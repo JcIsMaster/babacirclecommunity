@@ -17,6 +17,7 @@ public class BabacirclecommunityApplication extends SpringBootServletInitializer
         SpringApplication.run(BabacirclecommunityApplication.class, args);
     }
 
+
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
         // 注意这里要指向原先用main方法执行的Application启动类
