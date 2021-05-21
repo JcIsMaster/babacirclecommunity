@@ -43,4 +43,6 @@ public interface CircleMapper {
     @Select("select a.*,c.id as uId,c.avatar,c.user_name,b.tag_name,b.id as tagId from" +
             " tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.content like CONCAT('%',#{content},'%') and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryFuzzyCircle(@Param("content") String content, @Param("paging") String paging);
+
+
 }
