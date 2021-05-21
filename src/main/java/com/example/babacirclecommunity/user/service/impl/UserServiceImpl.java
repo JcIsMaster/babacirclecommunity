@@ -60,7 +60,7 @@ public class UserServiceImpl implements IUserService {
         if(openid==null){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"openid为空");
         }
-//根据openid查询数据库是否存在
+        //根据openid查询数据库是否存在
         User user = userMapper.selectUserByOpenId(openid);
         if(user!=null){
             //如果用户是封号状态就返回null
@@ -87,6 +87,7 @@ public class UserServiceImpl implements IUserService {
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
 
+            //初始化金币
             /*int i2 = goldMapper.addUserGoldCoins(user1.getId());
             if(i2<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR,"初始化金币数据失败");
