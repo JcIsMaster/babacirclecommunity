@@ -21,8 +21,9 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("SELECT r.id,r.tag_id, r.community_name, r.posters,r.introduce,COUNT(p.community_id) AS cnt FROM tb_community r" +
-            " inner JOIN tb_community_user p on r.id = p.community_id where r.user_id=${userId} and r.type=1 GROUP BY p.community_id ${paging}")
+    @Select("select r.id,r.tag_id, r.community_name, r.posters,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN" +
+            " (SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p  GROUP BY community_id) t1" +
+            " on r.id=t1.community_id where r.user_id=${userId} ORDER BY t1.community_id ${paging}")
     List<CircleVo> myCircleAndCircleJoined(@Param("userId") int userId, @Param("paging") String paging);
 
     /**
@@ -31,7 +32,9 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select b.id,b.tag_id,b.community_name,b.posters,b.introduce from tb_community_user a inner JOIN tb_community b on a.community_id=b.id where a.user_id=${userId} and b.type=1 GROUP BY a.community_id ${paging}")
+    @Select("select r.id,r.tag_id, r.community_name, r.posters,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN " +
+            "(SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p  GROUP BY community_id) t1 " +
+            " on r.id=t1.community_id where t1.user_id=${userId} ORDER BY t1.community_id {paging}")
     List<CircleVo> circleJoined(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
@@ -51,4 +54,23 @@ public interface CircleMapper {
     @Select("select a.*,c.id as uId,c.avatar,c.user_name,b.tag_name,b.id as tagId from" +
             " tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.content like CONCAT('%',#{content},'%') and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryFuzzyCircle(@Param("content") String content, @Param("paging") String paging);
+
+    /**
+     *  根据用户id查询圈子文章
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1 order by a.create_at desc ${paging}")
+    List<CircleClassificationVo> queryHavePostedCirclePosts(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 根据帖子id查询当前帖子图片
+     * @param id
+     * @return
+     */
+    @Select("select img_url from tb_img where z_id=${id}")
+    String[] selectImgByPostId(@Param("id") int id);
+
+
 }
