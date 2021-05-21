@@ -30,6 +30,11 @@ public class CircleVo {
     private String communityName;
 
     /**
+     * 社区介绍
+     */
+    private String introduce;
+
+    /**
      * 每个社区的人数
      */
     private int cnt;

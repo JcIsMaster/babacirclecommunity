@@ -21,7 +21,7 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("SELECT r.id,r.tag_id, r.community_name, r.posters,COUNT(p.community_id) AS cnt FROM tb_community r" +
+    @Select("SELECT r.id,r.tag_id, r.community_name, r.posters,r.introduce,COUNT(p.community_id) AS cnt FROM tb_community r" +
             " inner JOIN tb_community_user p on r.id = p.community_id where r.user_id=${userId} and r.type=1 GROUP BY p.community_id ${paging}")
     List<CircleVo> myCircleAndCircleJoined(@Param("userId") int userId, @Param("paging") String paging);
 
@@ -31,8 +31,16 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select b.id,b.tag_id, b.community_name, b.posters from tb_community_user a inner JOIN tb_community b on a.community_id=b.id where a.user_id=${userId} and b.type=1 GROUP BY a.community_id ${paging}")
+    @Select("select b.id,b.tag_id,b.community_name,b.posters,b.introduce from tb_community_user a inner JOIN tb_community b on a.community_id=b.id where a.user_id=${userId} and b.type=1 GROUP BY a.community_id ${paging}")
     List<CircleVo> circleJoined(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 统计每个圈子的人数
+     * @param id 用户id
+     * @return
+     */
+    @Select("select count(*) from tb_community_user where community_id=${id}")
+    int countCircleJoined(@Param("id") int id);
 
     /**
      * 根据圈子内容模糊查询

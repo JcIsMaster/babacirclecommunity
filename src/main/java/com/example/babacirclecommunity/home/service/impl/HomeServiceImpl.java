@@ -1,5 +1,8 @@
 package com.example.babacirclecommunity.home.service.impl;
 
+import com.example.babacirclecommunity.circle.dao.AttentionMapper;
+import com.example.babacirclecommunity.circle.dao.CircleMapper;
+import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
@@ -9,6 +12,9 @@ import com.example.babacirclecommunity.home.service.IHomeService;
 import com.example.babacirclecommunity.home.vo.TagVo;
 import com.example.babacirclecommunity.tags.dao.TagMapper;
 import com.example.babacirclecommunity.tags.entity.Tag;
+import com.example.babacirclecommunity.user.dao.UserMapper;
+import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
+import com.example.babacirclecommunity.user.vo.PersonalUserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +37,15 @@ public class HomeServiceImpl implements IHomeService {
 
     @Autowired
     private SearchRecordMapper searchRecordMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private CircleMapper circleMapper;
+
+    @Autowired
+    private AttentionMapper attentionMapper;
 
     @Autowired
     private TagMapper tagMapper;
@@ -59,12 +74,21 @@ public class HomeServiceImpl implements IHomeService {
 
         //查用户
         if(strata==0){
-
+            List<PersonalUserVo> personalUserVos = userMapper.queryUserLike(postingName,sql);
+            for (int i = 0;i < personalUserVos.size();i++){
+                //查看我是否关注了此人
+                int i1 = attentionMapper.queryWhetherAttention(userId, personalUserVos.get(i).getId());
+                if (i1 > 0){
+                    personalUserVos.get(i).setWhetherAttention(1);
+                }
+            }
+            return personalUserVos;
         }
 
         //查圈子
         if(strata==1){
-
+            List<CircleClassificationVo> classificationVos = circleMapper.queryFuzzyCircle(postingName,sql);
+            return classificationVos;
         }
         return null;
     }
@@ -72,9 +96,9 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public Map<String, Object> querySearchRecords(int userId) {
 
-        Map<String,Object> map=new HashMap<>(15);
+        Map<String,Object> map = new HashMap<>(15);
 
-        List<TagVo> tagVoList=new ArrayList<>();
+        List<TagVo> tagVoList = new ArrayList<>();
 
         //根据用户id查询历史记录
         List<SearchHistory> searchHistories = searchRecordMapper.selectSearchRecordByUserId(userId);
