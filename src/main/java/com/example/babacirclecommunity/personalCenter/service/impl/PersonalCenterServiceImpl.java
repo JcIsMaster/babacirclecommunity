@@ -1,7 +1,10 @@
 package com.example.babacirclecommunity.personalCenter.service.impl;
 
 import com.example.babacirclecommunity.circle.dao.AttentionMapper;
+import com.example.babacirclecommunity.circle.dao.CircleGiveMapper;
 import com.example.babacirclecommunity.circle.dao.CircleMapper;
+import com.example.babacirclecommunity.circle.dao.CommentMapper;
+import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.personalCenter.service.IPersonalCenterService;
@@ -33,6 +36,12 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
     @Autowired
     private CircleMapper circleMapper;
 
+    @Autowired
+    private CircleGiveMapper circleGiveMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
     @Override
     public PersonalVo queryPersonalCenter(int userId,int otherId) {
 
@@ -49,6 +58,15 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         personalVo.setPersonalCenterUserVo(personalCenterUserVo);
         personalVo.setCircleVos(circleVos);
         personalVo.setJoinedCircleVos(circleJoined);
+        //查询用户动态帖数量
+        int postedCircleNum = circleMapper.queryHavePostedCircleNum(otherId);
+        personalVo.setPostedCircleNum(postedCircleNum);
+        //查询用户点赞帖数量
+        int greatCircleNum = 0;
+        personalVo.setGreatCircleNum(greatCircleNum);
+        //查询用户关注帖数量
+        int attentionNum = 0;
+        personalVo.setAttentionNum(attentionNum);
         if (userId == 0){
             personalVo.setWhetherAttention(0);
             return personalVo;
@@ -60,6 +78,61 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         personalVo.setWhetherAttention(whetherAttention);
 
         return personalVo;
+    }
+
+    @Override
+    public List<CircleClassificationVo> queryPersonalCircle(int userId, int otherId,int type, Paging paging) {
+
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pag="limit "+page+","+paging.getLimit()+"";
+
+        //查询个人中心里“动态”圈子
+        if (type == 0) {
+            List<CircleClassificationVo> circles = circleMapper.queryHavePostedCirclePosts(otherId,pag);
+            for (int i = 0; i < circles.size(); i++) {
+                //得到图片组
+                String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
+                circles.get(i).setImg(strings);
+
+                //得到点过赞人的头像
+                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+                circles.get(i).setGiveAvatar(strings1);
+
+                //得到点赞数量
+                Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+                circles.get(i).setGiveNumber(integer1);
+
+
+                //等于0在用户没有到登录的情况下 直接设置没有点赞
+                if (userId == 0) {
+                    circles.get(i).setWhetherGive(0);
+                    circles.get(i).setWhetherAttention(0);
+                } else {
+                    //查看我是否关注了此人
+                    int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                    if (i1 > 0) {
+                        circles.get(i).setWhetherAttention(1);
+                    }
+
+                    //查询是否对帖子点了赞   0没有 1有
+                    Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                    if (integer > 0) {
+                        circles.get(i).setWhetherGive(1);
+                    }
+                }
+
+                //得到帖子评论数量
+                Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+                circles.get(i).setNumberPosts(integer2);
+
+            }
+            return circles;
+        }
+        //查询个人中心里“赞过”圈子
+        if (type == 1) {
+
+        }
+        return null;
     }
 
     @Override
@@ -76,11 +149,6 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         //查询加入的圈子
         if (type == 1){
             List<CircleVo> circleVos = circleMapper.circleJoined(otherId, sql);
-            for (int i = 0;i < circleVos.size();i++){
-                //统计每个圈子的人数
-                int i1 = circleMapper.countCircleJoined(circleVos.get(i).getId());
-                circleVos.get(i).setCnt(i1);
-            }
             return circleVos;
         }
         return null;

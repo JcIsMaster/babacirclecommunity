@@ -34,8 +34,6 @@ public interface UserMapper {
      */
     @Select("select id,user_name,introduce,avatar from tb_user where user_name like CONCAT('%',#{userName},'%') ${paging}")
     List<PersonalUserVo> queryUserLike(@Param("userName") String userName, @Param("paging") String paging);
-    @Select("select id,user_name,introduce,picture,avatar from tb_user where user_name like CONCAT('%',#{userName},'%')")
-    List<PersonalCenterUserVo> queryUserLike(@Param("userName") String userName);
 
     /**
      * 根据openid查询用户是否存在

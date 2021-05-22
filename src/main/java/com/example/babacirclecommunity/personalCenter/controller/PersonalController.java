@@ -1,5 +1,6 @@
 package com.example.babacirclecommunity.personalCenter.controller;
 
+import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.personalCenter.service.IPersonalCenterService;
@@ -31,6 +32,13 @@ public class PersonalController {
     @PostMapping("/queryPersonalCenter")
     public PersonalVo queryPersonalCenter(int userId,int otherId){
         return iPersonalCenterService.queryPersonalCenter(userId,otherId);
+    }
+
+    @ApiOperation(value = "查询个人中心里圈子相关的动态接口",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryPersonalCircle")
+    public List<CircleClassificationVo> queryPersonalCircle(int userId, int otherId,int type, Paging paging){
+        return iPersonalCenterService.queryPersonalCircle(userId,otherId,type,paging);
     }
 
     @ApiOperation(value = "查询创建或加入的圈子",notes = "成功返回数据 反则为空")
