@@ -71,7 +71,7 @@ public interface CircleMapper {
      * @return
      */
     @Select("select count(a.id) from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1")
-    Integer queryHavePostedCircleNum(@Param("userId") int userId);
+    int queryHavePostedCircleNum(@Param("userId") int userId);
 
     /**
      * 根据帖子id查询当前帖子图片

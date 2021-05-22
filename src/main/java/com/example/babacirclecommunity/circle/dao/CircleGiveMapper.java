@@ -46,13 +46,13 @@ public interface CircleGiveMapper {
      * @param paging
      * @return
      */
-    @Select("select b.content,b.cover,b.video,b.browse,b.create_at,c.tag_name,c.id,d.id as uId,d.user_name,d.avatar from tb_circles_give a INNER JOIN tb_circles b on a.zq_id=b.id " +
+    @Select("select b.id,b.content,b.cover,b.video,b.browse,b.create_at,c.tag_name,c.id,d.id as uId,d.user_name,d.avatar from tb_circles_give a INNER JOIN tb_circles b on a.zq_id=b.id " +
             "INNER JOIN tb_tags c on b.tags_two=c.id INNER JOIN tb_user d on b.u_id=d.id " +
-            "where a.u_id=${userId} and b.is_delete=1 ${paging}}")
+            "where a.u_id=${userId} and b.is_delete=1 ${paging}")
     List<CircleClassificationVo> queryGiveCircle(@Param("userId") int userId,String paging);
 
     /**
-     * 统计我点赞过的圈子帖子
+     * 统计我点赞过的圈子帖子数量
      * @param userId 用户id
      * @return
      */

@@ -48,7 +48,7 @@ public class AttentionServiceImpl implements IAttentionService {
         }
 
         //查询是否关注了他人
-        int i=0;
+        int i = 0;
         Attention attention1 = attentionMapper.queryWhetherExist(attention.getGuId(), attention.getBgId());
         if (attention1!= null) {
             //如果当前状态是1关注的  在进这个判断就是修改为0不关注的状态
