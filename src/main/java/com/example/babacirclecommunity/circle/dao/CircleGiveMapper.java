@@ -1,8 +1,11 @@
 package com.example.babacirclecommunity.circle.dao;
 
+import com.example.babacirclecommunity.circle.entity.Give;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -60,5 +63,33 @@ public interface CircleGiveMapper {
             "INNER JOIN tb_tags c on b.tags_two=c.id INNER JOIN tb_user d on b.u_id=d.id " +
             "where a.u_id=${userId} and b.is_delete=1")
     int countGiveCircle(@Param("userId") int userId);
+
+    /**
+     * 查询数据库是否存在该条数据
+     * @param userId 用户id
+     * @param tid 帖子id
+     * @return
+     */
+    @Select("select * from tb_circles_give where u_id=${userId} and zq_id=${tid}")
+    Give selectCountWhether(@Param("userId") int userId, @Param("tid") int tid);
+
+    /**
+     **增加点赞信息
+     *@param id 帖子id
+     *@param userId 用户id
+     *@param createAt 创建时间
+     * @return
+     */
+    @Insert("insert into tb_circles_give(zq_id,u_id,create_at,give_cancel)values(${id},${userId},#{createAt},1)")
+    int givePost(@Param("id")int id,@Param("userId") int userId,@Param("createAt") String createAt);
+
+    /**
+     * 修改点赞状态
+     * @param id 点赞id
+     * @param status 状态id
+     * @return
+     */
+    @Update("update tb_circles_give set give_cancel=${status} where id=${id}")
+    int updateGiveStatus(@Param("id") int id,@Param("status") int status);
 
 }

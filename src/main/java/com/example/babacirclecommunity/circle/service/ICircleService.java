@@ -37,4 +37,6 @@ public interface ICircleService {
      * @throws ParseException
      */
     CircleClassificationVo querySingleCircle(int id,int userId) throws ParseException;
+
+
 }

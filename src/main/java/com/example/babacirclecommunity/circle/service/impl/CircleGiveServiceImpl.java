@@ -4,8 +4,11 @@ import com.example.babacirclecommunity.circle.dao.AttentionMapper;
 import com.example.babacirclecommunity.circle.dao.CircleGiveMapper;
 import com.example.babacirclecommunity.circle.dao.CircleMapper;
 import com.example.babacirclecommunity.circle.dao.CommentMapper;
+import com.example.babacirclecommunity.circle.entity.Give;
 import com.example.babacirclecommunity.circle.service.ICircleGiveService;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
+import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.DateUtils;
 import com.example.babacirclecommunity.common.utils.Paging;
 import lombok.extern.slf4j.Slf4j;
@@ -87,5 +90,35 @@ public class CircleGiveServiceImpl implements ICircleGiveService {
         }
 
         return circles;
+    }
+
+    @Override
+    public int givePost(int id, int userId) {
+        Give give = circleGiveMapper.selectCountWhether(userId, id);
+        if(give==null){
+            int i = circleGiveMapper.givePost(id, userId, System.currentTimeMillis() / 1000 + "");
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+            return i;
+        }
+
+        int i =0;
+        //如果当前状态是1 那就改为0 取消收藏
+        if(give.getGiveCancel()==1){
+            i=circleGiveMapper.updateGiveStatus(give.getId(), 0);
+        }
+
+        //如果当前状态是0 那就改为1 为收藏状态
+        if(give.getGiveCancel()==0){
+            i = circleGiveMapper.updateGiveStatus(give.getId(), 1);
+        }
+
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
+
+        return i;
     }
 }

@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -43,6 +42,22 @@ public class CircleGiveController {
         }
         return  iCircleGiveService.queryGiveCircle(userId,otherId, paging);
     }
+
+    /**
+     *
+     * 点赞
+     * @return
+     */
+    @ApiOperation(value = "点赞",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/givePost")
+    public int givePost(int id,int userId){
+        if(id==0 || userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return  iCircleGiveService.givePost(id, userId);
+    }
+
 
 
 }

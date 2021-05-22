@@ -40,7 +40,7 @@ public interface UserMapper {
      * @param openId
      * @return
      */
-    @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce,open_id,is_delete from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where open_id=#{openId}")
+    @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce,open_id,is_delete,picture from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where open_id=#{openId}")
     User selectUserByOpenId(@Param("openId") String openId);
 
 
@@ -59,4 +59,12 @@ public interface UserMapper {
     @Insert("insert into tb_user(user_name,open_id,avatar,m_code,create_at)values(#{user.userName},#{user.openId},#{user.avatar},#{user.mCode},#{user.createAt})")
     @Options(useGeneratedKeys=true, keyProperty="user.id", keyColumn="id")
     int addUser(@Param("user") User user);
+
+    /**
+     * 根据id查询用户
+     * @param Id
+     * @return
+     */
+    @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce,a.open_id,b.can_withdraw_gold_coins,b.may_not_withdraw_gold_coins from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where a.id=${Id}")
+    User selectUserById(@Param("Id") int Id);
 }
