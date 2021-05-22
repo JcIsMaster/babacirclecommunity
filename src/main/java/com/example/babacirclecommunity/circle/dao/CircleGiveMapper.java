@@ -1,8 +1,11 @@
 package com.example.babacirclecommunity.circle.dao;
 
+import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author MQ
@@ -36,5 +39,26 @@ public interface CircleGiveMapper {
      */
     @Select("select COALESCE(count(*)) from tb_circles_give where u_id=${userId} and zq_id=${tid} and give_cancel=1")
     Integer whetherGive(@Param("userId") int userId,@Param("tid") int tid);
+
+    /**
+     * 查询我点赞过的圈子帖子
+     * @param userId 用户id
+     * @param paging
+     * @return
+     */
+    @Select("select b.content,b.cover,b.video,b.browse,b.create_at,c.tag_name,c.id,d.id as uId,d.user_name,d.avatar from tb_circles_give a INNER JOIN tb_circles b on a.zq_id=b.id " +
+            "INNER JOIN tb_tags c on b.tags_two=c.id INNER JOIN tb_user d on b.u_id=d.id " +
+            "where a.u_id=${userId} and b.is_delete=1 ${paging}}")
+    List<CircleClassificationVo> queryGiveCircle(@Param("userId") int userId,String paging);
+
+    /**
+     * 统计我点赞过的圈子帖子
+     * @param userId 用户id
+     * @return
+     */
+    @Select("select COALESCE(count(b.id),0) from tb_circles_give a INNER JOIN tb_circles b on a.zq_id=b.id " +
+            "INNER JOIN tb_tags c on b.tags_two=c.id INNER JOIN tb_user d on b.u_id=d.id " +
+            "where a.u_id=${userId} and b.is_delete=1")
+    int countGiveCircle(@Param("userId") int userId);
 
 }
