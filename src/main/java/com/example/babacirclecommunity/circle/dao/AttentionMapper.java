@@ -1,6 +1,5 @@
 package com.example.babacirclecommunity.circle.dao;
 
-
 import com.example.babacirclecommunity.circle.entity.Attention;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import org.apache.ibatis.annotations.Insert;

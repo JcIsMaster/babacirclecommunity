@@ -19,4 +19,12 @@ public interface ICircleGiveService {
      * @return
      */
     List<CircleClassificationVo> queryGiveCircle(int userId, int otherId, Paging paging);
+
+    /**
+     * 点赞
+     * @param id 帖子id
+     * @param userId 用户id
+     * @return
+     */
+    int givePost(int id,int userId);
 }
