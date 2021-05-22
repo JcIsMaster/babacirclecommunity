@@ -2,6 +2,7 @@ package com.example.babacirclecommunity.circle.dao;
 
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
@@ -51,7 +52,7 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.*,c.id as uId,c.avatar,c.user_name,b.tag_name,b.id as tagId from" +
+    @Select("select a.content,a.browse,a.video,a.cover,a.create_at,c.id as uId,c.avatar,c.user_name,b.tag_name,b.id as tagId from" +
             " tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.content like CONCAT('%',#{content},'%') and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryFuzzyCircle(@Param("content") String content, @Param("paging") String paging);
 
@@ -79,6 +80,43 @@ public interface CircleMapper {
      */
     @Select("select img_url from tb_img where z_id=${id}")
     String[] selectImgByPostId(@Param("id") int id);
+
+    /**
+     * 查询我关注的人发布的圈子文章
+     * @param userId 用户id
+     * @return
+     */
+    @Select("select a.id,a.content,a.tags_one,a.tags_two,a.type,d.id as uId,d.user_name,d.avatar,a.video,a.cover,a.browse,a.create_at,c.tag_name,c.id as tagId from tb_circles a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_user_attention b on a.u_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 order by a.create_at desc ${paging}")
+    List<CircleClassificationVo> queryAttentionPerson(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 查询图文或者视频
+     * @param type 类型（0 图文  1视频）
+     * @param paging 分页
+     * @return List<CircleClassificationVo>
+     */
+    @Select("select a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "where a.type=${type} and a.is_delete=1 order by a.create_at desc ${paging}")
+    List<CircleClassificationVo> queryImagesOrVideos(@Param("type") int type, @Param("paging") String paging);
+
+    /**
+     * 查询单个圈子的帖子
+     * @param id 帖子id
+     * @return
+     */
+    @Select("select a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "where a.id=${id} and a.is_delete=1")
+    CircleClassificationVo querySingleCircle(@Param("id") int id);
+
+    /**
+     * 浏览量加一
+     * @param id 帖子id
+     * @return
+     */
+    @Insert("update tb_circles set browse=browse+1 where id=${id} ")
+    int updateBrowse(@Param("id") int id);
 
 
 }
