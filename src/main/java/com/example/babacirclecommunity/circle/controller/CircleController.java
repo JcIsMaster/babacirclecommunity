@@ -46,10 +46,10 @@ public class CircleController {
 
 
     /**
-     * 查询视频或者图片
+     * 查询视频或者图片帖子
      * @return
      */
-    @ApiOperation(value = "查询视频或者图片",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "查询视频或者图片帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryImagesOrVideos")
     public List<CircleClassificationVo> queryImagesOrVideos(int type,Paging paging,int userId)  {

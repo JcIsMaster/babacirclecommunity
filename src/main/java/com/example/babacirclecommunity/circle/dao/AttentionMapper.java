@@ -51,7 +51,7 @@ public interface AttentionMapper {
      * @param attention 关注对象
      * @return
      */
-    @Insert("insert into tb_user_attention(gu_id,bg_id,remarks,create_at)values(${attention.guId},${attention.bgId},#{attention.remarks},#{attention.createAt})")
+    @Insert("insert into tb_user_attention(gu_id,bg_id,remarks,create_at)values(${attention.userId},${attention.bgId},#{attention.remarks},#{attention.createAt})")
     int addAttention(@Param("attention") Attention attention);
 
     /**
