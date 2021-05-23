@@ -39,7 +39,7 @@ public class CommentController {
     @ResponseBody
     @PostMapping("/addComment")
     public int addComment(Comment comment) throws ParseException {
-        if(comment.getPId()==0 || comment.getBId()==0){
+        if(comment.getUserId()==0 || comment.getBId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         return  iCommentService.addComment(comment);

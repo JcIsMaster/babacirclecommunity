@@ -42,7 +42,7 @@ public interface CommentMapper {
      * @param comment
      * @return
      */
-    @Insert("insert into tb_comment(p_id,b_id,t_id,comment_content,give_status,create_at)values(${comment.pId},${comment.bId},${comment.tId},#{comment.commentContent},${comment.giveStatus},#{comment.createAt})")
+    @Insert("insert into tb_comment(p_id,b_id,t_id,comment_content,give_status,create_at)values(${comment.userId},${comment.bId},${comment.tId},#{comment.commentContent},${comment.giveStatus},#{comment.createAt})")
     int addComment(@Param("comment") Comment comment);
 
     /**
