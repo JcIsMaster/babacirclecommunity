@@ -304,11 +304,7 @@ public class CircleServiceImpl implements ICircleService {
         tag.setCreateAt(System.currentTimeMillis()/1000+"");
         community.setCreateAt(System.currentTimeMillis()/1000+"");
 
-        community.setPosters(tag.getImgUrl());
-        community.setCommunityName(tag.getTagName());
-
         tag.setType(1);
-        community.setType(1);
 
         int i = tagMapper.addTag(tag);
         if(i<=0){

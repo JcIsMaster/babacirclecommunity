@@ -158,7 +158,6 @@ public class ConstantUtil {
 	             String result = EntityUtils.toString(entity,"utf-8");
 	             //将响应结果变成json
 	             JSONObject resultJsonObject = JSONObject.parseObject(result, JSONObject.class);
-				 System.out.println(resultJsonObject);
 
 	             //根据key得到值
 	             returnedValue =String.valueOf(resultJsonObject.get("errcode")) ;
