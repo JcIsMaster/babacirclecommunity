@@ -88,60 +88,7 @@ public class TagServiceImpl implements ITagService {
         return tags;
     }
 
-    @Override
-    public void addTag(Tag tag, Community community) throws ParseException {
 
-        //获取token
-        String token = ConstantUtil.getToken();
-        String identifyTextContent = ConstantUtil.identifyText(tag.getTagName(), token);
-        if(identifyTextContent.equals("87014")){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
-        }
-
-        //获取token
-        String token1 = ConstantUtil.getToken();
-        String identifyTextContent1 = ConstantUtil.identifyText(community.getIntroduce(), token1);
-        if(identifyTextContent1.equals("87014")){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
-        }
-
-        //获取token
-        String token2 = ConstantUtil.getToken();
-        String identifyTextContent2 = ConstantUtil.identifyText(community.getAnnouncement(), token2);
-        if(identifyTextContent2.equals("87014")){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
-        }
-
-        tag.setCreateAt(System.currentTimeMillis()/1000+"");
-        community.setCreateAt(System.currentTimeMillis()/1000+"");
-
-        community.setPosters(tag.getImgUrl());
-        community.setCommunityName(tag.getTagName());
-
-        tag.setType(1);
-        community.setType(1);
-
-        int i = tagMapper.addTag(tag);
-        if(i<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加失败");
-        }
-
-        community.setTagId(tag.getId());
-        int i1 = tagMapper.addCommunity(community);
-        if(i1<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加圈子信息失败");
-        }
-
-        int i2 = tagMapper.addTagHaplont(tag.getId(), 1);
-        if(i2<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-
-        int i3 = tagMapper.addTagHaplont(tag.getId(), 2);
-        if(i3<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-    }
 
 
 }

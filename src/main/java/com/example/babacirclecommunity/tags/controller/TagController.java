@@ -67,15 +67,6 @@ public class TagController {
     }
 
 
-    /**
-     * 添加二级标签
-     * @return
-     */
-    @ApiOperation(value = "添加二级标签",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/addTag")
-    public void addTag(Tag tag, Community community) throws ParseException {
-        iTagService.addTag(tag,community);
-    }
+
 
 }

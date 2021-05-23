@@ -13,12 +13,12 @@ public class Community {
     private int id;
 
     /**
-     * 社区名称
+     *圈子名称
      */
     private String communityName;
 
     /**
-     * 社区海报
+     * 圈子海报
      */
     private String posters;
 
@@ -36,6 +36,11 @@ public class Community {
      * 圈子公告
      */
     private String announcement;
+
+    /**
+     * 是否公开 （0不是，1是）默认是
+     */
+    private int whetherPublic;
 
     /**
      * 创建时间

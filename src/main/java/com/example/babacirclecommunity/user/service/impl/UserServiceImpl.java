@@ -8,6 +8,7 @@ import com.example.babacirclecommunity.common.utils.ConstantUtil;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.entity.User;
 import com.example.babacirclecommunity.user.service.IUserService;
+import com.example.babacirclecommunity.user.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,6 +96,11 @@ public class UserServiceImpl implements IUserService {
             return user1;
         }
 
+    }
+
+    @Override
+    public UserVo QueryUserInformationBasedUserId(int id, int userId) {
+        return userMapper.queryUserPartialInformation(id);
     }
 
     /**

@@ -16,7 +16,7 @@ public class Comment {
     /**
      * 评论人id
      */
-    private int pId;
+    private int userId;
 
     /**
      * 被评论人id

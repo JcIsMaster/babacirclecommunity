@@ -4,6 +4,7 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.user.entity.User;
 import com.example.babacirclecommunity.user.service.IUserService;
+import com.example.babacirclecommunity.user.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +41,20 @@ public class UserController {
         return iUserService.wxLogin(code,userName,avatar,address,sex);
     }
 
+    /**
+     * 查询用户id，名称，头像
+     * @return
+     */
+    @ApiOperation(value = "查询用户id，名称，头像",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/QueryUserInformationBasedUserId")
+    public UserVo QueryUserInformationBasedUserId(int id, int userId) {
+        if (id == 0) {
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
 
+        return iUserService.QueryUserInformationBasedUserId(id, userId);
 
-
+    }
 
 }
