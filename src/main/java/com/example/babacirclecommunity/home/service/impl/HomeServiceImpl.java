@@ -1,5 +1,10 @@
 package com.example.babacirclecommunity.home.service.impl;
 
+import com.example.babacirclecommunity.circle.dao.AttentionMapper;
+import com.example.babacirclecommunity.circle.dao.CircleGiveMapper;
+import com.example.babacirclecommunity.circle.dao.CircleMapper;
+import com.example.babacirclecommunity.circle.dao.CommentMapper;
+import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
@@ -9,6 +14,9 @@ import com.example.babacirclecommunity.home.service.IHomeService;
 import com.example.babacirclecommunity.home.vo.TagVo;
 import com.example.babacirclecommunity.tags.dao.TagMapper;
 import com.example.babacirclecommunity.tags.entity.Tag;
+import com.example.babacirclecommunity.user.dao.UserMapper;
+import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
+import com.example.babacirclecommunity.user.vo.PersonalUserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +39,21 @@ public class HomeServiceImpl implements IHomeService {
 
     @Autowired
     private SearchRecordMapper searchRecordMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private CircleMapper circleMapper;
+
+    @Autowired
+    private CircleGiveMapper circleGiveMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
+    @Autowired
+    private AttentionMapper attentionMapper;
 
     @Autowired
     private TagMapper tagMapper;
@@ -59,22 +82,67 @@ public class HomeServiceImpl implements IHomeService {
 
         //查用户
         if(strata==0){
-
+            List<PersonalUserVo> personalUserVos = userMapper.queryUserLike(postingName,sql);
+            for (int i = 0;i < personalUserVos.size();i++){
+                //查看我是否关注了此人
+                int i1 = attentionMapper.queryWhetherAttention(userId, personalUserVos.get(i).getId());
+                if (i1 > 0){
+                    personalUserVos.get(i).setWhetherAttention(1);
+                }
+            }
+            return personalUserVos;
         }
 
         //查圈子
         if(strata==1){
+            List<CircleClassificationVo> circles = circleMapper.queryFuzzyCircle(postingName,sql);
+            for (int i = 0; i < circles.size(); i++) {
+                //得到图片组
+                String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
+                circles.get(i).setImg(strings);
 
+                //得到点过赞人的头像
+                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+                circles.get(i).setGiveAvatar(strings1);
+
+                //得到点赞数量
+                Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+                circles.get(i).setGiveNumber(integer1);
+
+                //等于0在用户没有到登录的情况下 直接设置没有点赞
+                if (userId == 0) {
+                    circles.get(i).setWhetherGive(0);
+                    circles.get(i).setWhetherAttention(0);
+                } else {
+                    //查看我是否关注了此人
+                    int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                    if (i1 > 0) {
+                        circles.get(i).setWhetherAttention(1);
+                    }
+
+                    //查询是否对帖子点了赞   0没有 1有
+                    Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                    if (integer > 0) {
+                        circles.get(i).setWhetherGive(1);
+                    }
+                }
+
+                //得到帖子评论数量
+                Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+                circles.get(i).setNumberPosts(integer2);
+            }
+            return circles;
         }
-        return null;
+        //业务异常
+        throw new ApplicationException(CodeType.SERVICE_ERROR);
     }
 
     @Override
     public Map<String, Object> querySearchRecords(int userId) {
 
-        Map<String,Object> map=new HashMap<>(15);
+        Map<String,Object> map = new HashMap<>(15);
 
-        List<TagVo> tagVoList=new ArrayList<>();
+        List<TagVo> tagVoList = new ArrayList<>();
 
         //根据用户id查询历史记录
         List<SearchHistory> searchHistories = searchRecordMapper.selectSearchRecordByUserId(userId);

@@ -23,7 +23,7 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select r.id,r.tag_id, r.community_name, r.posters,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN" +
+    @Select("select r.id,r.tag_id, r.community_name, r.posters,r.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN" +
             " (SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p  GROUP BY community_id) t1" +
             " on r.id=t1.community_id where r.user_id=${userId} ORDER BY t1.community_id ${paging}")
     List<CircleVo> myCircleAndCircleJoined(@Param("userId") int userId, @Param("paging") String paging);
@@ -34,10 +34,18 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select r.id,r.tag_id, r.community_name, r.posters,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN " +
+    @Select("select r.id,r.tag_id, r.community_name, r.posters,r.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN " +
             "(SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p  GROUP BY community_id) t1 " +
-            " on r.id=t1.community_id where t1.user_id=${userId} ORDER BY t1.community_id {paging}")
+            " on r.id=t1.community_id where t1.user_id=${userId} ORDER BY t1.community_id ${paging}")
     List<CircleVo> circleJoined(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 统计每个圈子的人数
+     * @param id 用户id
+     * @return
+     */
+    @Select("select count(*) from tb_community_user where community_id=${id}")
+    int countCircleJoined(@Param("id") int id);
 
     /**
      * 根据圈子内容模糊查询
@@ -57,6 +65,14 @@ public interface CircleMapper {
      */
     @Select("select  a.forwarding_number,a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryHavePostedCirclePosts(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     *  根据用户id查询圈子文章数量
+     * @param userId 用户id
+     * @return
+     */
+    @Select("select count(a.id) from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1")
+    int queryHavePostedCircleNum(@Param("userId") int userId);
 
     /**
      * 根据帖子id查询当前帖子图片
