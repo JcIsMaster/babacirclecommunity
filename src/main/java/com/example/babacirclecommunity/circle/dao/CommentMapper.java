@@ -34,7 +34,7 @@ public interface CommentMapper {
      * @param tid
      * @return
      */
-    @Select(" select a.p_id as userId,a.b_id,a.t_id,a.comment_content,a.create_at,b.id as userId,b.user_name from tb_comment a INNER JOIN tb_user b on a.p_id=b.id where a.t_id=${tid} and a.is_delete=1 order by a.create_at desc limit 3")
+    @Select(" select a.p_id,a.b_id,a.t_id,a.comment_content,a.create_at,b.id as userId,b.user_name from tb_comment a INNER JOIN tb_user b on a.p_id=b.id where a.t_id=${tid} and a.is_delete=1 order by a.create_at desc limit 3")
     List<CommentUserVo> selectComment(@Param("tid") int tid);
 
     /**
@@ -42,7 +42,7 @@ public interface CommentMapper {
      * @param comment
      * @return
      */
-    @Insert("insert into tb_comment(p_id,b_id,t_id,comment_content,give_status,create_at)values(${comment.userId},${comment.bId},${comment.tId},#{comment.commentContent},${comment.giveStatus},#{comment.createAt})")
+    @Insert("insert into tb_comment(p_id,b_id,t_id,comment_content,give_status,create_at)values(${comment.pId},${comment.bId},${comment.tId},#{comment.commentContent},${comment.giveStatus},#{comment.createAt})")
     int addComment(@Param("comment") Comment comment);
 
     /**
@@ -50,7 +50,7 @@ public interface CommentMapper {
      * @param tId 帖子id
      * @return
      */
-    @Select("select a.p_id as userId,a.b_id,a.t_id,a.comment_content,a.create_at,b.id as userId,b.user_name,b.avatar from tb_comment a INNER JOIN tb_user b on a.p_id=b.id where a.t_id=${tId} and a.is_delete=1 order by a.create_at desc")
+    @Select("select a.p_id,a.b_id,a.t_id,a.comment_content,a.create_at,b.id as userId,b.user_name,b.avatar from tb_comment a INNER JOIN tb_user b on a.p_id=b.id where a.t_id=${tId} and a.is_delete=1 order by a.create_at desc")
     List<CommentReplyVo> queryComment(@Param("tId") int tId);
 
     /**
