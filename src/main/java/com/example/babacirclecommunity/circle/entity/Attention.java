@@ -15,7 +15,7 @@ public class Attention {
     /**
      * 关注人id
      */
-    private int guId;
+    private int userId;
 
     /**
      *被关注人id

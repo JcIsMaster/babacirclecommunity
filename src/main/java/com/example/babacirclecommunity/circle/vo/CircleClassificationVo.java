@@ -105,6 +105,11 @@ public class CircleClassificationVo {
      */
     private int numberPosts;
 
+    /**
+     * 转发数量
+     */
+    private int forwardingNumber;
+
 
 
 

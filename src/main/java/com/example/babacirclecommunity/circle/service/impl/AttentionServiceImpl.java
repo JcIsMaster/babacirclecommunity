@@ -43,22 +43,22 @@ public class AttentionServiceImpl implements IAttentionService {
 
     @Override
     public int addAttention(Attention attention) {
-        if(attention.getGuId()==attention.getBgId()){
+        if(attention.getUserId()==attention.getBgId()){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"自己不能关注自己哦");
         }
 
         //查询是否关注了他人
         int i=0;
-        Attention attention1 = attentionMapper.queryWhetherExist(attention.getGuId(), attention.getBgId());
+        Attention attention1 = attentionMapper.queryWhetherExist(attention.getUserId(), attention.getBgId());
         if (attention1!= null) {
             //如果当前状态是1关注的  在进这个判断就是修改为0不关注的状态
             if(attention1.getIsDelete()==1){
                 //修改关注状态 为取消关注
-                i= attentionMapper.updatePostingFollow(0, attention.getGuId(), attention.getBgId());
+                i= attentionMapper.updatePostingFollow(0, attention.getUserId(), attention.getBgId());
             }
             if(attention1.getIsDelete()==0){
                 //修改关注状态 为关注
-                i = attentionMapper.updatePostingFollow(1, attention.getGuId(), attention.getBgId());
+                i = attentionMapper.updatePostingFollow(1, attention.getUserId(), attention.getBgId());
             }
 
         }else{

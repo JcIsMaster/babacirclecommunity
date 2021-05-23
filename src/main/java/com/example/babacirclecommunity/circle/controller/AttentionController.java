@@ -38,7 +38,7 @@ public class AttentionController {
     @ResponseBody
     @PostMapping("/addAttention")
     public int addAttention(Attention attention){
-        if(attention.getGuId()==0 || attention.getBgId()==0){
+        if(attention.getUserId()==0 || attention.getBgId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         return  iAttentionService.addAttention(attention);

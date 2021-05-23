@@ -3,6 +3,8 @@ package com.example.babacirclecommunity.CircleFriends.service.impl;
 
 import com.example.babacirclecommunity.CircleFriends.dao.CircleFriendsMapper;
 import com.example.babacirclecommunity.CircleFriends.service.ICircleFriendsService;
+import com.example.babacirclecommunity.CircleFriends.vo.CircleFriendsVo;
+import com.example.babacirclecommunity.circle.dao.CircleMapper;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
@@ -38,9 +40,13 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
     @Autowired
     private CircleFriendsMapper circleFriendsMapper;
 
+
+    @Autowired
+    private CircleMapper circleMapper;
+
     @Override
-    public List<String> selectCircleFriendsFigure(String headUrl, String postImg, String postContent, String userName,String pageUrl,String title) {
-        if(postImg.equals("") || postContent.equals("")){
+    public List<String> selectCircleFriendsFigure(CircleFriendsVo circleFriendsVo) {
+        if(circleFriendsVo.getPostImg().equals("") || circleFriendsVo.getPostContent().equals("")){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
@@ -63,7 +69,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
             //秘钥
             param.put("scene", ConstantUtil.secret);
             //二维码指向的地址
-            param.put("page", pageUrl);
+            param.put("page", circleFriendsVo.getPageUrl());
             param.put("width", 430);
             param.put("auto_color", false);
             param.put("is_hyaline", true);//去掉二维码底色
@@ -106,8 +112,17 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
             WxPoster wxPoster=new WxPoster();
             //生成海报5
-            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMaster("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", headUrl, postImg,postContent,userName,title);
+            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMaster("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", circleFriendsVo.getHeadUrl(), circleFriendsVo.getPostImg(),circleFriendsVo.getPostContent(),circleFriendsVo.getUserName(),circleFriendsVo.getTitle());
             String newGreat = posterUrlGreatMaster.replace("e:/file/img/", "https://www.gofatoo.com/img/");
+            if(newGreat!=null){
+                if(circleFriendsVo.getType()==0){
+                    //帖子分享数量加一
+                    int i = circleMapper.updateForwardingNumber(circleFriendsVo.getId());
+                    if(i<=0){
+                        throw new ApplicationException(CodeType.SERVICE_ERROR,"分享错误");
+                    }
+                }
+            }
             posterList.add(newGreat);
         } catch (Exception e) {
             e.printStackTrace();

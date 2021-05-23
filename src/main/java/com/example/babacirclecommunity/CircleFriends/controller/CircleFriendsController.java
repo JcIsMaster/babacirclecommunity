@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.CircleFriends.controller;
 
 import com.example.babacirclecommunity.CircleFriends.service.ICircleFriendsService;
+import com.example.babacirclecommunity.CircleFriends.vo.CircleFriendsVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +31,8 @@ public class CircleFriendsController {
     @ApiOperation(value = "得到朋友圈分享图",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectCircleFriendsFigure")
-    public List<String> selectCircleFriendsFigure(String headUrl,String postImg,String postContent,String userName,String pageUrl,String title)  {
-       return iCircleFriendsService.selectCircleFriendsFigure(headUrl,postImg,postContent,userName,pageUrl,title);
+    public List<String> selectCircleFriendsFigure(CircleFriendsVo circleFriendsVo)  {
+       return iCircleFriendsService.selectCircleFriendsFigure(circleFriendsVo);
     }
 
 
