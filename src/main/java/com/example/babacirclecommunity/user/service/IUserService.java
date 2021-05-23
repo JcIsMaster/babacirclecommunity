@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.user.service;
 
 import com.example.babacirclecommunity.user.entity.User;
+import com.example.babacirclecommunity.user.vo.UserVo;
 
 /**
  * @author MQ
@@ -18,4 +19,12 @@ public interface IUserService {
      * @return
      */
     User wxLogin(String code, String userName, String avatar, String address, String sex);
+
+    /**
+     * 根据id查询用户部分用户信息 （消息版块用的接口）
+     * @param id 他的用id
+     * @param userId 当前登录人id
+     * @return
+     */
+    UserVo QueryUserInformationBasedUserId(int id, int userId);
 }

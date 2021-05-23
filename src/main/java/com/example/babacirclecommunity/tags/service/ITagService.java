@@ -34,12 +34,4 @@ public interface ITagService {
      */
     List<AllTagVo> queryAllPrimaryAndSecondaryTags();
 
-    /**
-     * 添加二级标签
-     * @param tag 标签对象
-     * @param community 社区对象
-     * @throws ParseException
-     */
-    void addTag(Tag tag, Community community) throws ParseException;
-
 }

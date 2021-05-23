@@ -1,7 +1,9 @@
 package com.example.babacirclecommunity.circle.dao;
 
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
+import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
+import com.example.babacirclecommunity.home.entity.Community;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -23,7 +25,7 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select r.id,r.tag_id, r.community_name, r.posters,r.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN" +
+    @Select("select r.whether_official,r.id,r.tag_id, r.community_name,r.tag_id, r.posters,r.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN" +
             " (SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p  GROUP BY community_id) t1" +
             " on r.id=t1.community_id where r.user_id=${userId} ORDER BY t1.community_id ${paging}")
     List<CircleVo> myCircleAndCircleJoined(@Param("userId") int userId, @Param("paging") String paging);
@@ -126,6 +128,24 @@ public interface CircleMapper {
      */
     @Update("update tb_circles set forwarding_number=forwarding_number+1 where id=${id}")
     int updateForwardingNumber(@Param("id") int id);
+
+
+    /**
+     * 根据二级标签id查询封面和id
+     * @param tagsTwo 二级标签id
+     * @return
+     */
+    @Select("select cover,id from tb_circles where tags_two=${tagsTwo} order by create_at desc limit 4")
+    List<CircleImgIdVo> queryCoveId(@Param("tagsTwo") int tagsTwo);
+
+    /**
+     * 添加圈子
+     * @param community
+     */
+    @Insert("insert into tb_community(community_name,posters,user_id,introduce,announcement,create_at,tag_id,whether_public)" +
+            "values(#{community.communityName},#{community.posters},${community.userId},#{community.introduce},#{community.announcement}" +
+            ",#{community.createAt},#{community.tagId},${community.whetherPublic})")
+    int addCommunity(@Param("community") Community community);
 
 
 

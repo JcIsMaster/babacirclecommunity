@@ -4,12 +4,18 @@ import com.example.babacirclecommunity.circle.dao.*;
 import com.example.babacirclecommunity.circle.entity.Browse;
 import com.example.babacirclecommunity.circle.service.ICircleService;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
+import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
+import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.circle.vo.CommentUserVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
+import com.example.babacirclecommunity.common.utils.ConstantUtil;
 import com.example.babacirclecommunity.common.utils.DateUtils;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.TimeUtil;
+import com.example.babacirclecommunity.home.entity.Community;
+import com.example.babacirclecommunity.tags.dao.TagMapper;
+import com.example.babacirclecommunity.tags.entity.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +47,9 @@ public class CircleServiceImpl implements ICircleService {
 
     @Autowired
     private BrowseMapper browseMapper;
+
+    @Autowired
+    private TagMapper tagMapper;
 
     @Override
     public List<CircleClassificationVo> queryPostsPeopleFollow(int userId, Paging paging) {
@@ -241,5 +250,85 @@ public class CircleServiceImpl implements ICircleService {
 
 
         return circleClassificationVo;
+    }
+
+    @Override
+    public List<CircleClassificationVo> queryReferenceCircles(int userId, Paging paging) {
+        Integer pages=(paging.getPage()-1)*paging.getLimit();
+        String pagings=" limit "+pages+","+paging.getLimit()+"";
+
+
+
+        return null;
+    }
+
+    @Override
+    public List<CircleVo> queryCheckMyCirclesSquare(int userId, Paging paging) {
+        Integer pages=(paging.getPage()-1)*paging.getLimit();
+        String pagings=" limit "+pages+","+paging.getLimit()+"";
+
+        //查询我创建的圈子
+        List<CircleVo> circleVos = circleMapper.myCircleAndCircleJoined(userId, pagings);
+        for (int i=0;i<circleVos.size();i++){
+            List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
+            circleVos.get(i).setCircleVoList(circleVos1);
+        }
+        return circleVos;
+    }
+
+    @Override
+    public void addCircle(Community community) throws ParseException {
+        //获取token
+        String token = ConstantUtil.getToken();
+        String identifyTextContent = ConstantUtil.identifyText(community.getCommunityName(), token);
+        if(identifyTextContent.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
+        //获取token
+        String token1 = ConstantUtil.getToken();
+        String identifyTextContent1 = ConstantUtil.identifyText(community.getIntroduce(), token1);
+        if(identifyTextContent1.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
+        //获取token
+        String token2 = ConstantUtil.getToken();
+        String identifyTextContent2 = ConstantUtil.identifyText(community.getAnnouncement(), token2);
+        if(identifyTextContent2.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
+        Tag tag=new Tag();
+
+        tag.setCreateAt(System.currentTimeMillis()/1000+"");
+        community.setCreateAt(System.currentTimeMillis()/1000+"");
+
+        community.setPosters(tag.getImgUrl());
+        community.setCommunityName(tag.getTagName());
+
+        tag.setType(1);
+        community.setType(1);
+
+        int i = tagMapper.addTag(tag);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加失败");
+        }
+
+        community.setTagId(tag.getId());
+        int i1 = circleMapper.addCommunity(community);
+        if(i1<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加圈子信息失败");
+        }
+
+        int i2 = tagMapper.addTagHaplont(tag.getId(), 1);
+        if(i2<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
+        int i3 = tagMapper.addTagHaplont(tag.getId(), 2);
+        if(i3<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
     }
 }

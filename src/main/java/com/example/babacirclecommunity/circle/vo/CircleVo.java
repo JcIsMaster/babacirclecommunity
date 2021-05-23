@@ -2,6 +2,8 @@ package com.example.babacirclecommunity.circle.vo;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author MQ
  * @date 2021/3/11 15:16
@@ -38,4 +40,14 @@ public class CircleVo {
      * 每个社区的人数
      */
     private int cnt;
+
+    /**
+     * 是否官方 （0不是，1是）默认为不是
+     */
+    private int whetherOfficial;
+
+    /**
+     * 每个圈子的最新圈子封面和id
+     */
+    List<CircleImgIdVo> circleVoList;
 }

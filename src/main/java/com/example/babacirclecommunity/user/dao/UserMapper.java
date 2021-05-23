@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.user.dao;
 import com.example.babacirclecommunity.user.entity.User;
 import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
 import com.example.babacirclecommunity.user.vo.PersonalUserVo;
+import com.example.babacirclecommunity.user.vo.UserVo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
@@ -67,4 +68,12 @@ public interface UserMapper {
      */
     @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce,a.open_id,b.can_withdraw_gold_coins,b.may_not_withdraw_gold_coins from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where a.id=${Id}")
     User selectUserById(@Param("Id") int Id);
+
+    /**
+     * 根据id查询部分用户信息
+     * @param id 他人id
+     * @return
+     */
+    @Select("select id,user_name,avatar from tb_user where id=${id}")
+    UserVo queryUserPartialInformation(@Param("id") int id);
 }

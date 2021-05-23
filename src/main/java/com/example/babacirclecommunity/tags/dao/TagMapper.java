@@ -94,14 +94,7 @@ public interface TagMapper {
     int addTag(@Param("tag") Tag tag);
 
 
-    /**
-     * 添加社区
-     * @param community
-     */
-    @Insert("insert into tb_community(community_name,posters,user_id,introduce,announcement,create_at,type,tag_id)" +
-            "values(#{community.communityName},#{community.posters},${community.userId},#{community.introduce},#{community.announcement}" +
-            ",#{community.createAt},#{community.type},#{community.tagId})")
-    int addCommunity(@Param("community") Community community);
+
 
     /**
      * 添加标签和导航栏的中间表
