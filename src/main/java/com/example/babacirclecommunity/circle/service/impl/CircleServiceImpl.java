@@ -20,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author MQ
@@ -264,9 +267,20 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public List<CircleVo> queryCheckMyCirclesSquare(int userId, Paging paging) {
+    public List<CircleVo> queryCheckMyCirclesSquare(int userId,String communityName, Paging paging) {
         Integer pages=(paging.getPage()-1)*paging.getLimit();
         String pagings=" limit "+pages+","+paging.getLimit()+"";
+
+        //如果communityName不等于空 就根据communityName查询圈子
+        if(communityName!=null && !communityName.equals("") && !"undefined".equals(communityName)){
+            List<CircleVo> circleVos = circleMapper.searchFundCircle(userId, communityName, pagings);
+            for (int i=0;i<circleVos.size();i++){
+                List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
+                circleVos.get(i).setCircleVoList(circleVos1);
+            }
+            return circleVos;
+        }
+
 
         //查询我创建的圈子
         List<CircleVo> circleVos = circleMapper.myCircleAndCircleJoined(userId, pagings);
@@ -317,6 +331,17 @@ public class CircleServiceImpl implements ICircleService {
         if(i1<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"添加圈子信息失败");
         }
+
+        //添加圈子人数 （创建人）
+        CommunityUser communityUser=new CommunityUser();
+        communityUser.setCreateAt(System.currentTimeMillis()/1000+"");
+        communityUser.setCommunityId(community.getId());
+        communityUser.setUserId(community.getUserId());
+        int i4 = circleMapper.addCommunityUser(communityUser);
+        if(i4<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加圈子人错误");
+        }
+
 
         int i2 = tagMapper.addTagHaplont(tag.getId(), 1);
         if(i2<=0){
@@ -394,57 +419,6 @@ public class CircleServiceImpl implements ICircleService {
         return communityVo;
     }
 
-    @Override
-    public List<CircleClassificationVo> selectPostsByCommunityCategoryId(int id, int userId, Paging paging) {
-        Integer page=(paging.getPage()-1)*paging.getLimit();
-        String pagings="limit "+page+","+paging.getLimit()+"";
-
-        List<CircleClassificationVo> circles = circleMapper.selectPostsBasedTagIdCircleTwo(id, pagings);
-        for (int i=0;i<circles.size();i++){
-            //得到图片组
-            String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
-            circles.get(i).setImg(strings);
-
-            //得到点过赞人的头像
-            String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
-            circles.get(i).setGiveAvatar(strings1);
-
-            //得到点赞数量
-            Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
-            circles.get(i).setGiveNumber(integer1);
-
-
-            //等于0在用户没有到登录的情况下 直接设置没有点赞
-            if(userId==0){
-                circles.get(i).setWhetherGive(0);
-                circles.get(i).setWhetherAttention(0);
-            }else{
-                //查看我是否关注了此人
-                int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
-                if(i1>0){
-                    circles.get(i).setWhetherAttention(1);
-                }
-
-                //查询是否对帖子点了赞   0没有 1有
-                Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
-                if(integer>0){
-                    circles.get(i).setWhetherGive(1);
-                }
-            }
-
-
-            //得到帖子评论数量
-            Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
-            circles.get(i).setNumberPosts(integer2);
-
-
-
-            //将时间戳转换为多少天或者多少个小时和多少年
-            String time = DateUtils.getTime(circles.get(i).getCreateAt());
-            circles.get(i).setCreateAt(time);
-        }
-        return circles;
-    }
 
     @Override
     public int joinCircle(CommunityUser communityUser) {
@@ -454,7 +428,7 @@ public class CircleServiceImpl implements ICircleService {
         int i1 = communityMapper.queryWhetherThereCircle(communityUser.getCommunityId(), communityUser.getUserId());
         if(i1>0){
             //退出圈子
-            int i = communityMapper.exitGroupChat(communityUser.getCommunityId(), communityUser.getUserId());
+            int i = communityMapper.exitGroupChat(communityUser.getCommunityId(),communityUser.getUserId());
             if(i<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR,"退出圈子失败");
             }
@@ -531,4 +505,63 @@ public class CircleServiceImpl implements ICircleService {
 
         return circles;
     }
+
+    @Override
+    public Map<String,Object> fundCircle(int userId, String communityName, Paging paging) {
+        int page=(paging.getPage()-1)*paging.getLimit();
+        String sql="limit "+page+","+paging.getLimit()+"";
+
+        Map<String,Object> map=new HashMap<>();
+
+        //查询官方圈子
+        List<CircleImgIdVo> circleImgIdVos = circleMapper.queryOfficialCircle();
+
+        //取前三条数据
+        List<CircleImgIdVo> collect = circleImgIdVos.stream().limit(3).collect(Collectors.toList());
+
+        //如果communityName不等于空就查询圈子
+        if(communityName!=null && !communityName.equals("") && !"undefined".equals(communityName)){
+            //查询圈子
+            List<CircleVo> circleVos = circleMapper.queryCircles(communityName);
+            for (int i=0;i<circleVos.size();i++){
+                List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
+                circleVos.get(i).setCircleVoList(circleVos1);
+            }
+
+            map.put("circleVos",circleVos);
+            map.put("circleImgIdVos",circleImgIdVos);
+            return map;
+        }
+
+        //查询热门的圈子
+        List<CircleVo> circleVos = circleMapper.queryPopularCircles(sql);
+        for (int i=0;i<circleVos.size();i++){
+            List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
+            circleVos.get(i).setCircleVoList(circleVos1);
+        }
+
+
+        map.put("circleVos",circleVos);
+        map.put("circleImgIdVos",collect);
+
+        return map;
+    }
+
+    @Override
+    public void updateCircle(Community community) {
+        int i = communityMapper.updateCircle(community);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"修改失败");
+        }
+    }
+
+    @Override
+    public void memberManagement(int communityId, int userId) {
+        int i = communityMapper.exitGroupChat(communityId, userId);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"踢出失败！");
+        }
+    }
+
+
 }
