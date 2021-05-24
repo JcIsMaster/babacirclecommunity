@@ -2,7 +2,6 @@ package com.example.babacirclecommunity.circle.controller;
 
 import com.example.babacirclecommunity.circle.entity.Circle;
 import com.example.babacirclecommunity.circle.entity.CommunityUser;
-import com.example.babacirclecommunity.circle.service.IAttentionService;
 import com.example.babacirclecommunity.circle.service.ICircleService;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -101,11 +101,11 @@ public class CircleController {
     @ApiOperation(value = "查询我的圈子 （圈子广场）",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryCheckMyCirclesSquare")
-    public List<CircleVo> queryCheckMyCirclesSquare(int userId, Paging paging)  {
+    public List<CircleVo> queryCheckMyCirclesSquare(int userId,String communityName, Paging paging)  {
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  iCircleService.queryCheckMyCirclesSquare(userId,paging);
+        return  iCircleService.queryCheckMyCirclesSquare(userId,communityName,paging);
     }
 
     /**
@@ -116,12 +116,13 @@ public class CircleController {
     @ApiOperation(value = "发现圈子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/fundCircle")
-    public List<CircleVo> fundCircle(int userId, Paging paging)  {
+    public Map<String,Object> fundCircle(int userId, String communityName, Paging paging)  {
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  iCircleService.queryCheckMyCirclesSquare(userId,paging);
+        return  iCircleService.fundCircle(userId,communityName,paging);
     }
+
 
 
     /**
@@ -181,5 +182,28 @@ public class CircleController {
     public int joinCircle(CommunityUser communityUser)  {
         return iCircleService.joinCircle(communityUser);
     }
+
+    /**
+     * 修改圈子信息
+     * @return
+     */
+    @ApiOperation(value = "修改圈子信息",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/updateCircle")
+    public void updateCircle(Community community)  {
+         iCircleService.updateCircle(community);
+    }
+
+    /**
+     * 成员管理
+     * @return
+     */
+    @ApiOperation(value = "成员管理",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/memberManagement")
+    public void memberManagement(int communityId,int userId)  {
+        iCircleService.memberManagement(communityId,userId);
+    }
+
 
 }

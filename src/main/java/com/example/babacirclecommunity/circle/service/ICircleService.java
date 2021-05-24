@@ -11,6 +11,7 @@ import com.example.babacirclecommunity.home.entity.Community;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -58,7 +59,7 @@ public interface ICircleService {
      * @param paging 分页
      * @return
      */
-    List<CircleVo> queryCheckMyCirclesSquare(int userId, Paging paging);
+    List<CircleVo> queryCheckMyCirclesSquare(int userId,String communityName, Paging paging);
 
     /**
      * 添加圈子
@@ -98,4 +99,26 @@ public interface ICircleService {
      * @return
      */
     List<CircleClassificationVo> queryClickUnitNavigationBar(int typeId,int userId,int tagId,Paging paging);
+
+    /**
+     * 发现圈子
+     * @param userId
+     * @param communityName
+     * @param paging
+     * @return
+     */
+    Map<String,Object> fundCircle(int userId, String communityName, Paging paging);
+
+    /**
+     * 修改圈子
+     * @param community
+     */
+    void updateCircle(Community community);
+
+    /**
+     * 成员管理
+     * @param communityId 圈子id
+     * @param userId 用户id
+     */
+    void memberManagement(int communityId,int userId);
 }

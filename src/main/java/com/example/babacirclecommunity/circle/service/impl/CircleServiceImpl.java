@@ -20,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author MQ
@@ -264,9 +267,20 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public List<CircleVo> queryCheckMyCirclesSquare(int userId, Paging paging) {
+    public List<CircleVo> queryCheckMyCirclesSquare(int userId,String communityName, Paging paging) {
         Integer pages=(paging.getPage()-1)*paging.getLimit();
         String pagings=" limit "+pages+","+paging.getLimit()+"";
+
+        //如果communityName不等于空 就根据communityName查询圈子
+        if(communityName!=null && !communityName.equals("") && !"undefined".equals(communityName)){
+            List<CircleVo> circleVos = circleMapper.searchFundCircle(userId, communityName, pagings);
+            for (int i=0;i<circleVos.size();i++){
+                List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
+                circleVos.get(i).setCircleVoList(circleVos1);
+            }
+            return circleVos;
+        }
+
 
         //查询我创建的圈子
         List<CircleVo> circleVos = circleMapper.myCircleAndCircleJoined(userId, pagings);
@@ -414,7 +428,7 @@ public class CircleServiceImpl implements ICircleService {
         int i1 = communityMapper.queryWhetherThereCircle(communityUser.getCommunityId(), communityUser.getUserId());
         if(i1>0){
             //退出圈子
-            int i = communityMapper.exitGroupChat(communityUser.getCommunityId(), communityUser.getUserId());
+            int i = communityMapper.exitGroupChat(communityUser.getCommunityId(),communityUser.getUserId());
             if(i<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR,"退出圈子失败");
             }
@@ -491,4 +505,63 @@ public class CircleServiceImpl implements ICircleService {
 
         return circles;
     }
+
+    @Override
+    public Map<String,Object> fundCircle(int userId, String communityName, Paging paging) {
+        int page=(paging.getPage()-1)*paging.getLimit();
+        String sql="limit "+page+","+paging.getLimit()+"";
+
+        Map<String,Object> map=new HashMap<>();
+
+        //查询官方圈子
+        List<CircleImgIdVo> circleImgIdVos = circleMapper.queryOfficialCircle();
+
+        //取前三条数据
+        List<CircleImgIdVo> collect = circleImgIdVos.stream().limit(3).collect(Collectors.toList());
+
+        //如果communityName不等于空就查询圈子
+        if(communityName!=null && !communityName.equals("") && !"undefined".equals(communityName)){
+            //查询圈子
+            List<CircleVo> circleVos = circleMapper.queryCircles(communityName);
+            for (int i=0;i<circleVos.size();i++){
+                List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
+                circleVos.get(i).setCircleVoList(circleVos1);
+            }
+
+            map.put("circleVos",circleVos);
+            map.put("circleImgIdVos",circleImgIdVos);
+            return map;
+        }
+
+        //查询热门的圈子
+        List<CircleVo> circleVos = circleMapper.queryPopularCircles(sql);
+        for (int i=0;i<circleVos.size();i++){
+            List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
+            circleVos.get(i).setCircleVoList(circleVos1);
+        }
+
+
+        map.put("circleVos",circleVos);
+        map.put("circleImgIdVos",collect);
+
+        return map;
+    }
+
+    @Override
+    public void updateCircle(Community community) {
+        int i = communityMapper.updateCircle(community);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"修改失败");
+        }
+    }
+
+    @Override
+    public void memberManagement(int communityId, int userId) {
+        int i = communityMapper.exitGroupChat(communityId, userId);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"踢出失败！");
+        }
+    }
+
+
 }
