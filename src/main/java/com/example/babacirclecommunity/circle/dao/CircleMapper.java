@@ -1,13 +1,11 @@
 package com.example.babacirclecommunity.circle.dao;
 
+import com.example.babacirclecommunity.circle.entity.Circle;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.home.entity.Community;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -147,6 +145,29 @@ public interface CircleMapper {
             ",#{community.createAt},#{community.tagId},${community.whetherPublic})")
     int addCommunity(@Param("community") Community community);
 
+    /**
+     * 批量增加图片
+     * @param zId 帖子id
+     * @param imgUrl 图片地址
+     * @param createAt 创建时间
+     * @param postType 帖子类型
+     * @return
+     */
+    @Insert("<script>" +
+            "insert into tb_img(z_id,img_url,type,create_at) VALUES  " +
+            "<foreach collection='imgUrl' item='item' index='index' separator=','>" +
+            "(${zId},#{item},${postType},#{createAt})" +
+            "</foreach>" +
+            "</script>")
+    int addImg(@Param("zId") int zId, @Param("imgUrl") String[] imgUrl,@Param("createAt") String createAt,@Param("postType") int postType);
 
 
+    /**
+     * 增加圈子帖子
+     * @param circle
+     * @return
+     */
+    @Insert("insert into tb_circles(content,tags_two,type,video,cover,create_at,u_id,title,haplont_type)values(#{circle.content},${circle.tagsTwo},${circle.type},#{circle.video},#{circle.cover},#{circle.createAt},${circle.uId},#{circle.title},${circle.haplontType})")
+    @Options(useGeneratedKeys=true, keyProperty="circle.id",keyColumn="id")
+    int addCirclePost(@Param("circle") Circle circle);
 }

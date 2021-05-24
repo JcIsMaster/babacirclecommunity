@@ -2,17 +2,14 @@ package com.example.babacirclecommunity.circle.service.impl;
 
 import com.example.babacirclecommunity.circle.dao.*;
 import com.example.babacirclecommunity.circle.entity.Browse;
+import com.example.babacirclecommunity.circle.entity.Circle;
+import com.example.babacirclecommunity.circle.entity.CommunityUser;
+import com.example.babacirclecommunity.circle.entity.Haplont;
 import com.example.babacirclecommunity.circle.service.ICircleService;
-import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
-import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
-import com.example.babacirclecommunity.circle.vo.CircleVo;
-import com.example.babacirclecommunity.circle.vo.CommentUserVo;
+import com.example.babacirclecommunity.circle.vo.*;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
-import com.example.babacirclecommunity.common.utils.ConstantUtil;
-import com.example.babacirclecommunity.common.utils.DateUtils;
-import com.example.babacirclecommunity.common.utils.Paging;
-import com.example.babacirclecommunity.common.utils.TimeUtil;
+import com.example.babacirclecommunity.common.utils.*;
 import com.example.babacirclecommunity.home.entity.Community;
 import com.example.babacirclecommunity.tags.dao.TagMapper;
 import com.example.babacirclecommunity.tags.entity.Tag;
@@ -21,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -50,6 +48,9 @@ public class CircleServiceImpl implements ICircleService {
 
     @Autowired
     private TagMapper tagMapper;
+
+    @Autowired
+    private CommunityMapper communityMapper;
 
     @Override
     public List<CircleClassificationVo> queryPostsPeopleFollow(int userId, Paging paging) {
@@ -326,5 +327,70 @@ public class CircleServiceImpl implements ICircleService {
         if(i3<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
+    }
+
+    @Override
+    public void publishingCircles(Circle circle, String imgUrl) throws ParseException, IOException {
+        //获取token
+        String token = ConstantUtil.getToken();
+        String identifyTextContent = ConstantUtil.identifyText(circle.getContent(), token);
+        if(identifyTextContent.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
+        circle.setCreateAt(System.currentTimeMillis()/1000+"");
+
+        //如果状态等于1说明发布的是视频
+        if(circle.getType()==1){
+            String videoCover = FfmpegUtil.getVideoCover(circle.getVideo());
+            circle.setCover(videoCover);
+        }else{
+            circle.setCover(imgUrl.split(",")[0]);
+        }
+
+
+        //添加圈子
+        int i = circleMapper.addCirclePost(circle);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
+        //如果状态等于0说明发布的是图文
+        if(circle.getType()==0){
+            String[] split =imgUrl.split(",");
+            int addImg = circleMapper.addImg(circle.getId(), split, System.currentTimeMillis() / 1000 + "", 1);
+            if(addImg<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+        }
+
+    }
+
+    @Override
+    public CommunityVo selectCommunityCategoryId(int id, int userId) {
+        //查询圈子信息
+        CommunityVo communityVo = communityMapper.selectCommunityCategoryId(id);
+        if(communityVo==null){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"没有该圈子");
+        }
+        //得到圈子总人数
+        int i = communityMapper.selectTotalNumberCirclesById(communityVo.getId());
+        communityVo.setTotalNumberCircles(i);
+
+        //查询圈子的用户头像
+        String[] strings = communityMapper.selectCirclesAvatars(communityVo.getId());
+        communityVo.setAvatar(strings);
+
+
+        List<CommunityUser> communities = communityMapper.queryCommunityById(communityVo.getId());
+        //匹配是否存在这个圈子
+        communities.stream().filter(u->u.getUserId()==userId).forEach(u->{
+            communityVo.setWhetherThere(1);
+        });
+
+        //得到单元体导航栏
+        List<Haplont> haplonts = communityMapper.selectHaplontByTagId(id);
+        communityVo.setHaplontList(haplonts);
+        return communityVo;
     }
 }

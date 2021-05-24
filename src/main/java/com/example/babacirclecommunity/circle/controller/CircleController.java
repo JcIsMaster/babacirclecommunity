@@ -1,19 +1,23 @@
 package com.example.babacirclecommunity.circle.controller;
 
+import com.example.babacirclecommunity.circle.entity.Circle;
 import com.example.babacirclecommunity.circle.service.IAttentionService;
 import com.example.babacirclecommunity.circle.service.ICircleService;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
+import com.example.babacirclecommunity.circle.vo.CommunityVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.home.entity.Community;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -104,6 +108,38 @@ public class CircleController {
     }
 
     /**
+     *
+     * 发现圈子
+     * @return
+     */
+    @ApiOperation(value = "发现圈子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/fundCircle")
+    public List<CircleVo> fundCircle(int userId, Paging paging)  {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return  iCircleService.queryCheckMyCirclesSquare(userId,paging);
+    }
+
+
+    /**
+     *
+     * 发布圈子
+     * @return
+     */
+    @ApiOperation(value = "发布圈子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/publishingCircles")
+    public void publishingCircles(Circle circle, String imgUrl) throws IOException, ParseException {
+        if(circle.getUserId()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        iCircleService.publishingCircles(circle, imgUrl);
+    }
+
+
+    /**
      * 添加圈子
      * @return
      */
@@ -115,6 +151,17 @@ public class CircleController {
     }
 
 
+    /**
+     * 进入单元体的接口
+     * 根据社区分类id查询圈子信息
+     * @return
+     */
+    @ApiOperation(value = "根据社区分类id查询圈子信息 ",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectCommunityCategoryId")
+    public CommunityVo selectCommunityCategoryId(int id, int userId)  {
+        return iCircleService.selectCommunityCategoryId(id,userId);
+    }
 
 
 }

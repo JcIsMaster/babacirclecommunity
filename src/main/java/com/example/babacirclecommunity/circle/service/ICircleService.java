@@ -1,10 +1,13 @@
 package com.example.babacirclecommunity.circle.service;
 
+import com.example.babacirclecommunity.circle.entity.Circle;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
+import com.example.babacirclecommunity.circle.vo.CommunityVo;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.home.entity.Community;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -61,5 +64,21 @@ public interface ICircleService {
      * @param community
      */
     void addCircle(Community community) throws ParseException;
+
+    /**
+     * 发布圈子
+     * @param circle
+     * @param imgUrl 图片地址
+     */
+    void publishingCircles(Circle circle, String imgUrl) throws ParseException, IOException;
+
+    /**
+     * 进入单元体的接口
+     * 根据社区分类id查询圈子信息
+     * @param id 标签id
+     * @param userId 用户id
+     * @return
+     */
+    CommunityVo selectCommunityCategoryId(int id, int userId);
 
 }
