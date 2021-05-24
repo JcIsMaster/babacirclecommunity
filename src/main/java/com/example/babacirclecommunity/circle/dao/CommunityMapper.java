@@ -23,7 +23,7 @@ public interface CommunityMapper {
      * @param id 标签id
      * @return
      */
-    @Select("select a.*,b.user_name,b.id as userId from tb_community a INNER JOIN tb_user b on a.user_id=b.id where a.tag_id=${id} and a.type=1")
+    @Select("select a.*,b.user_name,b.id as userId from tb_community a INNER JOIN tb_user b on a.user_id=b.id where a.tag_id=${id}")
     CommunityVo selectCommunityCategoryId(@Param("id") int id);
 
     /**
