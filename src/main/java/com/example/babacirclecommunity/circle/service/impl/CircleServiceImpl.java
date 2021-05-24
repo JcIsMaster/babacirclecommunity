@@ -477,15 +477,15 @@ public class CircleServiceImpl implements ICircleService {
         String sql="limit "+page+","+paging.getLimit()+"";
 
         //查询最新的数据
-        if(typeId==1){
-            str="order by a.create_at desc";
-            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
+        if(typeId==0){
+            str = "order by a.create_at desc " + sql;
+            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, str);
         }
 
         //查询最热的数据
-        if(typeId==2){
-            str="order by a.favour desc";
-            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
+        if(typeId==1){
+            str="order by a.favour desc " + sql;
+            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, str);
         }
 
 

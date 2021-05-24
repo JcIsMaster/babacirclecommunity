@@ -178,7 +178,7 @@ public interface CircleMapper {
      * @return
      */
     @Select("select a.*,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
-            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
-            "where a.tags_two=${id} and a.is_delete=1 order by a.create_at desc  ${paging}")
+            "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "where a.tags_two=${id} and a.is_delete=1 ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("id") int id, @Param("paging") String paging);
 }
