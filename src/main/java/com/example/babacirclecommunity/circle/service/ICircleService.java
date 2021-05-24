@@ -98,4 +98,13 @@ public interface ICircleService {
      */
     int joinCircle(CommunityUser communityUser);
 
+    /**
+     * 单元体导航栏点击查询
+     * @param typeId 单元体导航栏id
+     * @param userId 用户id
+     * @param tagId 标签id
+     * @param paging 分页
+     * @return
+     */
+    List<CircleClassificationVo> queryClickUnitNavigationBar(int typeId,int userId,int tagId,Paging paging);
 }

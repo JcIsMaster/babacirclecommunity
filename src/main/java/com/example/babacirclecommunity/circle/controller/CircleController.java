@@ -178,6 +178,13 @@ public class CircleController {
         return iCircleService.selectPostsByCommunityCategoryId(id,userId,paging);
     }
 
+    @ApiOperation(value = "单元体导航栏点击查询", notes = "成功返回集合")
+    @ResponseBody
+    @PostMapping("/queryClickUnitNavigationBar")
+    public List<CircleClassificationVo> queryClickUnitNavigationBar(int typeId,int userId,int tagId,Paging paging) {
+        return iCircleService.queryClickUnitNavigationBar(typeId,userId,tagId,paging);
+    }
+
     /**
      * 加入圈子
      * @return
