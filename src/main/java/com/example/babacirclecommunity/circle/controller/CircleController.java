@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.circle.controller;
 
 import com.example.babacirclecommunity.circle.entity.Circle;
+import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.service.IAttentionService;
 import com.example.babacirclecommunity.circle.service.ICircleService;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
@@ -124,7 +125,6 @@ public class CircleController {
 
 
     /**
-     *
      * 发布圈子
      * @return
      */
@@ -163,5 +163,30 @@ public class CircleController {
         return iCircleService.selectCommunityCategoryId(id,userId);
     }
 
+    /**
+     * 进入单元体的接口
+     * 根据标签id查询帖子
+     * @return
+     */
+    @ApiOperation(value = "根据标签id查询帖子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectPostsByCommunityCategoryId")
+    public List<CircleClassificationVo> selectPostsByCommunityCategoryId(int id,int userId, Paging paging)  {
+        if(paging.getPage()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
+        }
+        return iCircleService.selectPostsByCommunityCategoryId(id,userId,paging);
+    }
+
+    /**
+     * 加入圈子
+     * @return
+     */
+    @ApiOperation(value = "加入圈子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/joinCircle")
+    public int joinCircle(CommunityUser communityUser)  {
+        return iCircleService.joinCircle(communityUser);
+    }
 
 }

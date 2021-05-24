@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.circle.service;
 
 import com.example.babacirclecommunity.circle.entity.Circle;
+import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.circle.vo.CommunityVo;
@@ -80,5 +81,21 @@ public interface ICircleService {
      * @return
      */
     CommunityVo selectCommunityCategoryId(int id, int userId);
+
+    /**
+     * 根据标签id查询帖子
+     * @param id 标签id
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    List<CircleClassificationVo> selectPostsByCommunityCategoryId(int id,int userId, Paging paging);
+
+    /**
+     * 加入圈子
+     * @param communityUser
+     * @return
+     */
+    int joinCircle(CommunityUser communityUser);
 
 }

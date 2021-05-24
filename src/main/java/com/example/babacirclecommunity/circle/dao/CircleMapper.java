@@ -170,4 +170,15 @@ public interface CircleMapper {
     @Insert("insert into tb_circles(content,tags_two,type,video,cover,create_at,u_id,title,haplont_type)values(#{circle.content},${circle.tagsTwo},${circle.type},#{circle.video},#{circle.cover},#{circle.createAt},${circle.uId},#{circle.title},${circle.haplontType})")
     @Options(useGeneratedKeys=true, keyProperty="circle.id",keyColumn="id")
     int addCirclePost(@Param("circle") Circle circle);
+
+    /**
+     * 根据圈子中二级标签id查询帖子
+     * @param id 标签id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.*,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "where a.tags_two=${id} and a.is_delete=1 order by a.create_at desc  ${paging}")
+    List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("id") int id, @Param("paging") String paging);
 }

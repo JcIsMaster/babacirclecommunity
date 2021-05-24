@@ -3,6 +3,8 @@ package com.example.babacirclecommunity.circle.dao;
 import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.entity.Haplont;
 import com.example.babacirclecommunity.circle.vo.CommunityVo;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
@@ -55,4 +57,30 @@ public interface CommunityMapper {
      */
     @Select("SELECT a.id,a.h_name FROM `tb_haplont` a INNER JOIN tb_tag_haplont b on  a.id=b.haplont_id where b.tag_id=${id}")
     List<Haplont> selectHaplontByTagId(@Param("id") int id);
+
+    /**
+     * 根据圈子id和用户id查询是否在这个圈子里面
+     * @param id 圈子id
+     * @param userId 用户id
+     * @return
+     */
+    @Select("select COALESCE(count(*),0) from tb_community_user where community_id=${id} and user_id=${userId}")
+    int queryWhetherThereCircle(@Param("id") int id,int userId);
+
+    /**
+     * 退出圈子
+     * @param id 圈子id
+     * @param userId 用户id
+     * @return
+     */
+    @Delete("delete from tb_community_user where community_id=${id} and user_id=${userId}")
+    int exitGroupChat(@Param("id") int id,int userId);
+
+    /**
+     * 加入圈子
+     * @param communityUser
+     * @return
+     */
+    @Insert("insert into tb_community_user(community_id,user_id)values(${communityUser.communityId},${communityUser.userId})")
+    int joinCircle(@Param("communityUser") CommunityUser communityUser);
 }
