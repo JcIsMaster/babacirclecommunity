@@ -60,7 +60,7 @@ public class CircleController {
 
     /**
      *
-     * 查询单个圈子的帖子
+     * 查询单个圈子帖子
      * @return
      */
     @ApiOperation(value = "查询单个圈子的帖子",notes = "成功返回数据 反则为空")
