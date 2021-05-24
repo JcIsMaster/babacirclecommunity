@@ -140,10 +140,10 @@ public class CircleController {
 
 
     /**
-     * 添加圈子
+     * 创建圈子
      * @return
      */
-    @ApiOperation(value = "添加圈子",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "创建圈子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addCircle")
     public void addCircle(Community community) throws ParseException {
@@ -163,20 +163,6 @@ public class CircleController {
         return iCircleService.selectCommunityCategoryId(id,userId);
     }
 
-    /**
-     * 进入单元体的接口
-     * 根据标签id查询帖子
-     * @return
-     */
-    @ApiOperation(value = "根据标签id查询帖子",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/selectPostsByCommunityCategoryId")
-    public List<CircleClassificationVo> selectPostsByCommunityCategoryId(int id,int userId, Paging paging)  {
-        if(paging.getPage()==0){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
-        }
-        return iCircleService.selectPostsByCommunityCategoryId(id,userId,paging);
-    }
 
     @ApiOperation(value = "单元体导航栏点击查询", notes = "成功返回集合")
     @ResponseBody

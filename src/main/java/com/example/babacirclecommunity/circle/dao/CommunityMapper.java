@@ -81,6 +81,6 @@ public interface CommunityMapper {
      * @param communityUser
      * @return
      */
-    @Insert("insert into tb_community_user(community_id,user_id)values(${communityUser.communityId},${communityUser.userId})")
+    @Insert("insert into tb_community_user(community_id,user_id,create_at)values(${communityUser.communityId},${communityUser.userId},#{communityUser.create_at})")
     int joinCircle(@Param("communityUser") CommunityUser communityUser);
 }

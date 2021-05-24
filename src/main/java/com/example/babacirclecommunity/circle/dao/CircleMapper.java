@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.circle.dao;
 
 import com.example.babacirclecommunity.circle.entity.Circle;
+import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
@@ -143,7 +144,16 @@ public interface CircleMapper {
     @Insert("insert into tb_community(community_name,posters,user_id,introduce,announcement,create_at,tag_id,whether_public)" +
             "values(#{community.communityName},#{community.posters},${community.userId},#{community.introduce},#{community.announcement}" +
             ",#{community.createAt},#{community.tagId},${community.whetherPublic})")
+    @Options(useGeneratedKeys=true, keyProperty="community.id",keyColumn="id")
     int addCommunity(@Param("community") Community community);
+
+    /**
+     * 初始化圈子人数
+     * @param communityUser
+     */
+    @Insert("insert into tb_community_user(community_id,user_id,create_at)" +
+            "values(${communityUser.communityId},${communityUser.userId},#{communityUser.create_at})")
+    int addCommunityUser(@Param("communityUser") CommunityUser communityUser);
 
     /**
      * 批量增加图片
@@ -167,7 +177,7 @@ public interface CircleMapper {
      * @param circle
      * @return
      */
-    @Insert("insert into tb_circles(content,tags_two,type,video,cover,create_at,u_id,title,haplont_type)values(#{circle.content},${circle.tagsTwo},${circle.type},#{circle.video},#{circle.cover},#{circle.createAt},${circle.uId},#{circle.title},${circle.haplontType})")
+    @Insert("insert into tb_circles(content,tags_two,type,video,cover,create_at,user_id,title,haplont_type)values(#{circle.content},${circle.tagsTwo},${circle.type},#{circle.video},#{circle.cover},#{circle.createAt},${circle.userId},#{circle.title},${circle.haplontType})")
     @Options(useGeneratedKeys=true, keyProperty="circle.id",keyColumn="id")
     int addCirclePost(@Param("circle") Circle circle);
 
@@ -177,7 +187,7 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.*,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+    @Select("select a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
             "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
             "where a.tags_two=${id} and a.is_delete=1 order by a.create_at desc  ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("id") int id, @Param("paging") String paging);

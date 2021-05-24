@@ -25,7 +25,7 @@ public class Community {
     /**
      * 圈主用户id
      */
-    private String userId;
+    private int userId;
 
     /**
      * 圈子介绍
