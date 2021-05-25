@@ -10,6 +10,7 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.home.entity.Community;
+import com.example.babacirclecommunity.user.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -203,6 +204,17 @@ public class CircleController {
     @PostMapping("/memberManagement")
     public void memberManagement(int communityId,int userId)  {
         iCircleService.memberManagement(communityId,userId);
+    }
+
+    /**
+     * 查询圈子成员
+     * @return
+     */
+    @ApiOperation(value = "查询圈子成员",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCircleMembers")
+    public List<UserVo> queryCircleMembers(int communityId)  {
+        return iCircleService.queryCircleMembers(communityId);
     }
 
 

@@ -6,6 +6,7 @@ import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.home.entity.Community;
+import com.example.babacirclecommunity.user.vo.UserVo;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -227,6 +228,15 @@ public interface CircleMapper {
             "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
             "where a.tags_two=${id} and a.is_delete=1 order by a.create_at desc  ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("id") int id, @Param("paging") String paging);
+
+
+    /**
+     * 查询圈子里面的人
+     * @param communityId 圈子id
+     * @return
+     */
+    @Select("select b.id,b.user_name,b.avatar from tb_community_user a INNER JOIN tb_user b on a.user_id=b.id where a.community_id=${communityId}")
+    List<UserVo> queryCircleMembers(@Param("communityId") int communityId);
 
 
 }

@@ -13,6 +13,7 @@ import com.example.babacirclecommunity.common.utils.*;
 import com.example.babacirclecommunity.home.entity.Community;
 import com.example.babacirclecommunity.tags.dao.TagMapper;
 import com.example.babacirclecommunity.tags.entity.Tag;
+import com.example.babacirclecommunity.user.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -462,7 +463,6 @@ public class CircleServiceImpl implements ICircleService {
             circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
         }
 
-
         for (int i=0;i<circles.size();i++){
             //得到图片组
             String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
@@ -561,6 +561,11 @@ public class CircleServiceImpl implements ICircleService {
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"踢出失败！");
         }
+    }
+
+    @Override
+    public List<UserVo> queryCircleMembers(int communityId) {
+        return circleMapper.queryCircleMembers(communityId);
     }
 
 

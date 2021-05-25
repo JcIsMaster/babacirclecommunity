@@ -72,4 +72,9 @@ public class CommunityVo {
      * 是否存在这个圈子 1存在 0不存在
      */
     private int  whetherThere;
+
+    /**
+     * 是否公开 （0不是，1是）默认是
+     */
+    private int whetherPublic;
 }

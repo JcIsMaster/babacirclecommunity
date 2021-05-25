@@ -7,6 +7,7 @@ import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.circle.vo.CommunityVo;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.home.entity.Community;
+import com.example.babacirclecommunity.user.vo.UserVo;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -121,4 +122,11 @@ public interface ICircleService {
      * @param userId 用户id
      */
     void memberManagement(int communityId,int userId);
+
+    /**
+     * 查询圈子成员
+     * @param communityId 圈子id
+     * @return
+     */
+    List<UserVo> queryCircleMembers(int communityId);
 }
