@@ -23,4 +23,9 @@ public class UserVo {
      * 用户头像
      */
     private String avatar;
+
+    /**
+     * 介绍
+     */
+    private String introduce;
 }

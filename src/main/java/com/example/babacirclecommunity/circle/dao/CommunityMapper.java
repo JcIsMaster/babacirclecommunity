@@ -87,6 +87,6 @@ public interface CommunityMapper {
      * @param community
      * @return
      */
-    @Update("update set tb_community community_name=#{community.communityName},posters=#{community.posters},introduce=#{community.introduce},announcement=#{community.announcement},whether_public=${community.whetherPublic} where id=${id}")
+    @Update("update tb_community set community_name=#{community.communityName},posters=#{community.posters},introduce=#{community.introduce},announcement=#{community.announcement},whether_public=${community.whetherPublic} where id=${community.id}")
     int updateCircle(@Param("community") Community community);
 }

@@ -262,9 +262,52 @@ public class CircleServiceImpl implements ICircleService {
         Integer pages=(paging.getPage()-1)*paging.getLimit();
         String pagings=" limit "+pages+","+paging.getLimit()+"";
 
+        List<CircleClassificationVo> circles = circleMapper.queryReferenceCircles(pagings);
+        for (int i=0;i<circles.size();i++){
+
+            //得到图片组
+            String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
+            circles.get(i).setImg(strings);
+
+            //得到点过赞人的头像
+            String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+            circles.get(i).setGiveAvatar(strings1);
+
+            //得到点赞数量
+            Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+            circles.get(i).setGiveNumber(integer1);
 
 
-        return null;
+            //等于0在用户没有到登录的情况下 直接设置没有点赞
+            if(userId==0){
+                circles.get(i).setWhetherGive(0);
+                circles.get(i).setWhetherAttention(0);
+            }else{
+                //查看我是否关注了此人
+                int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                if(i1>0){
+                    circles.get(i).setWhetherAttention(1);
+                }
+
+                //查询是否对帖子点了赞   0没有 1有
+                Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                if(integer>0){
+                    circles.get(i).setWhetherGive(1);
+                }
+            }
+
+
+            //得到帖子评论数量
+            Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+            circles.get(i).setNumberPosts(integer2);
+
+
+            //将时间戳转换为多少天或者多少个小时和多少年
+            String time = DateUtils.getTime(circles.get(i).getCreateAt());
+            circles.get(i).setCreateAt(time);
+        }
+
+        return circles;
     }
 
     @Override
@@ -451,16 +494,23 @@ public class CircleServiceImpl implements ICircleService {
         int page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
 
+        //根据标签id查询出圈子中的用户id
+        List<Integer> integers = circleMapper.queryCircleUserId(tagId);
+        //如果集合为空不加入0 sql会报错
+        if(integers.size()==0){
+            integers.add(0);
+        }
+
         //查询最新的数据
         if(typeId==0){
             str = "order by a.create_at desc " + sql;
-            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, str);
+            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId,integers, str);
         }
 
         //查询最热的数据
         if(typeId==1){
             str="order by a.favour desc " + sql;
-            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, str);
+            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId,integers, str);
         }
 
         for (int i=0;i<circles.size();i++){

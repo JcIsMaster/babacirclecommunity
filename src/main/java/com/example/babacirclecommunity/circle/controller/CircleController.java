@@ -91,7 +91,7 @@ public class CircleController {
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  null;
+        return  iCircleService.queryReferenceCircles(userId,paging);
     }
 
     /**
@@ -202,8 +202,8 @@ public class CircleController {
     @ApiOperation(value = "成员管理",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/memberManagement")
-    public void memberManagement(int communityId,int userId)  {
-        iCircleService.memberManagement(communityId,userId);
+    public void memberManagement(int communityId,int otherId)  {
+        iCircleService.memberManagement(communityId,otherId);
     }
 
     /**

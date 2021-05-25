@@ -189,7 +189,7 @@ public interface CircleMapper {
      * @param communityUser
      */
     @Insert("insert into tb_community_user(community_id,user_id,create_at)" +
-            "values(${communityUser.communityId},${communityUser.userId},#{communityUser.create_at})")
+            "values(${communityUser.communityId},${communityUser.userId},#{communityUser.createAt})")
     int addCommunityUser(@Param("communityUser") CommunityUser communityUser);
 
     /**
@@ -220,21 +220,44 @@ public interface CircleMapper {
 
     /**
      * 根据圈子中二级标签id查询帖子
-     * @param id 标签id
+     * @param list 用户id组
      * @param paging 分页
      * @return
      */
-    @Select("select a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
-            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
-            "where a.tags_two=${id} and a.is_delete=1   ${paging}")
-    List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("id") int id, @Param("paging") String paging);
+    @Select("<script>" +
+            "select a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.user_id in " +
+             "<foreach item='item' index='index' collection='list' open='(' separator=',' close=')'>"+
+             "${item}"+
+             "</foreach> " +
+             " and a.is_delete=1 and a.tags_two=${tagId} ${paging}" +
+            "</script>")
+    List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("tagId") int tagId,@Param("list") List<Integer> list, @Param("paging") String paging);
+
+    /**
+     * 根据标签id查询出圈子中的用户id
+     * @param tagId 标签id
+     * @return
+     */
+    @Select("select b.user_id from tb_community a INNER JOIN tb_community_user b on a.id=b.community_id where a.tag_id=${tagId}")
+    List<Integer> queryCircleUserId(@Param("tagId") int tagId);
 
     /**
      * 查询圈子成员
      * @param communityId 圈子id
      * @return
      */
-    @Select("select b.id,b.user_name,b.avatar from tb_community_user a INNER JOIN tb_user b on a.user_id=b.id where a.community_id=69")
+    @Select("select b.id,b.user_name,b.avatar,b.introduce from tb_community_user a INNER JOIN tb_user b on a.user_id=b.id where a.community_id=${communityId}")
     List<UserVo> queryCircleMembers(@Param("communityId") int communityId);
+
+    /**
+     * 推荐
+     * @param paging
+     * @return
+     */
+    @Select("select  a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "where a.is_delete=1 order by a.create_at desc ${paging}")
+    List<CircleClassificationVo> queryReferenceCircles(@Param("paging") String paging);
 
 }
