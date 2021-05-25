@@ -21,7 +21,7 @@ public interface CommunityMapper {
      * @param id 标签id
      * @return
      */
-    @Select("select a.*,b.user_name,b.id as userId from tb_community a INNER JOIN tb_user b on a.user_id=b.id where a.tag_id=${id}")
+    @Select("select a.*,b.user_name,b.id as userId from tb_community a INNER JOIN tb_user b on a.user_id=b.id where a.tag_id=${id} and a.is_delete=1")
     CommunityVo selectCommunityCategoryId(@Param("id") int id);
 
     /**
@@ -79,7 +79,7 @@ public interface CommunityMapper {
      * @param communityUser
      * @return
      */
-    @Insert("insert into tb_community_user(community_id,user_id,create_at)values(${communityUser.communityId},${communityUser.userId},#{communityUser.create_at})")
+    @Insert("insert into tb_community_user(community_id,user_id,create_at)values(${communityUser.communityId},${communityUser.userId},#{communityUser.createAt})")
     int joinCircle(@Param("communityUser") CommunityUser communityUser);
 
     /**
@@ -89,4 +89,12 @@ public interface CommunityMapper {
      */
     @Update("update tb_community set community_name=#{community.communityName},posters=#{community.posters},introduce=#{community.introduce},announcement=#{community.announcement},whether_public=${community.whetherPublic} where id=${community.id}")
     int updateCircle(@Param("community") Community community);
+
+    /**
+     * 删除圈子
+     * @param id 圈子id
+     * @return
+     */
+    @Update("update tb_community set is_delete=0 where id=${id}")
+    int deleteCircle(@Param("id") int id);
 }

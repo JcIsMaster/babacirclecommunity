@@ -359,12 +359,12 @@ public class CircleServiceImpl implements ICircleService {
         }
 
         Tag tag=new Tag();
-
+        tag.setImgUrl(community.getPosters());
+        tag.setTagName(community.getCommunityName());
         tag.setCreateAt(System.currentTimeMillis()/1000+"");
-        community.setCreateAt(System.currentTimeMillis()/1000+"");
-
         tag.setType(1);
 
+        community.setCreateAt(System.currentTimeMillis()/1000+"");
         int i = tagMapper.addTag(tag);
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"添加失败");
