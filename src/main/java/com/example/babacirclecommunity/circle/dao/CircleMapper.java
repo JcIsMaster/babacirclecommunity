@@ -230,13 +230,4 @@ public interface CircleMapper {
     List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("id") int id, @Param("paging") String paging);
 
 
-    /**
-     * 查询圈子里面的人
-     * @param communityId 圈子id
-     * @return
-     */
-    @Select("select b.id,b.user_name,b.avatar from tb_community_user a INNER JOIN tb_user b on a.user_id=b.id where a.community_id=${communityId}")
-    List<UserVo> queryCircleMembers(@Param("communityId") int communityId);
-
-
 }
