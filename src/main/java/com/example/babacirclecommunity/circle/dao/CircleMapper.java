@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.circle.dao;
 
 import com.example.babacirclecommunity.circle.entity.Circle;
+import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
@@ -223,7 +224,7 @@ public interface CircleMapper {
      * @return
      */
     @Select("select a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
-            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
-            "where a.tags_two=${id} and a.is_delete=1 order by a.create_at desc  ${paging}")
+            "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "where a.tags_two=${id} and a.is_delete=1 ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("id") int id, @Param("paging") String paging);
 }
