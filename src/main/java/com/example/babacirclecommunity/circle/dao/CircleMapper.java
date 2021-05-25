@@ -91,7 +91,7 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select  a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,c.id as uId,c.avatar,c.user_name,b.tag_name,b.id as tagId from" +
+    @Select("select  a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,c.id as uId,c.avatar,c.user_name,b.tag_name,b.id as tagId from" +
             " tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.content like CONCAT('%',#{content},'%') and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryFuzzyCircle(@Param("content") String content, @Param("paging") String paging);
 
@@ -101,7 +101,7 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select  a.forwarding_number,a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.user_id=${userId} and a.is_delete=1 order by a.create_at desc ${paging}")
+    @Select("select a.type, a.forwarding_number,a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.user_id=${userId} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryHavePostedCirclePosts(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
@@ -125,7 +125,7 @@ public interface CircleMapper {
      * @param userId 用户id
      * @return
      */
-    @Select("select a.forwarding_number,a.id,a.content,a.tags_one,a.tags_two,a.type,d.id as uId,d.user_name,d.avatar,a.video,a.cover,a.browse,a.create_at,c.tag_name,c.id as tagId from tb_circles a INNER JOIN tb_user d on a.user_id=d.id INNER JOIN tb_user_attention b on a.user_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 and a.is_delete=1 order by a.create_at desc ${paging}")
+    @Select("select a.type,a.forwarding_number,a.id,a.content,a.tags_one,a.tags_two,a.type,d.id as uId,d.user_name,d.avatar,a.video,a.cover,a.browse,a.create_at,c.tag_name,c.id as tagId from tb_circles a INNER JOIN tb_user d on a.user_id=d.id INNER JOIN tb_user_attention b on a.user_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryAttentionPerson(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
@@ -134,7 +134,7 @@ public interface CircleMapper {
      * @param paging 分页
      * @return List<CircleClassificationVo>
      */
-    @Select("select  a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+    @Select("select  a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
             "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
             "where a.type=${type} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryImagesOrVideos(@Param("type") int type, @Param("paging") String paging);
@@ -144,7 +144,7 @@ public interface CircleMapper {
      * @param id 帖子id
      * @return
      */
-    @Select("select  a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+    @Select("select  a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
             "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
             "where a.id=${id} and a.is_delete=1")
     CircleClassificationVo querySingleCircle(@Param("id") int id);
@@ -225,7 +225,7 @@ public interface CircleMapper {
      * @return
      */
     @Select("<script>" +
-            "select a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
             "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.user_id in " +
              "<foreach item='item' index='index' collection='list' open='(' separator=',' close=')'>"+
              "${item}"+
@@ -255,7 +255,7 @@ public interface CircleMapper {
      * @param paging
      * @return
      */
-    @Select("select  a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+    @Select("select  a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
             "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
             "where a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryReferenceCircles(@Param("paging") String paging);
