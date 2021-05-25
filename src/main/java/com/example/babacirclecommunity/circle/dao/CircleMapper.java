@@ -37,7 +37,7 @@ public interface CircleMapper {
      * @return
      */
     @Select("select r.id,r.tag_id, r.community_name, r.posters,r.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN " +
-            "(SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p  GROUP BY community_id) t1 " +
+            "(SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p  GROUP BY id) t1 " +
             " on r.id=t1.community_id where t1.user_id=${userId} ORDER BY t1.community_id ${paging}")
     List<CircleVo> circleJoined(@Param("userId") int userId,@Param("paging") String paging);
 
