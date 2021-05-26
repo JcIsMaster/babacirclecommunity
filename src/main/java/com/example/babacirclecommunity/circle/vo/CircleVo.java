@@ -22,6 +22,11 @@ public class CircleVo {
     private int tagId;
 
     /**
+     * 用户id
+     */
+    private int userId;
+
+    /**
      * 社区头像
      */
     private String posters;
@@ -45,6 +50,11 @@ public class CircleVo {
      * 是否官方 （0不是，1是）默认为不是
      */
     private int whetherOfficial;
+
+    /**
+     *是否公开 （0不是，1是）默认是
+     */
+    private int whetherPublic;
 
     /**
      * 每个圈子的最新圈子封面和id

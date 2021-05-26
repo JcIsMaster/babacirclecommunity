@@ -76,4 +76,12 @@ public interface UserMapper {
      */
     @Select("select id,user_name,avatar from tb_user where id=${id}")
     UserVo queryUserPartialInformation(@Param("id") int id);
+
+    /**
+     * 根据openid查询用户id
+     * @param openid
+     * @return
+     */
+    @Select("select id from tb_user where open_id=#{openid}")
+    Integer queryUserIdByOpenId(@Param("openid") String openid);
 }

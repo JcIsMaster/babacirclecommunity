@@ -147,6 +147,13 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         //查询Ta创建的圈子
         if (type == 0){
             List<CircleVo> circleVos = circleMapper.myCircleAndCircleJoined(otherId, sql);
+            for (int i=0;i<circleVos.size();i++){
+                if(circleVos.get(i).getWhetherPublic()==0){
+                    if(circleVos.get(i).getUserId()!=otherId){
+                        circleVos.remove(i);
+                    }
+                }
+            }
             return circleVos;
         }
         //查询加入的圈子

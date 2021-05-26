@@ -88,9 +88,6 @@ public class CircleController {
     @ResponseBody
     @PostMapping("/queryReferenceCircles")
     public List<CircleClassificationVo> queryReferenceCircles(int userId, Paging paging)  {
-        if(userId==0){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR);
-        }
         return  iCircleService.queryReferenceCircles(userId,paging);
     }
 
@@ -117,7 +114,7 @@ public class CircleController {
     @ApiOperation(value = "发现圈子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/fundCircle")
-    public Map<String,Object> fundCircle(int userId, String communityName, Paging paging)  {
+    public Map<String,Object> fundCircle(int userId, String communityName,Paging paging)  {
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
