@@ -46,9 +46,6 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
     @Override
     public List<String> selectCircleFriendsFigure(CircleFriendsVo circleFriendsVo) {
-        if(circleFriendsVo.getPostImg().equals("") || circleFriendsVo.getPostContent().equals("")){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR);
-        }
 
 
         RestTemplate rest = new RestTemplate();
@@ -114,7 +111,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
             //生成海报5
             String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMaster("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", circleFriendsVo.getHeadUrl(), circleFriendsVo.getPostImg(),circleFriendsVo.getPostContent(),circleFriendsVo.getUserName(),circleFriendsVo.getTitle());
             String newGreat = posterUrlGreatMaster.replace("e:/file/img/", "https://www.gofatoo.com/img/");
-            if(newGreat!=null){
+            /*if(newGreat!=null){
                 if(circleFriendsVo.getType()==0){
                     //帖子分享数量加一
                     int i = circleMapper.updateForwardingNumber(circleFriendsVo.getId());
@@ -122,7 +119,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
                         throw new ApplicationException(CodeType.SERVICE_ERROR,"分享错误");
                     }
                 }
-            }
+            }*/
             posterList.add(newGreat);
         } catch (Exception e) {
             e.printStackTrace();

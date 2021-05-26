@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -307,6 +308,9 @@ public class CircleServiceImpl implements ICircleService {
             circles.get(i).setCreateAt(time);
         }
 
+        //混乱的意思
+        Collections.shuffle(circles);
+
         return circles;
     }
 
@@ -359,12 +363,12 @@ public class CircleServiceImpl implements ICircleService {
         }
 
         Tag tag=new Tag();
-
+        tag.setImgUrl(community.getPosters());
+        tag.setTagName(community.getCommunityName());
         tag.setCreateAt(System.currentTimeMillis()/1000+"");
-        community.setCreateAt(System.currentTimeMillis()/1000+"");
-
         tag.setType(1);
 
+        community.setCreateAt(System.currentTimeMillis()/1000+"");
         int i = tagMapper.addTag(tag);
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"添加失败");
@@ -494,23 +498,17 @@ public class CircleServiceImpl implements ICircleService {
         int page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
 
-        //根据标签id查询出圈子中的用户id
-        List<Integer> integers = circleMapper.queryCircleUserId(tagId);
-        //如果集合为空不加入0 sql会报错
-        if(integers.size()==0){
-            integers.add(0);
-        }
 
         //查询最新的数据
         if(typeId==0){
             str = "order by a.create_at desc " + sql;
-            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId,integers, str);
+            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId,str);
         }
 
         //查询最热的数据
         if(typeId==1){
             str="order by a.favour desc " + sql;
-            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId,integers, str);
+            circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId,str);
         }
 
         for (int i=0;i<circles.size();i++){
@@ -586,6 +584,11 @@ public class CircleServiceImpl implements ICircleService {
         //查询热门的圈子
         List<CircleVo> circleVos = circleMapper.queryPopularCircles(sql);
         for (int i=0;i<circleVos.size();i++){
+            if(circleVos.get(i).getWhetherPublic()==0){
+                if(circleVos.get(i).getUserId()!=userId){
+                    circleVos.remove(i);
+                }
+            }
             List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
             circleVos.get(i).setCircleVoList(circleVos1);
         }

@@ -513,25 +513,18 @@ public class WxPoster {
 	 * @return
 	 */
 	public String getPosterUrlGreatMaster(String leftUrl, String rightUrl, String loadUrl, String headUrl, String postImg, String postContent,String userName,String title)  {
-		System.out.println("=="+leftUrl);
-		System.out.println("=="+rightUrl);
-		System.out.println("=="+loadUrl);
-		System.out.println("=="+headUrl);
-		System.out.println("=="+postImg);
-		System.out.println("=="+postContent);
-		System.out.println("=="+userName);
-		System.out.println("=="+title);
+
 		try {
 			WxPoster tt = new WxPoster();
 			
 			//背景图
 			BufferedImage j = tt.loadImageLocal(leftUrl);
-			
+			System.out.println(rightUrl);
 			//二维码
 			BufferedImage k = tt.loadImageLocal(rightUrl);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,940, 1920,250,250));
 			
-			//将头像图改为圆形
+			/*//将头像图改为圆形
 			BufferedImage ka = getRemoteBufferedImage(headUrl);
 			if(ka==null){
 				throw new ApplicationException(CodeType.SERVICE_ERROR);
@@ -564,7 +557,7 @@ public class WxPoster {
 			//设置内容  文字换行
 			Font font2 = new Font("微软雅黑", Font.BOLD, 50);
 			drawStringWithFontStyleLineFeed(g,postContent ,800 , 60, 2030,font2);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));*/
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++"+e);
