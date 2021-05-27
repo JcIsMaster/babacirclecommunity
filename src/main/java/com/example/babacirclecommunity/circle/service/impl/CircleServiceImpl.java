@@ -120,10 +120,6 @@ public class CircleServiceImpl implements ICircleService {
             String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
             circles.get(i).setGiveAvatar(strings1);
 
-            //得到点赞数量
-            Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
-            circles.get(i).setGiveNumber(integer1);
-
 
             //等于0在用户没有到登录的情况下 直接设置没有点赞
             if(userId==0){
@@ -142,12 +138,6 @@ public class CircleServiceImpl implements ICircleService {
                     circles.get(i).setWhetherGive(1);
                 }
             }
-
-
-            //得到帖子评论数量
-            Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
-            circles.get(i).setNumberPosts(integer2);
-
 
             //将时间戳转换为多少天或者多少个小时和多少年
             String time = DateUtils.getTime(circles.get(i).getCreateAt());
@@ -221,11 +211,6 @@ public class CircleServiceImpl implements ICircleService {
         String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circleClassificationVo.getId());
         circleClassificationVo.setGiveAvatar(strings1);
 
-        //得到点赞数量
-        Integer integer1 = circleGiveMapper.selectGiveNumber(circleClassificationVo.getId());
-        circleClassificationVo.setGiveNumber(integer1);
-
-
         //等于0在用户没有到登录的情况下 直接设置没有点赞
         if(userId==0){
             circleClassificationVo.setWhetherGive(0);
@@ -244,11 +229,6 @@ public class CircleServiceImpl implements ICircleService {
                 circleClassificationVo.setWhetherGive(1);
             }
         }
-
-
-        //得到帖子评论数量
-        Integer integer2 = commentMapper.selectCommentNumber(circleClassificationVo.getId());
-        circleClassificationVo.setNumberPosts(integer2);
 
         //将时间戳转换为多少天或者多少个小时和多少年
         String time = DateUtils.getTime(circleClassificationVo.getCreateAt());
@@ -274,9 +254,7 @@ public class CircleServiceImpl implements ICircleService {
             String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
             circles.get(i).setGiveAvatar(strings1);
 
-            //得到点赞数量
-            Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
-            circles.get(i).setGiveNumber(integer1);
+
 
 
             //等于0在用户没有到登录的情况下 直接设置没有点赞
@@ -297,10 +275,6 @@ public class CircleServiceImpl implements ICircleService {
                 }
             }
 
-
-            //得到帖子评论数量
-            Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
-            circles.get(i).setNumberPosts(integer2);
 
 
             //将时间戳转换为多少天或者多少个小时和多少年
