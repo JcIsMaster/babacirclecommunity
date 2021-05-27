@@ -2,6 +2,7 @@ package com.example.babacirclecommunity.learn.service.impl;
 
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
+import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.learn.dao.DryGoodsCollectMapper;
 import com.example.babacirclecommunity.learn.dao.DryGoodsGiveMapper;
 import com.example.babacirclecommunity.learn.dao.QuestionMapper;
@@ -10,11 +11,16 @@ import com.example.babacirclecommunity.learn.entity.Give;
 import com.example.babacirclecommunity.learn.entity.Question;
 import com.example.babacirclecommunity.learn.service.IQuestionService;
 import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
+import com.example.babacirclecommunity.learn.vo.QuestionVo;
+import com.example.babacirclecommunity.personalCenter.vo.QuestionPersonalVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
+import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author JC
@@ -141,5 +147,30 @@ public class QuestionServiceImpl implements IQuestionService {
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
         return j;
+    }
+
+    @Override
+    public QuestionPersonalVo queryQuestionPersonal(int userId, int otherId,Paging paging) {
+
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pag="limit "+page+","+paging.getLimit()+"";
+
+        QuestionPersonalVo questionPersonalVo = new QuestionPersonalVo();
+        //查询用户基本信息
+        PersonalCenterUserVo personalCenterUserVo = userMapper.queryUserById(otherId);
+        questionPersonalVo.setPersonalCenterUserVo(personalCenterUserVo);
+        //查询用户发的提问帖子
+        List<QuestionVo> questionVos = questionMapper.queryQuestionListByUser(otherId, pag);
+        questionPersonalVo.setQuestionVos(questionVos);
+        if (userId == 0){
+            questionPersonalVo.setIsMe(0);
+            return questionPersonalVo;
+        }
+        if (userId == otherId){
+            questionPersonalVo.setIsMe(1);
+            return questionPersonalVo;
+        }
+        questionPersonalVo.setIsMe(0);
+        return questionPersonalVo;
     }
 }

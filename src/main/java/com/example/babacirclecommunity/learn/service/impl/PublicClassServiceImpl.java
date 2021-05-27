@@ -3,8 +3,9 @@ package com.example.babacirclecommunity.learn.service.impl;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
-//import com.example.babacirclecommunity.gold.dao.GoldMapper;
-//import com.example.babacirclecommunity.gold.entity.UserGoldCoins;
+import com.example.babacirclecommunity.gold.dao.GoldMapper;
+import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
+import com.example.babacirclecommunity.gold.entity.UserGoldCoins;
 import com.example.babacirclecommunity.learn.dao.DryGoodsCollectMapper;
 import com.example.babacirclecommunity.learn.dao.PublicClassMapper;
 import com.example.babacirclecommunity.learn.entity.ClassOrder;
@@ -13,8 +14,8 @@ import com.example.babacirclecommunity.learn.service.IPublicClassService;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.entity.User;
-//import com.example.babacirclecommunity.weChatPay.dao.OrderMapper;
-//import com.example.babacirclecommunity.weChatPay.entity.GoldCoinChange;
+import com.example.babacirclecommunity.weChatPay.dao.OrderMapper;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,11 +39,11 @@ public class PublicClassServiceImpl implements IPublicClassService {
     @Autowired
     private DryGoodsCollectMapper dryGoodsCollectMapper;
 
-//    @Autowired
-//    private GoldMapper goldMapper;
-//
-//    @Autowired
-//    private OrderMapper orderMapper;
+    @Autowired
+    private GoldMapper goldMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
 
     @Override
     public PublicClassVo queryPublicClassById(int id, int userId) {
@@ -115,7 +116,6 @@ public class PublicClassServiceImpl implements IPublicClassService {
         return j;
     }
 
-    /**
     @Override
     public ResultUtil buyerClass(ClassOrder classOrder) {
         String time = System.currentTimeMillis() / 1000 + "";
@@ -222,5 +222,4 @@ public class PublicClassServiceImpl implements IPublicClassService {
 
         return ResultUtil.success(b,"成功",200);
     }
-    */
 }

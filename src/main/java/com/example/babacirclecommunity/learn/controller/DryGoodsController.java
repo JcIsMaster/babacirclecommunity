@@ -38,11 +38,11 @@ public class DryGoodsController {
     @ApiOperation(value = "根据状态查询学习信息",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryLearnList")
-    public Object queryLearnList(int type, Paging paging, int orderRule){
+    public Object queryLearnList(int type, Paging paging, int orderRule,Integer tagId,String content){
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
         }
-        return iDryGoodsService.queryLearnList(type,paging,orderRule);
+        return iDryGoodsService.queryLearnList(type,paging,orderRule,tagId,content);
     }
 
     /**
@@ -112,10 +112,10 @@ public class DryGoodsController {
      * @param learnPostExceptional 打赏详情对象
      * @return
      */
-//    @ApiOperation(value = "打赏",notes = "成功返回数据 反则为空")
-//    @ResponseBody
-//    @PostMapping("/rewardGoldToDryGoods")
-//    public ResultUtil rewardGoldToDryGoods(LearnPostExceptional learnPostExceptional) throws Exception{
-//        return iDryGoodsService.rewardGoldToDryGoods(learnPostExceptional);
-//    }
+    @ApiOperation(value = "打赏",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/rewardGoldToDryGoods")
+    public ResultUtil rewardGoldToDryGoods(LearnPostExceptional learnPostExceptional) throws Exception{
+        return iDryGoodsService.rewardGoldToDryGoods(learnPostExceptional);
+    }
 }

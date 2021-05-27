@@ -17,9 +17,11 @@ public interface IDryGoodsService {
      * @param type 0:提问; 1:干货; 2:公开课
      * @param paging 分页
      * @param orderRule 排序规则 0:推荐  1:最新  2:最热
+     * @param tagId 标签id
+     * @param content 搜索内容
      * @return
      */
-    Object queryLearnList(int type, Paging paging, int orderRule);
+    Object queryLearnList(int type, Paging paging, int orderRule,Integer tagId,String content);
 
     /**
      * 根据id查询干货详情
@@ -57,5 +59,5 @@ public interface IDryGoodsService {
      * @param learnPostExceptional 打赏详情对象
      * @return
      */
-//    ResultUtil rewardGoldToDryGoods(LearnPostExceptional learnPostExceptional);
+    ResultUtil rewardGoldToDryGoods(LearnPostExceptional learnPostExceptional);
 }

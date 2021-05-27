@@ -4,8 +4,9 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
-//import com.example.babacirclecommunity.gold.dao.GoldMapper;
-//import com.example.babacirclecommunity.gold.entity.UserGoldCoins;
+import com.example.babacirclecommunity.gold.dao.GoldMapper;
+import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
+import com.example.babacirclecommunity.gold.entity.UserGoldCoins;
 import com.example.babacirclecommunity.learn.dao.*;
 import com.example.babacirclecommunity.learn.entity.Collect;
 import com.example.babacirclecommunity.learn.entity.DryGoods;
@@ -17,8 +18,8 @@ import com.example.babacirclecommunity.learn.vo.DryGoodsVo;
 import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
 import com.example.babacirclecommunity.learn.vo.QuestionVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
-//import com.example.babacirclecommunity.weChatPay.dao.OrderMapper;
-//import com.example.babacirclecommunity.weChatPay.entity.GoldCoinChange;
+import com.example.babacirclecommunity.weChatPay.dao.OrderMapper;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,17 +54,19 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
     @Autowired
     private PublicClassMapper publicClassMapper;
 
-//    @Autowired
-//    private OrderMapper orderMapper;
-//
-//    @Autowired
-//    private GoldMapper goldMapper;
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private GoldMapper goldMapper;
 
     @Override
-    public Object queryLearnList(int type, Paging paging, int orderRule) {
+    public Object queryLearnList(int type, Paging paging, int orderRule,Integer tagId,String content) {
 
         Integer page=(paging.getPage()-1)*paging.getLimit();
-
+        if (content.equals("undefined") || content.equals("") || content == null){
+            content = null;
+        }
         //提问
         if(type == 0){
             String sql2 = "";
@@ -77,7 +80,7 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
                 sql2 = "order by a.favour DESC ";
             }
             sql2 = sql2 + "limit "+page+","+paging.getLimit()+"";
-            List<QuestionVo> questionVos = questionMapper.queryQuestionList(sql2);
+            List<QuestionVo> questionVos = questionMapper.queryQuestionList(content,tagId,sql2);
             return questionVos;
         }
         //干货
@@ -231,7 +234,6 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
         return j;
     }
 
-    /**
     @Override
     public ResultUtil rewardGoldToDryGoods(LearnPostExceptional learnPostExceptional) {
         String time = System.currentTimeMillis() / 1000 + "";
@@ -328,5 +330,4 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
 
         return ResultUtil.success(k,"成功",200);
     }
-    */
 }

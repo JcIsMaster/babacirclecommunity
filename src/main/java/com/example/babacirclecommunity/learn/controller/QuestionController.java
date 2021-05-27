@@ -2,9 +2,11 @@ package com.example.babacirclecommunity.learn.controller;
 
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
+import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.learn.entity.Question;
 import com.example.babacirclecommunity.learn.service.IQuestionService;
 import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
+import com.example.babacirclecommunity.personalCenter.vo.QuestionPersonalVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * @author JC
@@ -47,7 +50,7 @@ public class QuestionController {
      * @return
      * @throws ParseException
      */
-    @ApiOperation(value = "根据id查询干货详情",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "根据id查询提问详情",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryQuestionById")
     public QuestionTagVo queryQuestionById(int id,int userId) throws Exception{
@@ -87,5 +90,18 @@ public class QuestionController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         return iQuestionService.giveCollect(id,userId);
+    }
+
+    /**
+     * 查询提问人个人中心
+     * @param userId
+     * @param otherId
+     * @return
+     */
+    @ApiOperation(value = "查询提问人个人中心",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryQuestionPersonal")
+    public QuestionPersonalVo queryQuestionPersonal(int userId, int otherId, Paging paging){
+        return iQuestionService.queryQuestionPersonal(userId,otherId,paging);
     }
 }

@@ -17,12 +17,19 @@ public interface QuestionMapper {
 
     /**
      * 查询提问列表
+     * @param content
+     * @param tagId
      * @param sql
      * @return
      */
-    @Select("select a.id,a.title,a.description,a.content_type,a.cover_img,a.favour,a.collect,a.comment,a.tags_two,b.tag_name from " +
-            "tb_question a LEFT JOIN tb_tags b on a.tags_two = b.id where a.is_delete = 1 ${sql}")
-    List<QuestionVo> queryQuestionList(@Param("sql") String sql);
+    @Select("<script>"+
+            "select a.id,a.title,a.description,a.content_type,a.cover_img,a.favour,a.collect,a.comment,a.tags_two,b.tag_name from " +
+            "tb_question a LEFT JOIN tb_tags b on a.tags_two = b.id where " +
+            "<if test='tagId != null and tagId != 125'> a.tags_two = ${tagId} and </if>"+
+            "<if test='content != null'>a.title LIKE CONCAT('%',#{content},'%') or a.description LIKE CONCAT('%',#{content},'%') and </if>"+
+            "a.is_delete = 1 ${sql}"+
+            "</script>")
+    List<QuestionVo> queryQuestionList(@Param("content") String content,@Param("tagId") Integer tagId, @Param("sql") String sql);
 
     /**
      * 根据userId查询提问列表

@@ -66,10 +66,10 @@ public class PublicClassController {
      * @param classOrder
      * @return
      */
-//    @ApiOperation(value = "购买",notes = "成功返回数据 反则为空")
-//    @ResponseBody
-//    @PostMapping("/buyerClass")
-//    public ResultUtil buyerClass(ClassOrder classOrder) throws Exception{
-//        return iPublicClassService.buyerClass(classOrder);
-//    }
+    @ApiOperation(value = "购买",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/buyerClass")
+    public ResultUtil buyerClass(ClassOrder classOrder) throws Exception{
+        return iPublicClassService.buyerClass(classOrder);
+    }
 }

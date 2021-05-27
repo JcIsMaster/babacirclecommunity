@@ -1,7 +1,12 @@
 package com.example.babacirclecommunity.learn.service;
 
+import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.learn.entity.Question;
 import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
+import com.example.babacirclecommunity.learn.vo.QuestionVo;
+import com.example.babacirclecommunity.personalCenter.vo.QuestionPersonalVo;
+
+import java.util.List;
 
 /**
  * @author JC
@@ -39,4 +44,13 @@ public interface IQuestionService {
      * @return
      */
     int giveCollect(int id,int userId);
+
+    /**
+     * 查询提问人个人中心
+     * @param userId
+     * @param otherId
+     * @param paging
+     * @return
+     */
+    QuestionPersonalVo queryQuestionPersonal(int userId,int otherId,Paging paging);
 }

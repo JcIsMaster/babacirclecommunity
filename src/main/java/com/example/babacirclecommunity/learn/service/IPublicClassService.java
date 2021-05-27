@@ -31,5 +31,5 @@ public interface IPublicClassService {
      * @param classOrder 课程订单对象
      * @return
      */
-//    ResultUtil buyerClass(ClassOrder classOrder);
+    ResultUtil buyerClass(ClassOrder classOrder);
 }
