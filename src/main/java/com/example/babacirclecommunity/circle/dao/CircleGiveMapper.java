@@ -23,7 +23,7 @@ public interface CircleGiveMapper {
      * @param zqId
      * @return
      */
-    @Select("select b.avatar as giveAvatar from tb_circles_give a INNER JOIN tb_user b on a.u_id=b.id where a.zq_id=${zqId} and a.give_cancel=1 order by a.create_at limit 8")
+    @Select("select b.avatar as giveAvatar from tb_circles_give a INNER JOIN tb_user b on a.u_id=b.id where a.zq_id=${zqId} and a.give_cancel=1 order by a.create_at desc limit 8")
     String[] selectCirclesGivePersonAvatar(@Param("zqId") int zqId);
 
     /**
