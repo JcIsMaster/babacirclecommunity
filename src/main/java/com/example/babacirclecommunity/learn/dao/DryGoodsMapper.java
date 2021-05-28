@@ -18,11 +18,20 @@ public interface DryGoodsMapper {
 
     /**
      * 查询干货列表
+     * @param content
+     * @param tagId
      * @param sql
      * @return
      */
-    @Select("select id,title,description,cover_img from tb_dry_goods where is_delete = 1 ${sql}")
-    List<DryGoodsVo> queryDryGoodsList(@Param("sql") String sql);
+    @Select("<script>"+
+            "select a.id,a.title,a.description,a.cover_img,a.tags_two,a.create_at,b.tag_name,a.u_id,c.user_name,c.avatar from tb_dry_goods a " +
+            "INNER JOIN tb_tags b on a.tags_two = b.id " +
+            "INNER JOIN tb_user c on a.u_id = c.id where " +
+            "<if test='tagId != null and tagId != 125'> a.tags_two = ${tagId} and </if>"+
+            "<if test='content != null'>a.title LIKE CONCAT('%',#{content},'%') or a.description LIKE CONCAT('%',#{content},'%') and </if>"+
+            "a.is_delete = 1 ${sql}" +
+            "</script>")
+    List<DryGoodsVo> queryDryGoodsList(@Param("content") String content,@Param("tagId") Integer tagId,@Param("sql") String sql);
 
     /**
      * 根据userId查询干货列表

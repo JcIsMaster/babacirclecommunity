@@ -8,6 +8,7 @@ import com.example.babacirclecommunity.learn.entity.DryGoods;
 import com.example.babacirclecommunity.learn.entity.LearnPostExceptional;
 import com.example.babacirclecommunity.learn.service.IDryGoodsService;
 import com.example.babacirclecommunity.learn.vo.DryGoodsTagVo;
+import com.example.babacirclecommunity.personalCenter.vo.DryGoodsPersonalVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -117,5 +118,18 @@ public class DryGoodsController {
     @PostMapping("/rewardGoldToDryGoods")
     public ResultUtil rewardGoldToDryGoods(LearnPostExceptional learnPostExceptional) throws Exception{
         return iDryGoodsService.rewardGoldToDryGoods(learnPostExceptional);
+    }
+
+    /**
+     * 查询干货个人中心
+     * @param userId
+     * @param otherId
+     * @return
+     */
+    @ApiOperation(value = "查询干货个人中心",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryDryGoodsPersonal")
+    public DryGoodsPersonalVo queryDryGoodsPersonal(int userId, int otherId, Paging paging){
+        return iDryGoodsService.queryDryGoodsPersonal(userId,otherId,paging);
     }
 }

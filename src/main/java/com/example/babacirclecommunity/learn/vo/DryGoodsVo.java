@@ -22,4 +22,28 @@ public class DryGoodsVo {
      * 封面图
      */
     private String coverImg;
+    /**
+     * 二级标签id
+     */
+    private int tagsTwo;
+    /**
+     * 提问tagsTwo对应的tagName
+     */
+    private String tagName;
+    /**
+     * 创建时间
+     */
+    private String createAt;
+    /**
+     * 发帖人id
+     */
+    private int uId;
+    /**
+     * 发帖人姓名
+     */
+    private String userName;
+    /**
+     * 发帖人头像
+     */
+    private String avatar;
 }

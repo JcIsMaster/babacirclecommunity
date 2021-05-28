@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.DryGoods;
 import com.example.babacirclecommunity.learn.entity.LearnPostExceptional;
 import com.example.babacirclecommunity.learn.vo.DryGoodsTagVo;
+import com.example.babacirclecommunity.personalCenter.vo.DryGoodsPersonalVo;
 
 /**
  * @author JC
@@ -60,4 +61,13 @@ public interface IDryGoodsService {
      * @return
      */
     ResultUtil rewardGoldToDryGoods(LearnPostExceptional learnPostExceptional);
+
+    /**
+     * 查询干货个人中心
+     * @param userId
+     * @param otherId
+     * @param paging
+     * @return
+     */
+    DryGoodsPersonalVo queryDryGoodsPersonal(int userId, int otherId, Paging paging);
 }

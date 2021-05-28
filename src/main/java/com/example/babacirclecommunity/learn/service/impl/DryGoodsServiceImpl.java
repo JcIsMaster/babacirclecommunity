@@ -2,6 +2,7 @@ package com.example.babacirclecommunity.learn.service.impl;
 
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
+import com.example.babacirclecommunity.common.utils.DateUtils;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.gold.dao.GoldMapper;
@@ -17,7 +18,9 @@ import com.example.babacirclecommunity.learn.vo.DryGoodsTagVo;
 import com.example.babacirclecommunity.learn.vo.DryGoodsVo;
 import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
 import com.example.babacirclecommunity.learn.vo.QuestionVo;
+import com.example.babacirclecommunity.personalCenter.vo.DryGoodsPersonalVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
+import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
 import com.example.babacirclecommunity.weChatPay.dao.OrderMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -87,16 +90,21 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
         if(type == 1){
             String sql = "";
             if (orderRule == 0){
-                sql = "order by collect DESC ";
+                sql = "order by a.collect DESC ";
             }
             if (orderRule == 1){
-                sql = "order by create_at DESC ";
+                sql = "order by a.create_at DESC ";
             }
             if (orderRule == 2){
-                sql = "order by favour DESC ";
+                sql = "order by a.favour DESC ";
             }
             sql = sql + "limit "+page+","+paging.getLimit()+"";
-            List<DryGoodsVo> dryGoods = dryGoodsMapper.queryDryGoodsList(sql);
+            List<DryGoodsVo> dryGoods = dryGoodsMapper.queryDryGoodsList(content,tagId,sql);
+            for (DryGoodsVo dryGood : dryGoods) {
+                //将时间戳转换为多少天或者多少个小时和多少年
+                String time = DateUtils.getTime(dryGood.getCreateAt());
+                dryGood.setCreateAt(time);
+            }
             return dryGoods;
         }
         //公开课
@@ -112,7 +120,7 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
                 sql3 = "order by a.buyer_num DESC ";
             }
             sql3 = sql3 + "limit "+page+","+paging.getLimit()+"";
-            List<PublicClassTagVo> publicClassTagVos = publicClassMapper.queryPublicClassList(sql3);
+            List<PublicClassTagVo> publicClassTagVos = publicClassMapper.queryPublicClassList(content,tagId,sql3);
             return publicClassTagVos;
         }
         return null;
@@ -329,5 +337,31 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
         //收入记录增加成功后给发帖人推送消息
 
         return ResultUtil.success(k,"成功",200);
+    }
+
+    @Override
+    public DryGoodsPersonalVo queryDryGoodsPersonal(int userId, int otherId, Paging paging) {
+
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pag="limit "+page+","+paging.getLimit()+"";
+
+        DryGoodsPersonalVo goodsPersonalVo = new DryGoodsPersonalVo();
+        //查询用户基本信息
+        PersonalCenterUserVo personalCenterUserVo = userMapper.queryUserById(otherId);
+        goodsPersonalVo.setPersonalCenterUserVo(personalCenterUserVo);
+        //查询用户发的干货帖子
+        List<DryGoodsVo> dryGoodsVos = dryGoodsMapper.queryDryGoodsListByUser(otherId, pag);
+        goodsPersonalVo.setDryGoodsVos(dryGoodsVos);
+
+        if (userId == 0){
+            goodsPersonalVo.setIsMe(0);
+            return goodsPersonalVo;
+        }
+        if (userId == otherId){
+            goodsPersonalVo.setIsMe(1);
+            return goodsPersonalVo;
+        }
+        goodsPersonalVo.setIsMe(0);
+        return goodsPersonalVo;
     }
 }
