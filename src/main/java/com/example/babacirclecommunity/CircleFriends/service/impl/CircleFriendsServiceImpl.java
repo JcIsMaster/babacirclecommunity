@@ -1,12 +1,9 @@
 package com.example.babacirclecommunity.CircleFriends.service.impl;
 
-
 import com.example.babacirclecommunity.CircleFriends.dao.CircleFriendsMapper;
 import com.example.babacirclecommunity.CircleFriends.service.ICircleFriendsService;
-import com.example.babacirclecommunity.CircleFriends.vo.CircleFriendsVo;
 import com.example.babacirclecommunity.circle.dao.CircleMapper;
-import com.example.babacirclecommunity.common.constanct.CodeType;
-import com.example.babacirclecommunity.common.exception.ApplicationException;
+import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
 import com.example.babacirclecommunity.common.utils.WxPoster;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +17,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.xml.ws.Action;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,12 +41,15 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
     private CircleMapper circleMapper;
 
     @Override
-    public List<String> selectCircleFriendsFigure(CircleFriendsVo circleFriendsVo) {
+    public List<String> selectCircleFriendsFigure(String pageUrl,int id) {
 
 
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
+
+        //根据id查询帖子信息
+        CircleClassificationVo circleClassificationVo = circleMapper.querySingleCircle(id);
 
         String time = "";
 
@@ -62,19 +61,20 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
         try {
             String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+token;
 
-            Map<String,Object> param = new HashMap<>();
+            Map<String,Object> param = new HashMap<>(15);
             //秘钥
             param.put("scene", ConstantUtil.secret);
             //二维码指向的地址
-            param.put("page", circleFriendsVo.getPageUrl());
+            param.put("page", pageUrl);
             param.put("width", 430);
             param.put("auto_color", false);
-            param.put("is_hyaline", true);//去掉二维码底色
-            Map<String,Object> line_color = new HashMap<>();
-            line_color.put("r", 0);
-            line_color.put("g", 0);
-            line_color.put("b", 0);
-            param.put("line_color", line_color);
+            //去掉二维码底色
+            param.put("is_hyaline", true);
+            Map<String,Object> lineColor = new HashMap<>(10);
+            lineColor.put("r", 0);
+            lineColor.put("g", 0);
+            lineColor.put("b", 0);
+            param.put("line_color", lineColor);
 
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<String,String>();
             // 头部信息
@@ -85,7 +85,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
             @SuppressWarnings("unchecked")
             HttpEntity requestEntity = new HttpEntity(param, headers);
-            ResponseEntity<byte[]> entity = rest.exchange(url, HttpMethod.POST, requestEntity, byte[].class, new Object[0]);
+            ResponseEntity<byte[]> entity = rest.exchange(url, HttpMethod.POST, requestEntity, byte[].class);
 
             byte[] result = entity.getBody();
 
@@ -109,7 +109,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
             WxPoster wxPoster=new WxPoster();
             //生成海报5
-            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMaster("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", circleFriendsVo.getHeadUrl(), circleFriendsVo.getPostImg(),circleFriendsVo.getPostContent(),circleFriendsVo.getUserName(),circleFriendsVo.getTitle());
+            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMaster("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", circleClassificationVo.getAvatar(), circleClassificationVo.getCover(),circleClassificationVo.getContent(),circleClassificationVo.getUserName(),circleClassificationVo.getTitle());
             String newGreat = posterUrlGreatMaster.replace("e:/file/img/", "https://www.gofatoo.com/img/");
             /*if(newGreat!=null){
                 if(circleFriendsVo.getType()==0){

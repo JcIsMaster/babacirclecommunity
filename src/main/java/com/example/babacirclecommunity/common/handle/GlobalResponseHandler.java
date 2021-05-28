@@ -32,12 +32,9 @@ public class GlobalResponseHandler implements ResponseBodyAdvice {
         /**
          * 配置swagger
          */
-        if (methodParameter.getMember().getName().equals("error") || methodParameter.getMember().getName().equals("uiConfiguration")
-              || methodParameter.getMember().getName().equals("securityConfiguration") || methodParameter.getMember().getName().equals("swaggerResources")
-              || methodParameter.getMember().getName().equals("getDocumentation")) {
-            return false;
-        }
-        return true;
+        return !methodParameter.getMember().getName().equals("error") && !methodParameter.getMember().getName().equals("uiConfiguration")
+                && !methodParameter.getMember().getName().equals("securityConfiguration") && !methodParameter.getMember().getName().equals("swaggerResources")
+                && !methodParameter.getMember().getName().equals("getDocumentation");
     }
 
     @Override

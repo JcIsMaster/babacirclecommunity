@@ -11,10 +11,12 @@ import java.util.List;
 public interface ICircleFriendsService {
 
     /**
-     * 得到朋友圈分享图
+     *  得到朋友圈分享图
+     * @param pageUrl 二维码指向的地址
+     * @param id 帖子id
      * @return
      */
-    List<String> selectCircleFriendsFigure(CircleFriendsVo circleFriendsVo);
+    List<String> selectCircleFriendsFigure(String pageUrl,int id);
 
     /**
      * 查询圈子海报图

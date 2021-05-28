@@ -25,7 +25,7 @@ public class FilesUtils {
     /**
      * 格式化时间
      */
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
     /**
      *
