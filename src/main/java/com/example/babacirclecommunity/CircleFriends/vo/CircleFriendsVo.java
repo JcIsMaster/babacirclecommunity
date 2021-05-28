@@ -14,10 +14,6 @@ public class CircleFriendsVo {
      */
     private int type;
 
-    /**
-     * 帖子id
-     */
-    private int id;
 
     /**
      * 用户头像

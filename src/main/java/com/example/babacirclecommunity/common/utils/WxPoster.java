@@ -39,7 +39,7 @@ public class WxPoster {
 
  
 	//包含Font.PLAIN，Font.BOLD，Font.ITALIC三种，分别对应平体、加粗和斜体
-	private Font font = new Font("微软雅黑", Font.BOLD, 80); // 添加字体的属性设置
+	private Font font = new Font("微软雅黑", Font.BOLD, 20); // 添加字体的属性设置
 
 	private static Graphics2D g = null;
 
@@ -394,7 +394,7 @@ public class WxPoster {
 
  
 
-	public static void pichead(String url, String path) throws MalformedURLException, IOException {
+	public static void pichead(String url, String path) throws IOException {
 
  
 
@@ -516,15 +516,16 @@ public class WxPoster {
 
 		try {
 			WxPoster tt = new WxPoster();
-			
+
 			//背景图
 			BufferedImage j = tt.loadImageLocal(leftUrl);
-			System.out.println(rightUrl);
+
 			//二维码
 			BufferedImage k = tt.loadImageLocal(rightUrl);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,940, 1920,250,250));
-			
-			/*//将头像图改为圆形
+
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,150, 560,160,160));
+
+			//将头像图改为圆形
 			BufferedImage ka = getRemoteBufferedImage(headUrl);
 			if(ka==null){
 				throw new ApplicationException(CodeType.SERVICE_ERROR);
@@ -534,30 +535,33 @@ public class WxPoster {
 			if(convertCircular==null){
 				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
 			}
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,200,200));
-			
-		    //帖子第一张图片的地址
-		    //网络图片
-		    BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
-            tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,15, 370,1030,750));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,80,80));
+
+			//帖子第一张图片的地址
+			//网络图片
+			BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,480,280));
 
 			//设置用户名
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,260,160,font);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
 
-			Font font1 = new Font("微软雅黑", Font.BOLD, 50);
-			g= j.createGraphics();
-			//设置标题 文字换行
-			drawStringWithFontStyleLineFeed(g,title,710 , 400, 1640,font1);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));
+			if(title!=null){
+				Font font1 = new Font("Monospaced", Font.BOLD, 20);
+				g= j.createGraphics();
+				//设置标题 文字换行
+				drawStringWithFontStyleLineFeedTitle(g,title,300 , 15, 440,font1);
+				tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
+			}
+
 
 			//得到画图
 			g= j.createGraphics();
 			//设置内容  文字换行
-			Font font2 = new Font("微软雅黑", Font.BOLD, 50);
-			drawStringWithFontStyleLineFeed(g,postContent ,800 , 60, 2030,font2);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));*/
+			Font font2 = new Font("Monospaced", Font.PLAIN, 15);
+			drawStringWithFontStyleLineFeed(g,postContent ,400 , 15, 490,font2);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++"+e);
@@ -568,7 +572,64 @@ public class WxPoster {
 
 
 
+	/**
+	 * 根据指定宽度自动换行
+	 * @param g
+	 * @param maxWdith
+	 * @param strContent
+	 * @param loc_X
+	 * @param loc_Y
+	 * @param font
+	 */
+	private  void  drawStringWithFontStyleLineFeedTitle(Graphics g, String strContent,int maxWdith, int loc_X, int loc_Y, Font font){
+		g.setFont(font);
+		g.setColor(Color.darkGray);
+		//获取字符串 字符的总宽度
+		int strWidth =getStringLength(g,strContent);
+		if(strWidth>=294){
+			String strsub=strContent.substring(0,strContent.length()-1);//0到56的字符串
+			strContent=strsub+"......";
+		}
 
+		//每一行字符串宽度
+		int rowWidth=maxWdith;
+		// System.out.println("每行字符宽度:"+rowWidth);
+		//获取字符高度
+		int strHeight=getStringHeight(g);
+		//字符串总个数
+		//  System.out.println("字符串总个数:"+strContent.length());
+		if(strWidth>rowWidth){
+			char[] strContentArr = strContent.toCharArray();
+			int count = 0;
+			int conut_value = 0;
+			int line = 0;
+			int charWidth = 0;
+			for(int j=0;j< strContentArr.length;j++){
+
+				if(conut_value>=rowWidth){
+					conut_value = 0;
+					g.drawString(strContent.substring(count,j),loc_X,loc_Y+strHeight*line);
+					count = j;
+					line++;
+
+				}else{
+					if(j==strContentArr.length - 1){
+						g.drawString(strContent.substring(count,j),loc_X,loc_Y+strHeight*line);
+					}else{
+						charWidth = g.getFontMetrics().charWidth(strContentArr[j]);
+						conut_value = charWidth + conut_value;
+					}
+
+				}
+
+			}
+
+		}else{
+			//直接绘制
+			g.drawString(strContent, loc_X, loc_Y);
+		}
+
+	}
 
 
 	/**

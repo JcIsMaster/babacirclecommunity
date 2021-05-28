@@ -81,11 +81,7 @@ public class TimeUtil {
 		Date date1 = new Date();
 		String time1 = new SimpleDateFormat("yyyy-MM-dd").format(date1);
 		String format = longToDate(time, "yyyy-MM-dd");
-		if (time1.equals(format)) {
-			return true;
-		} else {
-			return false;
-		}
+        return time1.equals(format);
 	}
 
 

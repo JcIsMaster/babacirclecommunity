@@ -25,9 +25,9 @@ import java.security.KeyStore;
 public class CertHttpUtil {
 
     // 连接超时时间，默认10秒
-    private static int socketTimeout = 10000;
+    private static final int socketTimeout = 10000;
     // 传输超时时间，默认30秒
-    private static int connectTimeout = 30000;
+    private static final int connectTimeout = 30000;
 
     // 请求器的配置
     private static RequestConfig requestConfig;

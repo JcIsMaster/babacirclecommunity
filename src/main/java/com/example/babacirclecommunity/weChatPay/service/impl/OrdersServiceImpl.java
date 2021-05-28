@@ -190,7 +190,7 @@ public class OrdersServiceImpl implements IOrdersService {
 
     @Override
     public void weChatNotify(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream()));
+        BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
         String line = null;
         StringBuilder sb = new StringBuilder();
         while ((line = br.readLine()) != null) {

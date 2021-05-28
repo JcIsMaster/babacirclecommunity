@@ -110,7 +110,7 @@ public class CircleServiceImpl implements ICircleService {
         String pagings=" limit "+pages+","+paging.getLimit()+"";
 
         List<CircleClassificationVo> circles = circleMapper.queryImagesOrVideos(type, pagings);
-        for (int i=0;i<circles.size();i++){
+        for (int i=0;i< circles.size();i++){
 
             //得到图片组
             String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
@@ -122,10 +122,7 @@ public class CircleServiceImpl implements ICircleService {
 
 
             //等于0在用户没有到登录的情况下 直接设置没有点赞
-            if(userId==0){
-                circles.get(i).setWhetherGive(0);
-                circles.get(i).setWhetherAttention(0);
-            }else{
+            if(userId!=0){
                 //查看我是否关注了此人
                 int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
                 if(i1>0){
@@ -138,6 +135,7 @@ public class CircleServiceImpl implements ICircleService {
                     circles.get(i).setWhetherGive(1);
                 }
             }
+
 
             //将时间戳转换为多少天或者多少个小时和多少年
             String time = DateUtils.getTime(circles.get(i).getCreateAt());
@@ -255,13 +253,7 @@ public class CircleServiceImpl implements ICircleService {
             circles.get(i).setGiveAvatar(strings1);
 
 
-
-
-            //等于0在用户没有到登录的情况下 直接设置没有点赞
-            if(userId==0){
-                circles.get(i).setWhetherGive(0);
-                circles.get(i).setWhetherAttention(0);
-            }else{
+            if(userId!=0){
                 //查看我是否关注了此人
                 int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
                 if(i1>0){
@@ -274,8 +266,6 @@ public class CircleServiceImpl implements ICircleService {
                     circles.get(i).setWhetherGive(1);
                 }
             }
-
-
 
             //将时间戳转换为多少天或者多少个小时和多少年
             String time = DateUtils.getTime(circles.get(i).getCreateAt());
