@@ -29,7 +29,7 @@ public interface ResourceMapper {
             "<if test='title!=null and title!=\"\">" +
             "and a.title like CONCAT('%',#{title},'%') " +
             "</if>" +
-            "<if test='tagId!=0'>" +
+            "<if test='tagId!=130'>" +
             " and a.tags_two=${tagId}" +
             "</if>" +
             "<if test='orderRule==1'>" +
