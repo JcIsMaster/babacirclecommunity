@@ -28,6 +28,9 @@ public class ResourceServiceImpl implements IResourceService {
     public List<ResourceClassificationVo> queryResource(Paging paging, int orderRule, int tagId, String title) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
+        if(title==null || title.equals("") || title.equals("undefined")){
+            title="";
+        }
         System.out.println(tagId);
         System.out.println(title);
         return resourceMapper.queryResource(sql,orderRule,title,tagId);
