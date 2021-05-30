@@ -2,10 +2,12 @@ package com.example.babacirclecommunity.learn.controller;
 
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
+import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.ClassOrder;
 import com.example.babacirclecommunity.learn.service.IPublicClassService;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
+import com.example.babacirclecommunity.personalCenter.vo.ClassPersonalVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -71,5 +73,18 @@ public class PublicClassController {
     @PostMapping("/buyerClass")
     public ResultUtil buyerClass(ClassOrder classOrder) throws Exception{
         return iPublicClassService.buyerClass(classOrder);
+    }
+
+    /**
+     * 查询公开课个人中心
+     * @param userId
+     * @param otherId
+     * @return
+     */
+    @ApiOperation(value = "查询公开课个人中心",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryClassPersonal")
+    public ClassPersonalVo queryClassPersonal(int userId, int otherId, Paging paging){
+        return iPublicClassService.queryClassPersonal(userId,otherId,paging);
     }
 }

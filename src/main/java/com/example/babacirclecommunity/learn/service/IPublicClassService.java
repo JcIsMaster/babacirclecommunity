@@ -1,8 +1,10 @@
 package com.example.babacirclecommunity.learn.service;
 
+import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.ClassOrder;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
+import com.example.babacirclecommunity.personalCenter.vo.ClassPersonalVo;
 
 /**
  * @author JC
@@ -32,4 +34,13 @@ public interface IPublicClassService {
      * @return
      */
     ResultUtil buyerClass(ClassOrder classOrder);
+
+    /**
+     * 公开课个人中心
+     * @param userId
+     * @param otherId
+     * @param paging
+     * @return
+     */
+    ClassPersonalVo queryClassPersonal(int userId, int otherId, Paging paging);
 }

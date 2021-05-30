@@ -2,6 +2,7 @@ package com.example.babacirclecommunity.learn.service.impl;
 
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
+import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.gold.dao.GoldMapper;
 import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
@@ -11,15 +12,20 @@ import com.example.babacirclecommunity.learn.dao.PublicClassMapper;
 import com.example.babacirclecommunity.learn.entity.ClassOrder;
 import com.example.babacirclecommunity.learn.entity.Collect;
 import com.example.babacirclecommunity.learn.service.IPublicClassService;
+import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
+import com.example.babacirclecommunity.personalCenter.vo.ClassPersonalVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.entity.User;
+import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
 import com.example.babacirclecommunity.weChatPay.dao.OrderMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author JC
@@ -221,5 +227,30 @@ public class PublicClassServiceImpl implements IPublicClassService {
         //收入记录增加成功后给发帖人推送消息
 
         return ResultUtil.success(b,"成功",200);
+    }
+
+    @Override
+    public ClassPersonalVo queryClassPersonal(int userId, int otherId, Paging paging) {
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pag="limit "+page+","+paging.getLimit()+"";
+
+        ClassPersonalVo classPersonalVo = new ClassPersonalVo();
+        //查询用户基本信息
+        PersonalCenterUserVo personalCenterUserVo = userMapper.queryUserById(otherId);
+        classPersonalVo.setPersonalCenterUserVo(personalCenterUserVo);
+        //查询用户发的干货帖子
+        List<PublicClassTagVo> publicClassTagVos = publicClassMapper.queryPublicClassListByUser(otherId, pag);
+        classPersonalVo.setPublicClassTagVos(publicClassTagVos);
+
+        if (userId == 0){
+            classPersonalVo.setIsMe(0);
+            return classPersonalVo;
+        }
+        if (userId == otherId){
+            classPersonalVo.setIsMe(1);
+            return classPersonalVo;
+        }
+        classPersonalVo.setIsMe(0);
+        return classPersonalVo;
     }
 }
