@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.resource.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.resource.entity.Collection;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
 
@@ -38,4 +39,29 @@ public interface IResourceService {
      * @return
      */
     List<ResourceClassificationVo> queryHavePostedPosts(int othersId, Paging paging);
+
+    /**
+     * 根据二级标签id查询推荐数据
+     * @param id 二级标签id
+     * @param userId 用户id
+     * @param tid 帖子id
+     * @return
+     */
+    List<ResourceClassificationVo> selectRecommendedSecondaryTagId(int id,int userId,int tid);
+
+    /**
+     * 根据一级标签id查询所有视频
+     * @param id 一级标签id
+     * @param paging 分页
+     * @return
+     */
+    List<ResourcesVo> queryAllVideosPrimaryTagId(int id, Paging paging,int userId) throws ParseException;
+
+
+    /**
+     * 收藏帖子
+     * @param collection 收藏对象
+     * @return
+     */
+    int collectionPost(Collection collection);
 }
