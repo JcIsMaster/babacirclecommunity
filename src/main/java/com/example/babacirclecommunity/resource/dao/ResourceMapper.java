@@ -25,7 +25,7 @@ public interface ResourceMapper {
     @Select({"<script>"+
             "select a.id,c.avatar,c.id as uId,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name" +
             ",b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
-            "where  a.is_delete=1 " +
+            "where  a.is_delete=1 and tags_one=12" +
             "<if test='title!=null and title!=\"\">" +
             "and a.title like CONCAT('%',#{title},'%') " +
             "</if>" +
@@ -37,7 +37,8 @@ public interface ResourceMapper {
             "</if>" +
             "<if test='orderRule==2'>" +
             " order by a.favour DESC" +
-            "</if>"+
+            "</if>" +
+            " ${paging}"+
             "</script>"})
     List<ResourceClassificationVo> queryResource(@Param("paging") String paging,@Param("orderRule") int orderRule,@Param("title") String title,@Param("tagId") int tagId);
 }
