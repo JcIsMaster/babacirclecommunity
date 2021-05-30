@@ -36,7 +36,7 @@ public class ResourceController {
     @ApiOperation(value = "查询资源数据",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryResource")
-    public List<ResourceClassificationVo> queryResource(Paging paging,int orderRule, int tagId, String title){
+    public List<ResourceClassificationVo> queryResource(Paging paging,int orderRule,int tagId, String title){
         return iResourceService.queryResource(paging,orderRule,tagId,title);
     }
 
