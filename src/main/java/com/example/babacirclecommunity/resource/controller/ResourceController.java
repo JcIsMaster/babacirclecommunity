@@ -60,6 +60,18 @@ public class ResourceController {
         return iResourceService.queryHavePostedPosts(othersId,paging);
     }
 
+    /**
+     * 根据二级标签id查询推荐数据 点进帖子详情 触发
+     * @param id 二级标签id
+     * @return
+     */
+    @ApiOperation(value = "根据二级标签id查询推荐的数据",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectRecommendedSecondaryTagId")
+    public List<ResourceClassificationVo> selectRecommendedSecondaryTagId(int id,int userId,int tid)  {
+        return iResourceService.selectRecommendedSecondaryTagId(id,userId,tid);
+    }
+
 
 
 }

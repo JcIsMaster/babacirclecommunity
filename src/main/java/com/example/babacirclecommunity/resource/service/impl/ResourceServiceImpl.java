@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author MQ
@@ -136,5 +137,16 @@ public class ResourceServiceImpl implements IResourceService {
 
         List<ResourceClassificationVo> homeClassificationVos = resourceMapper.queryHavePostedPosts(othersId,pag);
         return homeClassificationVos;
+    }
+
+    @Override
+    public List<ResourceClassificationVo> selectRecommendedSecondaryTagId(int id, int userId, int tid) {
+        List<ResourceClassificationVo> homeClassificationVos = resourceMapper.selectRecommendedSecondaryTagId(id);
+
+        //筛选掉等于当前用户id的数据
+        //筛选掉当前点进来的帖子是一样的就干掉
+        List<ResourceClassificationVo> collect = homeClassificationVos.stream().filter(u -> u.getUId() != userId).filter(a-> a.getId()!=tid).collect(Collectors.toList());
+
+        return collect;
     }
 }

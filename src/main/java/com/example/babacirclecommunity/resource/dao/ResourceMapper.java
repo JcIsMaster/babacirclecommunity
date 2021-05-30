@@ -110,4 +110,13 @@ public interface ResourceMapper {
      */
     @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<ResourceClassificationVo> queryHavePostedPosts(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 根据二级标签id查询推荐的数据
+     * @param id 二级标签id
+     * @return
+     */
+    @Select("select a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId " +
+            "from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where  a.id in (SELECT id FROM (SELECT id FROM tb_resources where tags_one=12 and tags_two=${id} and is_delete=1 ORDER BY RAND()  LIMIT 10) t) ")
+    List<ResourceClassificationVo> selectRecommendedSecondaryTagId(@Param("id") int id);
 }

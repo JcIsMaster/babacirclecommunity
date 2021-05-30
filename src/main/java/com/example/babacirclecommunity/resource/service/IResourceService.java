@@ -38,4 +38,13 @@ public interface IResourceService {
      * @return
      */
     List<ResourceClassificationVo> queryHavePostedPosts(int othersId, Paging paging);
+
+    /**
+     * 根据二级标签id查询推荐数据
+     * @param id 二级标签id
+     * @param userId 用户id
+     * @param tid 帖子id
+     * @return
+     */
+    List<ResourceClassificationVo> selectRecommendedSecondaryTagId(int id,int userId,int tid);
 }
