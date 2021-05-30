@@ -42,11 +42,6 @@ public class ResourceServiceImpl implements IResourceService {
         if(title==null || title.equals("") || title.equals("undefined")){
             title="";
         }
-        System.out.println(tagId);
-        System.out.println(title);
-        if(title==null || title.equals("") || title.equals("undefined")){
-            title="";
-        }
         return resourceMapper.queryResource(sql,orderRule,title,tagId);
     }
 
