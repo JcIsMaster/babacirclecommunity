@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.resource.service.IResourceService;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
+import com.example.babacirclecommunity.resource.vo.ResourcesVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,18 @@ public class ResourceController {
     @PostMapping("/queryResource")
     public List<ResourceClassificationVo> queryResource(Paging paging,int orderRule,int tagId, String title){
         return iResourceService.queryResource(paging,orderRule,tagId,title);
+    }
+
+    /**
+     * 查询单个资源帖子
+     * @param id 资源帖子id
+     * @return
+     */
+    @ApiOperation(value = "查询单个资源帖子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectSingleResourcePost")
+    public ResourcesVo selectSingleResourcePost(int id, int userId) throws ParseException {
+        return iResourceService.selectSingleResourcePost(id,userId);
     }
 
 }
