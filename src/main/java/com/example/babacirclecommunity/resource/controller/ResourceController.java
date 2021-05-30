@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.resource.controller;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.resource.entity.Collection;
 import com.example.babacirclecommunity.resource.service.IResourceService;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
@@ -72,6 +73,26 @@ public class ResourceController {
         return iResourceService.selectRecommendedSecondaryTagId(id,userId,tid);
     }
 
+    /**
+     * 根据一级标签id查询所有视频
+     * @param id 一级标签id
+     * @return
+     */
+    @ApiOperation(value = "根据一级标签id查询所有视频",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryAllVideosPrimaryTagId")
+    public List<ResourcesVo> queryAllVideosPrimaryTagId(int id, Paging paging,int userId) throws ParseException {
+        return iResourceService.queryAllVideosPrimaryTagId(id,paging,userId);
+    }
 
+    @ApiOperation(value = "收藏帖子", notes = "成功返回集合")
+    @ResponseBody
+    @PostMapping("/collectionPost")
+    public int collectionPost(Collection collection) {
+        if(collection.getUserId()==0 || collection.getTId()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iResourceService.collectionPost(collection);
+    }
 
 }
