@@ -126,4 +126,13 @@ public class ResourceServiceImpl implements IResourceService {
 
         return resourcesVo;
     }
+
+    @Override
+    public List<ResourceClassificationVo> queryHavePostedPosts(int othersId,Paging paging) {
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pag="limit "+page+","+paging.getLimit()+"";
+
+        List<ResourceClassificationVo> homeClassificationVos = resourceMapper.queryHavePostedPosts(othersId,pag);
+        return homeClassificationVos;
+    }
 }

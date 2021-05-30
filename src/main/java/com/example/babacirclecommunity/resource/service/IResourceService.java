@@ -30,4 +30,12 @@ public interface IResourceService {
      * @return
      */
     ResourcesVo selectSingleResourcePost(int id, int userId) throws ParseException;
+
+    /**
+     * 根据id查询他人发布的货源帖子
+     * @param othersId 他人用户id
+     * @param paging 分页
+     * @return
+     */
+    List<ResourceClassificationVo> queryHavePostedPosts(int othersId, Paging paging);
 }
