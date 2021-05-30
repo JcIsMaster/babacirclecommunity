@@ -116,7 +116,7 @@ public class CircleServiceImpl implements ICircleService {
             String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
             circles.get(i).setImg(strings);
 
-            //得到点过赞人的头像
+            //得到看过这个帖子人的头像
             String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
             circles.get(i).setGiveAvatar(strings1);
 
