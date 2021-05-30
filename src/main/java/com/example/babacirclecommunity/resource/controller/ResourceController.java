@@ -53,4 +53,13 @@ public class ResourceController {
         return iResourceService.selectSingleResourcePost(id,userId);
     }
 
+    @ApiOperation(value = "根据id查询他人发布的货源帖子", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryHavePostedPosts")
+    public List<ResourceClassificationVo> queryHavePostedPosts(int othersId,Paging paging) {
+        return iResourceService.queryHavePostedPosts(othersId,paging);
+    }
+
+
+
 }

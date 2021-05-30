@@ -101,4 +101,13 @@ public interface ResourceMapper {
      */
     @Select("select COALESCE(count(*),0) from tb_browse where zq_id=${tid} and type=0")
     int countPostNum(@Param("tid")  int tid);
+
+    /**
+     * 查询我发布资源帖子
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1 order by a.create_at desc ${paging}")
+    List<ResourceClassificationVo> queryHavePostedPosts(@Param("userId") int userId,@Param("paging") String paging);
 }
