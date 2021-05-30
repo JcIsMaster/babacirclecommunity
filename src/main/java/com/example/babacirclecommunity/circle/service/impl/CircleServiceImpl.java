@@ -73,9 +73,6 @@ public class CircleServiceImpl implements ICircleService {
             String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circleClassificationVos.get(i).getId());
             circleClassificationVos.get(i).setGiveAvatar(strings1);
 
-            //得到点赞数量
-            Integer integer1 = circleGiveMapper.selectGiveNumber(circleClassificationVos.get(i).getId());
-            circleClassificationVos.get(i).setGiveNumber(integer1);
 
 
             //等于0在用户没有到登录的情况下 直接设置没有点赞
@@ -90,11 +87,6 @@ public class CircleServiceImpl implements ICircleService {
                     circleClassificationVos.get(i).setWhetherGive(1);
                 }
             }
-
-
-            //得到帖子评论数量
-            Integer integer2 = commentMapper.selectCommentNumber(circleClassificationVos.get(i).getId());
-            circleClassificationVos.get(i).setNumberPosts(integer2);
 
 
             //将所有关注状态为1关注状态
@@ -205,7 +197,7 @@ public class CircleServiceImpl implements ICircleService {
         String[] strings = circleMapper.selectImgByPostId(circleClassificationVo.getId());
         circleClassificationVo.setImg(strings);
 
-        //得到点过赞人的头像
+        //得到看过帖子人的头像
         String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circleClassificationVo.getId());
         circleClassificationVo.setGiveAvatar(strings1);
 

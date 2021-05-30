@@ -125,7 +125,13 @@ public interface CircleMapper {
      * @param userId 用户id
      * @return
      */
-    @Select("select a.type,a.forwarding_number,a.id,a.content,a.tags_one,a.tags_two,a.type,d.id as uId,d.user_name,d.avatar,a.video,a.cover,a.browse,a.create_at,c.tag_name,c.id as tagId from tb_circles a INNER JOIN tb_user d on a.user_id=d.id INNER JOIN tb_user_attention b on a.user_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 and a.is_delete=1 order by a.create_at desc ${paging}")
+    @Select("select a.type,a.forwarding_number,a.id,a.content,a.tags_one,a.tags_two,a.type,d.id as uId,d.user_name,d.avatar" +
+            ",a.video,a.cover,a.browse,a.create_at,c.tag_name,c.id as tagId,ifnull(d.giveNumber,0) as giveNumber " +
+            ",ifnull(e.uu,0) as numberPosts from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from " +
+            "tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id LEFT JOIN (select COALESCE(count(*),0) as uu,t_id " +
+            "from tb_comment GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user d on a.user_id=d.id INNER JOIN " +
+            "tb_user_attention b on a.user_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 " +
+            "and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryAttentionPerson(@Param("userId") int userId,@Param("paging") String paging);
 
     /**

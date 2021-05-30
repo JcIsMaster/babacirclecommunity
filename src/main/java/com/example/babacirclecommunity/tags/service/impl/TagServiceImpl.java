@@ -45,7 +45,7 @@ public class TagServiceImpl implements ITagService {
         //根据一级标签查询二级标签数据
         List<Tag> tags = tagMapper.selectResourcesAllTags(tid);
 
-        String str="";
+   /*     String str="";
 
         if(tags.get(0).getType()==0){
             str="tb_resources";
@@ -53,15 +53,15 @@ public class TagServiceImpl implements ITagService {
 
         if(tags.get(0).getType()==1){
             str="tb_circles";
-        }
+        }*/
        /* //将对象List中的某个字段放到新的List中
         List<Integer> stringList = tags.stream().map(Tag::getId).collect(Collectors.toList());*/
-
+/*
        for (int i=0;i<tags.size();i++){
            //根据二级标签组查询每个标签发过多少个帖子
            int i1 = tagMapper.selectTagsNum(tags.get(i).getId(), str);
            tags.get(i).setNum(i1);
-       }
+       }*/
 
         return tags;
     }
