@@ -2,7 +2,9 @@ package com.example.babacirclecommunity.resource.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
+import com.example.babacirclecommunity.resource.vo.ResourcesVo;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -20,4 +22,12 @@ public interface IResourceService {
      * @return
      */
     List<ResourceClassificationVo> queryResource(Paging paging,int orderRule,  int tagId, String title);
+
+    /**
+     * 查询单个资源帖子
+     * @param id 帖子id
+     * @param userId 用户id
+     * @return
+     */
+    ResourcesVo selectSingleResourcePost(int id, int userId) throws ParseException;
 }
