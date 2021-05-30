@@ -46,9 +46,9 @@ public class ResourceServiceImpl implements IResourceService {
     public List<ResourceClassificationVo> queryResource(Paging paging, int orderRule, int tagId, String title) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
-        System.out.println(tagId);
-        System.out.println(title);
-
+        if(title==null || title.equals("") || title.equals("undefined")){
+            title="";
+        }
         return resourceMapper.queryResource(sql,orderRule,title,tagId);
     }
 
@@ -149,10 +149,7 @@ public class ResourceServiceImpl implements IResourceService {
 
         //筛选掉等于当前用户id的数据
         //筛选掉当前点进来的帖子是一样的就干掉
-        List<ResourceClassificationVo> collect=null;
-        if(userId!=0){
-            collect = homeClassificationVos.stream().filter(u -> u.getUId() != userId).filter(a-> a.getId()!=tid).collect(Collectors.toList());
-        }
+        List<ResourceClassificationVo> collect = homeClassificationVos.stream().filter(u -> u.getUId() != userId).filter(a-> a.getId()!=tid).collect(Collectors.toList());
 
         return collect;
     }
