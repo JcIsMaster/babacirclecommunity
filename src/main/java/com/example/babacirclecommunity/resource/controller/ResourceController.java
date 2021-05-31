@@ -59,8 +59,8 @@ public class ResourceController {
     @ApiOperation(value = "根据id查询他人发布的货源帖子", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryHavePostedPosts")
-    public Map<String,Object> queryHavePostedPosts(int othersId, Paging paging) {
-        return iResourceService.queryHavePostedPosts(othersId,paging);
+    public Map<String,Object> queryHavePostedPosts(int userId,int othersId, Paging paging) {
+        return iResourceService.queryHavePostedPosts(userId,othersId,paging);
     }
 
     /**
@@ -105,7 +105,7 @@ public class ResourceController {
     @ResponseBody
     @PostMapping("/issueResourceOrCircle")
     public void issueResourceOrCircle(Resources resources, String imgUrl,int whetherCover) throws Exception {
-        if(resources.getUId()==0 || resources.getTagsOne()==0 || resources.getTagsTwo()==0){
+        if(resources.getUId()==0 || resources.getTagsTwo()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         iResourceService.issueResourceOrCircle(resources,imgUrl,whetherCover);

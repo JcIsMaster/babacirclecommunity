@@ -36,11 +36,12 @@ public interface IResourceService {
 
     /**
      * 根据id查询他人发布的货源帖子
+     * @param userId
      * @param othersId 他人用户id
      * @param paging 分页
      * @return
      */
-    Map<String,Object> queryHavePostedPosts(int othersId, Paging paging);
+    Map<String,Object> queryHavePostedPosts(int userId,int othersId, Paging paging);
 
     /**
      * 根据二级标签id查询推荐数据
