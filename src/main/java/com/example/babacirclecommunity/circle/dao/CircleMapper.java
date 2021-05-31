@@ -7,6 +7,7 @@ import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.home.entity.Community;
+import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.user.vo.UserVo;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
@@ -280,6 +281,16 @@ public interface CircleMapper {
     @Insert("insert into tb_haplont(h_name,create_at)values(#{haplont.hName},#{haplont.createAt})")
     @Options(useGeneratedKeys=true, keyProperty="haplont.id",keyColumn="id")
     int addHaplont(@Param("haplont") Haplont haplont);
+
+    /**
+     * 根据三级标签查询资源数据
+     * @param haplontType
+     * @return
+     */
+    @Select("select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
+            " tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.haplont_type=${haplontType} and a.tags_two=${tagId} order by a.create_at desc ${paging}")
+    List<CircleClassificationVo> queryPostByHaplontType(@Param("haplontType") int haplontType, @Param("paging") String paging, @Param("tagId") int tagId);
+
 
 
 }
