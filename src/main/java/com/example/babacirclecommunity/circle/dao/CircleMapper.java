@@ -2,6 +2,7 @@ package com.example.babacirclecommunity.circle.dao;
 
 import com.example.babacirclecommunity.circle.entity.Circle;
 import com.example.babacirclecommunity.circle.entity.CommunityUser;
+import com.example.babacirclecommunity.circle.entity.Haplont;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
@@ -266,20 +267,19 @@ public interface CircleMapper {
     /**
      * 添加圈子的标签
      * @param tagId 标签id
-     * @param hName 名称
+     * @param haplontId 名称
      * @return
      */
-    @Insert("insert into tb_tag_haplont(tag_id,h_name)values(${tagId},#{hName})")
-    int addTagHaplont(@Param("tagId") int tagId,@Param("hName") String hName);
+    @Insert("insert into tb_tag_haplont(tag_id,haplont_id)values(${tagId},#{haplontId})")
+    int addTagHaplont(@Param("tagId") int tagId,@Param("haplontId") int haplontId);
 
     /**
      * 添加单元体
-     * @param hName 名称
-     * @param createAt 创建时间
      * @return
      */
-    @Insert("insert into tb_haplont(h_name,create_at)values(#{hName},#{createAt})")
-    int addHaplont(@Param("hName") String hName,@Param("createAt") String createAt);
+    @Insert("insert into tb_haplont(h_name,create_at)values(#{haplont.hName},#{haplont.createAt})")
+    @Options(useGeneratedKeys=true, keyProperty="haplont.id",keyColumn="id")
+    int addHaplont(@Param("haplont") Haplont haplont);
 
 
 }
