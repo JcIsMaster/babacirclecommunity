@@ -93,7 +93,7 @@ public class CircleController {
 
     /**
      *
-     * 查询我的圈子 （圈子广场）
+     * 查询我的圈子 查询我创建的圈子 （圈子广场）
      * @return
      */
     @ApiOperation(value = "查询我的圈子 （圈子广场）",notes = "成功返回数据 反则为空")
