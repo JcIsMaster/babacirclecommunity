@@ -599,7 +599,6 @@ public class WxPoster {
 
 			//二维码
 			BufferedImage k = tt.loadImageLocal(rightUrl);
-
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,150, 560,160,160));
 
 			//将头像图改为圆形
@@ -608,7 +607,7 @@ public class WxPoster {
 				throw new ApplicationException(CodeType.SERVICE_ERROR);
 			}
 			//将图片设置为圆形
-			BufferedImage convertCircular = convertCircular(ka);
+			BufferedImage convertCircular = getSque(ka);
 			if(convertCircular==null){
 				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
 			}
@@ -617,7 +616,7 @@ public class WxPoster {
 			//帖子第一张图片的地址
 			//网络图片
 			BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,480,280));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
 
 			//设置用户名
 			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font);
@@ -648,6 +647,31 @@ public class WxPoster {
 	}
 
 
+	/**
+	 * 剪裁成正方形
+	 */
+	public static BufferedImage getSque(BufferedImage bi) throws IOException {
+		int init_width = bi.getWidth();
+		int init_height = bi.getHeight();
+		if (init_width != init_height){
+			int width_height = 0;
+			int x = 0;
+			int y = 0;
+			if (init_width > init_height) {
+				//原图是宽大于高的长方形
+				width_height = init_height;
+				x = (init_width-init_height)/2;
+				y = 0;
+			} else if (init_width < init_height) {
+				//原图是高大于宽的长方形
+				width_height = init_width;
+				y = (init_height-init_width)/2;
+				x = 0;
+			}
+			bi = bi.getSubimage(x, y, init_width, width_height);
+		}
+		return convertCircular(bi);
+	}
 
 
 	/**

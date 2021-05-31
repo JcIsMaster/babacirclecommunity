@@ -61,7 +61,7 @@ public interface ResourceMapper {
      * @param tid 帖子id
      * @return
      */
-    @Select("select COALESCE(count(*),0) from tb_user_collection where u_id=${userId} and t_id=${tid} and is_delete=1")
+    @Select("select COALESCE(count(*),0) from tb_user_collection where u_id=${userId} and t_id=${tid} and is_delete=1 ")
     int selectWhetherCollection(@Param("userId") int userId,@Param("tid") int tid);
 
     /**

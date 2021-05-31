@@ -24,7 +24,7 @@ public interface IResourceService {
      * @param title 标题
      * @return
      */
-    List<ResourceClassificationVo> queryResource(Paging paging,int orderRule,  int tagId, String title);
+    List<ResourceClassificationVo> queryResource(Paging paging,int orderRule,int tagId, String title);
 
     /**
      * 查询单个资源帖子
