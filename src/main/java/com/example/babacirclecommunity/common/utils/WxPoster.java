@@ -627,7 +627,7 @@ public class WxPoster {
 				Font font1 = new Font("Monospaced", Font.BOLD, 20);
 				g= j.createGraphics();
 				//设置标题 文字换行
-				drawStringWithFontStyleLineFeedTitle(g,title,300 , 15, 440,font1);
+				drawStringWithFontStyleLineFeedTitle(g,title,300 , 15, 480,font1);
 				tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 			}
 
@@ -636,7 +636,7 @@ public class WxPoster {
 			g= j.createGraphics();
 			//设置内容  文字换行
 			Font font2 = new Font("Monospaced", Font.PLAIN, 15);
-			drawStringWithFontStyleLineFeed(g,postContent ,400 , 15, 490,font2);
+			drawStringWithFontStyleLineFeed(g,postContent ,400 , 15, 530,font2);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 		} catch (Exception e) {
 			// TODO: handle exception
