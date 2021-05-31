@@ -410,13 +410,14 @@ public class ResourceServiceImpl implements IResourceService {
                 outputStream.write(buf, 0, len);
             }
             outputStream.flush();
+            outputStream.close();
 
             time=System.currentTimeMillis()/1000+13+"";
 
 
             WxPoster wxPoster=new WxPoster();
             //生成海报5
-            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMasterResource("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", resourcesVo.getAvatar(), resourcesVo.getCover(),resourcesVo.getContent(),resourcesVo.getUserName(),resourcesVo.getTitle());
+            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMasterResource("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/"+time+".png", resourcesVo.getAvatar(), resourcesVo.getCover(),resourcesVo.getContent(),resourcesVo.getUserName(),resourcesVo.getTitle());
             String newGreat = posterUrlGreatMaster.replace("e:/file/img/", "https://www.gofatoo.com/img/");
             /*if(newGreat!=null){
                 if(circleFriendsVo.getType()==0){

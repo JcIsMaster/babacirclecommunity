@@ -15,6 +15,7 @@ import com.example.babacirclecommunity.tags.dao.TagMapper;
 import com.example.babacirclecommunity.tags.entity.Tag;
 import com.example.babacirclecommunity.user.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -575,6 +576,19 @@ public class CircleServiceImpl implements ICircleService {
     @Override
     public List<UserVo> queryCircleMembers(int communityId) {
         return circleMapper.queryCircleMembers(communityId);
+    }
+
+    @Override
+    public void addTagHaplont(int tagId, String hName) {
+        int i = circleMapper.addHaplont(hName, System.currentTimeMillis() / 1000 + "");
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
+        int i1 = circleMapper.addTagHaplont(tagId, hName);
+        if(i1<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加单元体错误");
+        }
     }
 
 

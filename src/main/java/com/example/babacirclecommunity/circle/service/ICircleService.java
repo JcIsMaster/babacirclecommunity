@@ -129,4 +129,11 @@ public interface ICircleService {
      * @return
      */
     List<UserVo> queryCircleMembers(int communityId);
+
+    /**
+     * 添加单元体标签
+     * @param tagId 标签id
+     * @param hName 名称
+     */
+    void addTagHaplont(int tagId,String hName );
 }

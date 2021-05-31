@@ -10,6 +10,7 @@ import com.example.babacirclecommunity.user.vo.UserVo;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.security.PermitAll;
 import java.util.List;
 
 /**
@@ -261,5 +262,24 @@ public interface CircleMapper {
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
             " where a.is_delete=1 order by a.create_at desc  ${paging}")
     List<CircleClassificationVo> queryReferenceCircles(@Param("paging") String paging);
+
+    /**
+     * 添加圈子的标签
+     * @param tagId 标签id
+     * @param hName 名称
+     * @return
+     */
+    @Insert("insert into tb_tag_haplont(tag_id,h_name)values(${tagId},#{hName})")
+    int addTagHaplont(@Param("tagId") int tagId,@Param("hName") String hName);
+
+    /**
+     * 添加单元体
+     * @param hName 名称
+     * @param createAt 创建时间
+     * @return
+     */
+    @Insert("insert into tb_haplont(h_name,create_at)values(#{hName},#{createAt})")
+    int addHaplont(@Param("hName") String hName,@Param("createAt") String createAt);
+
 
 }
