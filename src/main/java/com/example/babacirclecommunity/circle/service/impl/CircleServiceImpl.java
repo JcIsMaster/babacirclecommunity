@@ -11,6 +11,7 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.*;
 import com.example.babacirclecommunity.home.entity.Community;
+import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.tags.dao.TagMapper;
 import com.example.babacirclecommunity.tags.entity.Tag;
 import com.example.babacirclecommunity.user.vo.UserVo;
@@ -467,6 +468,13 @@ public class CircleServiceImpl implements ICircleService {
             str="order by a.favour desc " + sql;
             circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId,str);
         }
+
+        //其他导航栏点击
+        if(typeId>1){
+            circles = circleMapper.queryPostByHaplontType(typeId, sql, tagId);
+        }
+
+
 
         for (int i=0;i<circles.size();i++){
             //得到图片组
