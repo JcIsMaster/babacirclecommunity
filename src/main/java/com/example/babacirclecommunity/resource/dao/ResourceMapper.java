@@ -1,8 +1,10 @@
 package com.example.babacirclecommunity.resource.dao;
 
+import com.example.babacirclecommunity.resource.entity.Resources;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
@@ -129,4 +131,29 @@ public interface ResourceMapper {
     @Select("select a.id,a.cover,a.tags_one,a.content,c.avatar,c.id as uId,c.user_name,a.title,a.favour,a.collect,a.browse,a.create_at,a.type,a.video,b.tag_name,b.id as tagId" +
             " from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one=${tagsOne} and a.type=1 and a.is_delete=1 ${paging}")
     List<ResourcesVo> queryAllVideosPrimaryTagId(@Param("tagsOne") int tagsOne,@Param("paging") String paging);
+
+    /**
+     * 增加资源帖子
+     * @param resources
+     * @return
+     */
+    @Insert("insert into tb_resources(content,tags_one,tags_two,type,video,cover,create_at,u_id,title,haplont_type)values(#{resources.content},${resources.tagsOne},${resources.tagsTwo},${resources.type},#{resources.video},#{resources.cover},#{resources.createAt},${resources.uId},#{resources.title},${resources.haplontType})")
+    @Options(useGeneratedKeys=true, keyProperty="resources.id",keyColumn="id")
+    int addResourcesPost(@Param("resources") Resources resources);
+
+    /**
+     * 批量增加图片
+     * @param zId 帖子id
+     * @param imgUrl 图片地址
+     * @param createAt 创建时间
+     * @param postType 帖子类型
+     * @return
+     */
+    @Insert("<script>" +
+            "insert into tb_img(z_id,img_url,type,create_at) VALUES  " +
+            "<foreach collection='imgUrl' item='item' index='index' separator=','>" +
+            "(${zId},#{item},${postType},#{createAt})" +
+            "</foreach>" +
+            "</script>")
+    int addImg(@Param("zId") int zId, @Param("imgUrl") String[] imgUrl,@Param("createAt") String createAt,@Param("postType") int postType);
 }

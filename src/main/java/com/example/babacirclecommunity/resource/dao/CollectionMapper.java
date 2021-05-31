@@ -37,6 +37,7 @@ public interface CollectionMapper {
      * @param uId 用户id
      * @param tId 贴子id
      * @param createAt 创建时间
+     * @param remarks 备注
      * @return
      */
     @Insert("insert into tb_user_collection(u_id,t_id,create_at,remarks) values(${uId},${tId},#{createAt},#{remarks})")
