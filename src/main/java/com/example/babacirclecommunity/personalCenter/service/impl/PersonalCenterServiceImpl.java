@@ -1,9 +1,7 @@
 package com.example.babacirclecommunity.personalCenter.service.impl;
 
-import com.example.babacirclecommunity.circle.dao.AttentionMapper;
-import com.example.babacirclecommunity.circle.dao.CircleGiveMapper;
-import com.example.babacirclecommunity.circle.dao.CircleMapper;
-import com.example.babacirclecommunity.circle.dao.CommentMapper;
+import com.example.babacirclecommunity.circle.dao.*;
+import com.example.babacirclecommunity.circle.entity.Haplont;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.common.utils.Paging;
@@ -41,6 +39,9 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
 
     @Autowired
     private CommentMapper commentMapper;
+
+    @Autowired
+    private CommunityMapper communityMapper;
 
     @Override
     public PersonalVo queryPersonalCenter(int userId,int otherId) {
@@ -148,6 +149,10 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         if (type == 0){
             List<CircleVo> circleVos = circleMapper.myCircleAndCircleJoined(otherId, sql);
             for (int i=0;i<circleVos.size();i++){
+                //得到单元体导航栏
+                List<Haplont> haplonts = communityMapper.selectHaplontByTagId(circleVos.get(i).getTagId());
+                circleVos.get(i).setHaplonts(haplonts);
+
                 if(circleVos.get(i).getWhetherPublic()==0){
                     if(circleVos.get(i).getUserId()!=otherId){
                         circleVos.remove(i);
@@ -159,6 +164,11 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         //查询加入的圈子
         if (type == 1){
             List<CircleVo> circleVos = circleMapper.circleJoined(otherId, sql);
+            for (int i=0;i<circleVos.size();i++){
+                //得到单元体导航栏
+                List<Haplont> haplonts = communityMapper.selectHaplontByTagId(circleVos.get(i).getTagId());
+                circleVos.get(i).setHaplonts(haplonts);
+            }
             return circleVos;
         }
         return null;

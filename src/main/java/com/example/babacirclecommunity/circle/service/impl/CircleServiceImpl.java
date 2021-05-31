@@ -283,9 +283,7 @@ public class CircleServiceImpl implements ICircleService {
             for (int i=0;i<circleVos.size();i++){
                 List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
                 circleVos.get(i).setCircleVoList(circleVos1);
-                //得到单元体导航栏
-                List<Haplont> haplonts = communityMapper.selectHaplontByTagId(circleVos.get(i).getTagId());
-                circleVos.get(i).setHaplonts(haplonts);
+
 
             }
             return circleVos;
@@ -297,9 +295,7 @@ public class CircleServiceImpl implements ICircleService {
         for (int i=0;i<circleVos.size();i++){
             List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
             circleVos.get(i).setCircleVoList(circleVos1);
-            //得到单元体导航栏
-            List<Haplont> haplonts = communityMapper.selectHaplontByTagId(circleVos.get(i).getTagId());
-            circleVos.get(i).setHaplonts(haplonts);
+
         }
 
         return circleVos;
