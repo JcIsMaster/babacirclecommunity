@@ -141,7 +141,7 @@ public class ResourceServiceImpl implements IResourceService {
     }
 
     @Override
-    public Map<String,Object> queryHavePostedPosts(int othersId, Paging paging) {
+    public Map<String,Object> queryHavePostedPosts(int userId,int othersId, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String pag="limit "+page+","+paging.getLimit()+"";
 
@@ -155,6 +155,16 @@ public class ResourceServiceImpl implements IResourceService {
 
         map.put("homeClassificationVos",homeClassificationVos);
         map.put("user",personalCenterUserVo);
+
+        if (userId == 0){
+            map.put("isMe",0);
+            return map;
+        }
+        if (userId == othersId){
+            map.put("isMe",1);
+            return map;
+        }
+        map.put("isMe",0);
 
         return map;
     }
@@ -333,7 +343,7 @@ public class ResourceServiceImpl implements IResourceService {
 
     public void issue(Resources resources, String imgUrl, int whetherCover)throws Exception{
         resources.setCreateAt(System.currentTimeMillis()/1000+"");
-
+        resources.setTagsOne(12);
         String[] split = null;
 
         //自己选封面
