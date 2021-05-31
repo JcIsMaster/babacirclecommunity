@@ -112,4 +112,14 @@ public class ResourceController {
     }
 
 
+    /**
+     * 得到海报图
+     * @return
+     */
+    @ApiOperation(value = "得到海报图",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/getPosterImage")
+    public List<String> getPosterImage(String pageUrl,int id) throws Exception {
+        return  iResourceService.getPosterImage(pageUrl,id);
+    }
 }

@@ -75,4 +75,13 @@ public interface IResourceService {
      * @throws Exception
      */
     void issueResourceOrCircle(Resources resources, String imgUrl, int whetherCover) throws Exception;
+
+    /**
+     * 得到资源海报图
+     * @param pageUrl 二维码指向的地址
+     * @param id 帖子id
+     * @return
+     * @throws Exception
+     */
+    List<String> getPosterImage(String pageUrl,int id) throws Exception;
 }
