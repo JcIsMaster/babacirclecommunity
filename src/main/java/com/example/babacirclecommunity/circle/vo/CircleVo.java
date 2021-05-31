@@ -1,5 +1,6 @@
 package com.example.babacirclecommunity.circle.vo;
 
+import com.example.babacirclecommunity.circle.entity.Haplont;
 import lombok.Data;
 
 import java.util.List;
@@ -60,4 +61,8 @@ public class CircleVo {
      * 每个圈子的最新圈子封面和id
      */
     List<CircleImgIdVo> circleVoList;
+
+    List<Haplont> haplonts;
+
+
 }
