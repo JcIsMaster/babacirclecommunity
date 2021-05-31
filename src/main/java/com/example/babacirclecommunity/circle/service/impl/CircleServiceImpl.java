@@ -580,12 +580,16 @@ public class CircleServiceImpl implements ICircleService {
 
     @Override
     public void addTagHaplont(int tagId, String hName) {
-        int i = circleMapper.addHaplont(hName, System.currentTimeMillis() / 1000 + "");
+
+        Haplont haplont=new Haplont();
+        haplont.setCreateAt(System.currentTimeMillis()/1000+"");
+        haplont.setHName(hName);
+        int i = circleMapper.addHaplont(haplont);
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
 
-        int i1 = circleMapper.addTagHaplont(tagId, hName);
+        int i1 = circleMapper.addTagHaplont(tagId, haplont.getId());
         if(i1<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"添加单元体错误");
         }
