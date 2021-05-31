@@ -76,7 +76,7 @@ public interface CollaborateMapper {
      * @param id
      * @return
      */
-    @Insert("update tb_collaborate set browse=browse+1 where id=${id} ")
+    @Insert("update tb_resources set browse=browse+1 where id=${id} ")
     int updateBrowse(@Param("id") int id);
 
     /**
