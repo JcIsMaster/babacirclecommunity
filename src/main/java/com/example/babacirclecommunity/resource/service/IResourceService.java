@@ -2,11 +2,13 @@ package com.example.babacirclecommunity.resource.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.resource.entity.Collection;
+import com.example.babacirclecommunity.resource.entity.Resources;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -38,7 +40,7 @@ public interface IResourceService {
      * @param paging 分页
      * @return
      */
-    List<ResourceClassificationVo> queryHavePostedPosts(int othersId, Paging paging);
+    Map<String,Object> queryHavePostedPosts(int othersId, Paging paging);
 
     /**
      * 根据二级标签id查询推荐数据
@@ -64,4 +66,13 @@ public interface IResourceService {
      * @return
      */
     int collectionPost(Collection collection);
+
+    /**
+     * 发布
+     * @param resources 对象
+     * @param imgUrl 图片地址
+     * @param whetherCover（1自己选的，0系统默认）
+     * @throws Exception
+     */
+    void issueResourceOrCircle(Resources resources, String imgUrl, int whetherCover) throws Exception;
 }

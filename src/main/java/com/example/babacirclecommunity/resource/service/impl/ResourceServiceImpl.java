@@ -4,15 +4,16 @@ import com.example.babacirclecommunity.circle.dao.BrowseMapper;
 import com.example.babacirclecommunity.circle.entity.Browse;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
-import com.example.babacirclecommunity.common.utils.DateUtils;
-import com.example.babacirclecommunity.common.utils.Paging;
-import com.example.babacirclecommunity.common.utils.TimeUtil;
+import com.example.babacirclecommunity.common.utils.*;
 import com.example.babacirclecommunity.resource.dao.CollectionMapper;
 import com.example.babacirclecommunity.resource.dao.ResourceMapper;
 import com.example.babacirclecommunity.resource.entity.Collection;
+import com.example.babacirclecommunity.resource.entity.Resources;
 import com.example.babacirclecommunity.resource.service.IResourceService;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
+import com.example.babacirclecommunity.user.dao.UserMapper;
+import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +44,9 @@ public class ResourceServiceImpl implements IResourceService {
 
     @Autowired
     private CollectionMapper collectionMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public List<ResourceClassificationVo> queryResource(Paging paging, int orderRule, int tagId, String title) {
@@ -135,12 +141,22 @@ public class ResourceServiceImpl implements IResourceService {
     }
 
     @Override
-    public List<ResourceClassificationVo> queryHavePostedPosts(int othersId,Paging paging) {
+    public Map<String,Object> queryHavePostedPosts(int othersId, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String pag="limit "+page+","+paging.getLimit()+"";
 
+        //插叙资源帖子信息
         List<ResourceClassificationVo> homeClassificationVos = resourceMapper.queryHavePostedPosts(othersId,pag);
-        return homeClassificationVos;
+
+        //根据用户id查询出用户信息
+        PersonalCenterUserVo personalCenterUserVo = userMapper.queryUserById(othersId);
+
+        Map<String,Object> map=new HashMap<>(5);
+
+        map.put("homeClassificationVos",homeClassificationVos);
+        map.put("user",personalCenterUserVo);
+
+        return map;
     }
 
     @Override
@@ -293,5 +309,67 @@ public class ResourceServiceImpl implements IResourceService {
         }
 
         return i;
+    }
+
+    @Override
+    public void issueResourceOrCircle(Resources resources, String imgUrl, int whetherCover) throws Exception {
+
+        //获取token
+        String token = ConstantUtil.getToken();
+        String identifyTextContent = ConstantUtil.identifyText(resources.getTitle(), token);
+        if(identifyTextContent.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
+        //获取token
+        String token1 = ConstantUtil.getToken();
+        String identifyTextContent1 = ConstantUtil.identifyText(resources.getContent(), token1);
+        if(identifyTextContent1.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
+        issue(resources,imgUrl,whetherCover);
+    }
+
+    public void issue(Resources resources, String imgUrl, int whetherCover)throws Exception{
+        resources.setCreateAt(System.currentTimeMillis()/1000+"");
+
+        String[] split = null;
+
+        //自己选封面
+        if(whetherCover==1){
+            if(resources.getType()==0){
+                split=imgUrl.split(",");
+            }
+        }
+
+        //系统默认封面
+        if(whetherCover==0){
+            //视频
+            if(resources.getType()==1){
+                String videoCover = FfmpegUtil.getVideoCover(resources.getVideo());
+                resources.setCover(videoCover);
+                //图片
+            }else if(resources.getType()==0){
+                split=imgUrl.split(",");
+                resources.setCover(split[0]);
+            }
+        }
+
+        int i = resourceMapper.addResourcesPost(resources);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
+
+
+        if(resources.getType()==0){
+            int addImg = resourceMapper.addImg(resources.getId(), split, System.currentTimeMillis() / 1000 + "", 0);
+            if(addImg<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+        }
+
+
     }
 }

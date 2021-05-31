@@ -4,6 +4,7 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.resource.entity.Collection;
+import com.example.babacirclecommunity.resource.entity.Resources;
 import com.example.babacirclecommunity.resource.service.IResourceService;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -57,7 +59,7 @@ public class ResourceController {
     @ApiOperation(value = "根据id查询他人发布的货源帖子", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryHavePostedPosts")
-    public List<ResourceClassificationVo> queryHavePostedPosts(int othersId,Paging paging) {
+    public Map<String,Object> queryHavePostedPosts(int othersId, Paging paging) {
         return iResourceService.queryHavePostedPosts(othersId,paging);
     }
 
@@ -94,5 +96,20 @@ public class ResourceController {
         }
         return iResourceService.collectionPost(collection);
     }
+
+    /**
+     * 发布
+     * @return
+     */
+    @ApiOperation(value = "发布",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/issueResourceOrCircle")
+    public void issueResourceOrCircle(Resources resources, String imgUrl,int whetherCover) throws Exception {
+        if(resources.getUId()==0 || resources.getTagsOne()==0 || resources.getTagsTwo()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        iResourceService.issueResourceOrCircle(resources,imgUrl,whetherCover);
+    }
+
 
 }
