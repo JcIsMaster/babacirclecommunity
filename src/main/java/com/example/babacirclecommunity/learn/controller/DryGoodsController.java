@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.List;
 
 
 /**
@@ -132,4 +133,18 @@ public class DryGoodsController {
     public DryGoodsPersonalVo queryDryGoodsPersonal(int userId, int otherId, Paging paging){
         return iDryGoodsService.queryDryGoodsPersonal(userId,otherId,paging);
     }
+
+    /**
+     * 得到干货海报
+     * @param id 帖子id
+     * @param pageUrl 二维码指向的地址
+     * @return
+     */
+    @ApiOperation(value = "得到干货海报",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/getDryPosters")
+    public List<String> getDryPosters(int id, String pageUrl){
+        return iDryGoodsService.getDryPosters(id,pageUrl);
+    }
+
 }

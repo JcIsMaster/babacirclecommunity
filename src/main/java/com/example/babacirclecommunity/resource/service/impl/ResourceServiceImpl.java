@@ -372,7 +372,7 @@ public class ResourceServiceImpl implements IResourceService {
             //秘钥
             param.put("scene", ConstantUtil.secret);
             //二维码指向的地址
-            param.put("page", pageUrl);
+            param.put("page", "pages/indexHome/home");
             param.put("width", 430);
             param.put("auto_color", false);
             //去掉二维码底色

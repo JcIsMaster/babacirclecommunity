@@ -7,6 +7,8 @@ import com.example.babacirclecommunity.learn.entity.LearnPostExceptional;
 import com.example.babacirclecommunity.learn.vo.DryGoodsTagVo;
 import com.example.babacirclecommunity.personalCenter.vo.DryGoodsPersonalVo;
 
+import java.util.List;
+
 /**
  * @author JC
  * @date 2021/4/16 15:56
@@ -70,4 +72,12 @@ public interface IDryGoodsService {
      * @return
      */
     DryGoodsPersonalVo queryDryGoodsPersonal(int userId, int otherId, Paging paging);
+
+    /**
+     * 得到干货海报
+     * @param id 帖子id
+     * @param pageUrl 二维码指向的地址
+     * @return
+     */
+    List<String> getDryPosters(int id, String pageUrl);
 }

@@ -2,6 +2,7 @@ package com.example.babacirclecommunity.learn.dao;
 
 import com.example.babacirclecommunity.learn.entity.DryGoods;
 import com.example.babacirclecommunity.learn.entity.LearnPostExceptional;
+import com.example.babacirclecommunity.learn.vo.DryGoodsPostersVo;
 import com.example.babacirclecommunity.learn.vo.DryGoodsTagVo;
 import com.example.babacirclecommunity.learn.vo.DryGoodsVo;
 import org.apache.ibatis.annotations.*;
@@ -51,6 +52,15 @@ public interface DryGoodsMapper {
             "on a.tags_two = b.id LEFT JOIN tb_learn_post_exceptional c on a.id = c.t_id and c.type = 1 " +
             "where a.id = ${id} and a.is_delete = 1")
     DryGoodsTagVo queryDryGoodsById(@Param("id") int id);
+
+    /**
+     * 干货海报
+     * @param id 帖子id
+     * @return
+     */
+    @Select("select a.title,a.cover_img,b.user_name,b.avatar from tb_dry_goods a inner join tb_user b on a.u_id=b.id " +
+            "where a.id = ${id} and a.is_delete = 1")
+    DryGoodsPostersVo queryDryGoodsPosters(@Param("id") int id);
 
     /**
      * 增加干货帖

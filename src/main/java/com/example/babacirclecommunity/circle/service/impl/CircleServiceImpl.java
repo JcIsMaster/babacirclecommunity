@@ -18,8 +18,12 @@ import com.example.babacirclecommunity.user.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -35,6 +39,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@CacheConfig(cacheNames = "circleCache")
 @Transactional(rollbackFor = Exception.class)
 public class CircleServiceImpl implements ICircleService {
 
@@ -98,6 +103,7 @@ public class CircleServiceImpl implements ICircleService {
         return circleClassificationVos;
     }
 
+    @Cacheable(key = "#userId+'-'+#type")
     @Override
     public List<CircleClassificationVo> queryImagesOrVideos(int type, Paging paging, int userId) {
         Integer pages=(paging.getPage()-1)*paging.getLimit();
@@ -135,7 +141,6 @@ public class CircleServiceImpl implements ICircleService {
             String time = DateUtils.getTime(circles.get(i).getCreateAt());
             circles.get(i).setCreateAt(time);
         }
-
         return circles;
     }
 

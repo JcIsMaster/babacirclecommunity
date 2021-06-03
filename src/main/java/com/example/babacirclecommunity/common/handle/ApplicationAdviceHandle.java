@@ -4,6 +4,7 @@ package com.example.babacirclecommunity.common.handle;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.data.Result;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
+import io.lettuce.core.RedisCommandTimeoutException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MultipartException;
@@ -53,5 +54,11 @@ public class ApplicationAdviceHandle extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = MultipartException.class)
     Result arithmeticExceptionException(MultipartException e, HttpServletRequest request) {
         return new Result(-1,"上传单个文件大小只能上传30M","");
+    }
+
+    @ExceptionHandler(value = RedisCommandTimeoutException.class)
+    Result arithmeticExceptionException(RedisCommandTimeoutException e,HttpServletRequest request){
+        return new Result(-1,"redis连接超时");
+
     }
 }

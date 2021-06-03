@@ -6,6 +6,8 @@ import com.example.babacirclecommunity.learn.entity.ClassOrder;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
 import com.example.babacirclecommunity.personalCenter.vo.ClassPersonalVo;
 
+import java.util.List;
+
 /**
  * @author JC
  * @date 2021/5/6 9:45
@@ -43,4 +45,12 @@ public interface IPublicClassService {
      * @return
      */
     ClassPersonalVo queryClassPersonal(int userId, int otherId, Paging paging);
+
+    /**
+     * 得到公开课海报
+     * @param id 帖子id
+     * @param pageUrl 二维码指向的地址
+     * @return
+     */
+    List<String> getPublicClass(int id, String pageUrl);
 }

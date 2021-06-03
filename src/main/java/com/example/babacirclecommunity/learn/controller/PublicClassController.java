@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * @author JC
@@ -86,5 +87,18 @@ public class PublicClassController {
     @PostMapping("/queryClassPersonal")
     public ClassPersonalVo queryClassPersonal(int userId, int otherId, Paging paging){
         return iPublicClassService.queryClassPersonal(userId,otherId,paging);
+    }
+
+    /**
+     * 得到公开课海报
+     * @param id 帖子id
+     * @param pageUrl 二维码指向的地址
+     * @return
+     */
+    @ApiOperation(value = "得到公开课海报",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/getPublicClass")
+    public List<String> getPublicClass(int id, String pageUrl){
+        return iPublicClassService.getPublicClass(id,pageUrl);
     }
 }

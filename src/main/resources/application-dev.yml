@@ -12,6 +12,14 @@ spring:
       connection-timeout: 50000
       maximum-pool-size: 60
       minimum-idle: 10
+  redis:
+    host: 119.29.130.179
+    timeout: 5000
+    jedis:
+      pool:
+        max-wait: 1000
+        max-active: 20
+        min-idle: 1
   # HTTP ENCODING
   servlet:
     multipart:

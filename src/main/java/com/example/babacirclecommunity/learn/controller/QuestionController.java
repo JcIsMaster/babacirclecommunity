@@ -104,4 +104,6 @@ public class QuestionController {
     public QuestionPersonalVo queryQuestionPersonal(int userId, int otherId, Paging paging){
         return iQuestionService.queryQuestionPersonal(userId,otherId,paging);
     }
+
+
 }

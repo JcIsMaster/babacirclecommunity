@@ -607,11 +607,11 @@ public class WxPoster {
 				throw new ApplicationException(CodeType.SERVICE_ERROR);
 			}
 			//将图片设置为圆形
-			BufferedImage convertCircular = getSque(ka);
+			BufferedImage convertCircular = convertCircular(ka);
 			if(convertCircular==null){
 				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
 			}
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,80,80));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,70,70));
 
 			//帖子第一张图片的地址
 			//网络图片
@@ -638,6 +638,146 @@ public class WxPoster {
 			Font font2 = new Font("Monospaced", Font.PLAIN, 15);
 			drawStringWithFontStyleLineFeed(g,postContent ,400 , 15, 530,font2);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++"+e);
+		}
+
+		return loadUrl;
+	}
+
+
+
+	/**
+	 * 干货
+	 * @param leftUrl 背景图
+	 * @param rightUrl 二维码
+	 * @param loadUrl 合成图的地址  （自定义）
+	 * @param headUrl 头像地址
+	 * @param postImg 帖子第一张图片
+	 * @param userName 用户名
+	 * @param title 标题
+	 * @return
+	 */
+	public String getPosterUrlGreatMasterDryGoods(String leftUrl, String rightUrl, String loadUrl, String headUrl, String postImg,String userName,String title)  {
+
+		try {
+			WxPoster tt = new WxPoster();
+
+			//背景图
+			BufferedImage j = tt.loadImageLocal(leftUrl);
+
+			//二维码
+			BufferedImage k = tt.loadImageLocal(rightUrl);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,150, 560,160,160));
+
+			//将头像图改为圆形
+			BufferedImage ka = getRemoteBufferedImage(headUrl);
+			if(ka==null){
+				throw new ApplicationException(CodeType.SERVICE_ERROR);
+			}
+			//将图片设置为圆形
+			BufferedImage convertCircular = convertCircular(ka);
+			if(convertCircular==null){
+				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
+			}
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,70,70));
+
+			//帖子第一张图片的地址
+			//网络图片
+			BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
+
+			//设置用户名
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
+
+
+			if(title!=null){
+				Font font1 = new Font("Monospaced", Font.BOLD, 20);
+				g= j.createGraphics();
+				//设置标题 文字换行
+				drawStringWithFontStyleLineFeedTitle(g,title,300 , 15, 480,font1);
+				tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
+			}
+
+
+			/*//得到画图
+			g= j.createGraphics();
+			//设置内容  文字换行
+			Font font2 = new Font("Monospaced", Font.PLAIN, 15);
+			drawStringWithFontStyleLineFeed(g,postContent ,400 , 15, 530,font2);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));*/
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++"+e);
+		}
+
+		return loadUrl;
+	}
+
+
+
+	/**
+	 * 公开课
+	 * @param leftUrl 背景图
+	 * @param rightUrl 二维码
+	 * @param loadUrl 合成图的地址  （自定义）
+	 * @param headUrl 头像地址
+	 * @param postImg 帖子第一张图片
+	 * @param userName 用户名
+	 * @param title 标题
+	 * @return
+	 */
+	public String getPosterUrlGreatMasterPublicClass(String leftUrl, String rightUrl, String loadUrl, String headUrl, String postImg,String userName,String title)  {
+
+		try {
+			WxPoster tt = new WxPoster();
+
+			//背景图
+			BufferedImage j = tt.loadImageLocal(leftUrl);
+
+			//二维码
+			BufferedImage k = tt.loadImageLocal(rightUrl);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,150, 560,160,160));
+
+			//将头像图改为圆形
+			BufferedImage ka = getRemoteBufferedImage(headUrl);
+			if(ka==null){
+				throw new ApplicationException(CodeType.SERVICE_ERROR);
+			}
+			//将图片设置为圆形
+			BufferedImage convertCircular = convertCircular(ka);
+			if(convertCircular==null){
+				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
+			}
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,70,70));
+
+			//帖子第一张图片的地址
+			//网络图片
+			BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
+
+			//设置用户名
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
+
+
+			if(title!=null){
+				Font font1 = new Font("Monospaced", Font.BOLD, 20);
+				g= j.createGraphics();
+				//设置标题 文字换行
+				drawStringWithFontStyleLineFeedTitle(g,title,300 , 15, 480,font1);
+				tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
+			}
+
+
+			/*//得到画图
+			g= j.createGraphics();
+			//设置内容  文字换行
+			Font font2 = new Font("Monospaced", Font.PLAIN, 15);
+			drawStringWithFontStyleLineFeed(g,postContent ,400 , 15, 530,font2);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));*/
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++"+e);

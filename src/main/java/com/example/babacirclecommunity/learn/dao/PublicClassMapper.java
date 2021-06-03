@@ -50,6 +50,14 @@ public interface PublicClassMapper {
     PublicClassVo queryPublicClassById(@Param("id") int id);
 
     /**
+     * 根据id查询公开课详情
+     * @param id
+     * @return
+     */
+    @Select("select a.title,a.cover_img,b.user_name as uName,b.avatar as uAvatar from tb_public_class a inner join tb_user b on a.u_id=b.id where id = ${id} and is_delete = 1")
+    PublicClassVo queryPublicClassPosters(@Param("id") int id);
+
+    /**
      * 根据id查询公开课发帖人
      * @param id
      * @return
