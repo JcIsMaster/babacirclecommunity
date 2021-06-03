@@ -438,7 +438,6 @@ public class ResourceServiceImpl implements IResourceService {
 
     public void issue(Resources resources, String imgUrl, int whetherCover)throws Exception{
         resources.setCreateAt(System.currentTimeMillis()/1000+"");
-        resources.setTagsOne(12);
         String[] split = null;
 
         //自己选封面
