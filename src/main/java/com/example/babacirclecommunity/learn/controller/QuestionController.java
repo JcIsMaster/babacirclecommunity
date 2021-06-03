@@ -105,5 +105,17 @@ public class QuestionController {
         return iQuestionService.queryQuestionPersonal(userId,otherId,paging);
     }
 
+    /**
+     * 得到提问海报
+     * @param id 帖子id
+     * @param pageUrl 二维码指向的地址
+     * @return
+     */
+    @ApiOperation(value = "得到提问海报",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/getQuestionPosters")
+    public List<String> getQuestionPosters(int id, String pageUrl){
+        return iQuestionService.getQuestionPosters(id,pageUrl);
+    }
 
 }

@@ -53,4 +53,12 @@ public interface IQuestionService {
      * @return
      */
     QuestionPersonalVo queryQuestionPersonal(int userId,int otherId,Paging paging);
+
+    /**
+     * 得到提问海报
+     * @param id 帖子id
+     * @param pageUrl 二维码指向的地址
+     * @return
+     */
+    List<String> getQuestionPosters(int id, String pageUrl);
 }
