@@ -130,7 +130,7 @@ public class CircleController {
     @ApiOperation(value = "发布圈子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/publishingCircles")
-    public void publishingCircles(Circle circle, String imgUrl) throws IOException, ParseException {
+    public void publishingCircles(Circle circle, String imgUrl) throws Exception {
         if(circle.getUserId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }

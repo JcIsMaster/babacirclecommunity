@@ -6,12 +6,20 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.UUID;
 
 
@@ -276,7 +284,7 @@ public class WxPoster {
 	 * @param img
 	 * @return
 	 */
-	public BufferedImage modifyImageYe(BufferedImage img,String userName,int w,int h,Font font) {
+	public BufferedImage modifyImageYe(BufferedImage img,String userName,int x,int y,Font font) {
 
  
 
@@ -294,7 +302,7 @@ public class WxPoster {
 			if (this.font != null) {
 				g.setFont(font);
 			}
-			g.drawString(userName, w, h);
+			g.drawString(userName, x, y);
 			g.dispose();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -499,7 +507,222 @@ public class WxPoster {
 
 	}
 
-	
+	/**
+	 * 图像等比例缩放
+	 *
+	 * @param img     the img
+	 * @param maxSize the max size 清晰度 值越大 图片越清晰
+	 * @param type    the type
+	 * @return the scaled image
+	 */
+	private static BufferedImage getScaledImage(BufferedImage img, int maxSize, int type) {
+		int w0 = img.getWidth();
+		int h0 = img.getHeight();
+		int w = w0;
+		int h = h0;
+		// 头像如果是长方形：
+		// 1:高度与宽度的最大值为maxSize进行等比缩放,
+		// 2:高度与宽度的最小值为maxSize进行等比缩放
+		if (type == 1) {
+			w = w0 > h0 ? maxSize : (maxSize * w0 / h0);
+			h = w0 > h0 ? (maxSize * h0 / w0) : maxSize;
+		} else if (type == 2) {
+			w = w0 > h0 ? (maxSize * w0 / h0) : maxSize;
+			h = w0 > h0 ? maxSize : (maxSize * h0 / w0);
+		}
+		Image schedImage = img.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+		BufferedImage bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = bufferedImage.createGraphics();
+		g.drawImage(schedImage, 0, 0, null);
+		return bufferedImage;
+	}
+
+	/**
+	 * 裁剪图片
+	 *
+	 * @param img          the img
+	 * @param originWidth  the origin width
+	 * @param originHeight the origin height
+	 * @return the buffered image
+	 * @throws Exception the exception
+	 */
+	public static BufferedImage cutPicture(BufferedImage img, int originWidth, int originHeight) throws IOException {
+		int width = img.getWidth();  // 原图的宽度
+		int height = img.getHeight();  //原图的高度
+
+		int newImageX = 0; // 要截图的坐标
+		int newImageY = 0; // 要截图的坐标
+		if (width > originWidth) {
+			newImageX = (width - originWidth) / 2;
+		}
+		if (height > originHeight) {
+			newImageY = height - originHeight;
+		}
+		return cutJPG(img, newImageX, newImageY, originWidth, originHeight);
+	}
+
+	/**
+	 * 进行裁剪操作
+	 *
+	 * @param originalImage the original image
+	 * @param x             the x
+	 * @param y             the y
+	 * @param width         the width
+	 * @param height        the height
+	 * @return the buffered image
+	 * @throws IOException the io exception
+	 */
+	public static BufferedImage cutJPG(BufferedImage originalImage, int x, int y, int width, int height) throws IOException {
+		Iterator<ImageReader> iterator = ImageIO.getImageReadersByFormatName("jpg");
+		ImageReader reader = iterator.next();
+		// 转换成字节流
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		// writeToJPEG(1080,originalImage,0.5f,outputStream);
+		ImageIO.write(originalImage, "jpg", outputStream);
+		InputStream is = new ByteArrayInputStream(outputStream.toByteArray());
+		ImageInputStream iis = ImageIO.createImageInputStream(is);
+		reader.setInput(iis, true);
+		ImageReadParam param = reader.getDefaultReadParam();
+		Rectangle rect = new Rectangle(x, y, width, height);
+		param.setSourceRegion(rect);
+		return reader.read(0, param);
+	}
+
+	/**
+	 * 方形转为圆形
+	 *
+	 * @param img    the img
+	 * @param radius the radius 半径
+	 * @return the buffered image
+	 * @throws Exception the exception
+	 */
+	public static BufferedImage convertRoundedImage(BufferedImage img, int radius) {
+		BufferedImage result = new BufferedImage(radius, radius, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = result.createGraphics();
+		//在适当的位置画图
+		g.drawImage(img, (radius - img.getWidth(null)) / 2, (radius - img.getHeight(null)) / 2, null);
+
+		//圆角
+		RoundRectangle2D round = new RoundRectangle2D.Double(0, 0, radius, radius, radius * 2, radius * 2);
+		Area clear = new Area(new Rectangle(0, 0, radius, radius));
+		clear.subtract(new Area(round));
+		g.setComposite(AlphaComposite.Clear);
+
+		//抗锯齿
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.fill(clear);
+		g.dispose();
+
+		return result;
+	}
+
+	/**
+	 * 对头像处理
+	 * @param img
+	 * @param radius
+	 * @return
+	 */
+	public static BufferedImage createRoundedImage(BufferedImage img , int radius) {
+		BufferedImage fixedImg = null;
+		BufferedImage bufferedImage = null;
+		try {
+			// 1. 按原比例缩减
+			fixedImg = getScaledImage(img, radius, 2);
+			// 2. 居中裁剪
+			fixedImg = cutPicture(fixedImg, radius, radius);
+			// 3. 把正方形生成圆形
+			bufferedImage = convertRoundedImage(fixedImg, radius);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return bufferedImage;
+	}
+
+
+	/*** 图片切圆角
+
+	 *@paramsrcImage
+
+	 *@paramradius
+
+	 *@return
+
+	 */
+
+	public static BufferedImage setClip(BufferedImage srcImage, int radius){
+		int width =srcImage.getWidth();int height =srcImage.getHeight();
+
+		BufferedImage image= new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D gs=image.createGraphics();
+
+		gs.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		gs.setClip(new RoundRectangle2D.Double(0, 0, width, height, radius, radius));
+
+		gs.drawImage(srcImage,0, 0, null);
+
+		gs.dispose();return image;
+
+	}
+
+
+	/*** 图片设置圆角
+
+	 *@paramsrcImage
+
+	 *@paramradius
+
+	 *@paramborder
+
+	 *@parampadding
+
+	 *@return*@throwsIOException*/
+
+	public static BufferedImage setRadius(BufferedImage srcImage, int radius, int border, int padding) throws IOException{
+	int width =srcImage.getWidth();
+
+	int height =srcImage.getHeight();int canvasWidth = width + padding * 2;int canvasHeight = height + padding * 2;
+
+		BufferedImage image= new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D gs=image.createGraphics();
+
+		gs.setComposite(AlphaComposite.Src);
+
+		gs.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		gs.setColor(Color.WHITE);
+
+		gs.fill(new RoundRectangle2D.Float(0, 0, canvasWidth, canvasHeight, radius, radius));
+
+		gs.setComposite(AlphaComposite.SrcAtop);
+
+		gs.drawImage(setClip(srcImage, radius), padding, padding,null);if(border !=0){
+			gs.setColor(Color.GRAY);
+
+			gs.setStroke(new BasicStroke(border));
+
+			gs.drawRoundRect(padding, padding, canvasWidth- 2 * padding, canvasHeight - 2 *padding, radius, radius);
+
+		}
+		gs.dispose();
+		return image;
+	}
+
+	/*** 图片设置圆角
+
+	 *@paramsrcImage
+
+	 *@return*@throwsIOException*/
+
+	public static BufferedImage setRadius(BufferedImage srcImage)throws Exception{
+	int radius = (srcImage.getWidth() + srcImage.getHeight()) / 20; //调整图片的圆角尺寸
+		return setRadius(srcImage, radius, 1, 1);//调整左右的白边
+	}
+
+
+
 	
 	/**
 	 * 圈子
@@ -524,29 +747,37 @@ public class WxPoster {
 			//二维码
 			BufferedImage k = tt.loadImageLocal(rightUrl);
 
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,150, 560,160,160));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,280, 630,160,160));
 
-			//将头像图改为圆形
+			//头像
 			BufferedImage ka = getRemoteBufferedImage(headUrl);
-			if(ka==null){
-				throw new ApplicationException(CodeType.SERVICE_ERROR);
-			}
-			//将图片设置为圆形
-			BufferedImage convertCircular = convertCircular(ka);
+			//切圆角
+			BufferedImage bufferedImage2 = setRadius(ka);
+			BufferedImage convertCircular = getScaledImage(bufferedImage2,80,1);
 			if(convertCircular==null){
 				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
 			}
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,80,80));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,17, 20,60,60));
 
 			//帖子第一张图片的地址
 			//网络图片
-			BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,480,280));
+			BufferedImage bufferedImage = getRemoteBufferedImage(postImg);
+			//切圆角
+			BufferedImage bufferedImage1 = setRadius(bufferedImage);
+			//等比例缩放
+			BufferedImage remoteBufferedImage2 = getScaledImage(bufferedImage1,1000,1);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,17, 115,415,365));
 
 			//设置用户名
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font);
+			Font userNameFont = new Font("Microsoft YaHei", Font.BOLD, 18);
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,95,50,userNameFont);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
+			//设置时间
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+			Font dataFont = new Font("Microsoft YaHei", Font.BOLD, 18);
+			BufferedImage modifyImageYe1 = tt.modifyImageYe(j,df.format(new Date()),95,72,dataFont);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
 			if(title!=null){
 				Font font1 = new Font("Monospaced", Font.BOLD, 20);
@@ -560,8 +791,8 @@ public class WxPoster {
 			//得到画图
 			g= j.createGraphics();
 			//设置内容  文字换行
-			Font font2 = new Font("Monospaced", Font.PLAIN, 15);
-			drawStringWithFontStyleLineFeed(g,postContent ,400 , 15, 490,font2);
+			Font font2 = new Font("Microsoft YaHei", Font.BOLD, 18);
+			drawStringWithFontStyleLineFeedCircle(g,postContent ,400 , 15, 510,font2);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -616,6 +847,7 @@ public class WxPoster {
 			//帖子第一张图片的地址
 			//网络图片
 			BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
+
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
 
 			//设置用户名
@@ -1010,12 +1242,74 @@ public class WxPoster {
 	 */
 	private  void  drawStringWithFontStyleLineFeed(Graphics g, String strContent,int maxWdith, int loc_X, int loc_Y, Font font){
 		g.setFont(font);
-		g.setColor(new Color(29,29,29));
+		g.setColor(Color.BLACK);
 		//获取字符串 字符的总宽度
 		int strWidth =getStringLength(g,strContent);
 
 		if(strWidth>1866){
 			String strsub=strContent.substring(0,45);//0到56的字符串
+			strContent=strsub+"......";
+		}
+
+		//每一行字符串宽度
+		int rowWidth=maxWdith;
+		// System.out.println("每行字符宽度:"+rowWidth);
+		//获取字符高度
+		int strHeight=getStringHeight(g);
+		//字符串总个数
+		//  System.out.println("字符串总个数:"+strContent.length());
+		if(strWidth>rowWidth){
+			char[] strContentArr = strContent.toCharArray();
+			int count = 0;
+			int conut_value = 0;
+			int line = 0;
+			int charWidth = 0;
+			for(int j=0;j< strContentArr.length;j++){
+
+				if(conut_value>=rowWidth){
+					conut_value = 0;
+					g.drawString(strContent.substring(count,j),loc_X,loc_Y+strHeight*line);
+					count = j;
+					line++;
+
+				}else{
+					if(j==strContentArr.length - 1){
+						g.drawString(strContent.substring(count,j),loc_X,loc_Y+strHeight*line);
+					}else{
+						charWidth = g.getFontMetrics().charWidth(strContentArr[j]);
+						conut_value = charWidth + conut_value;
+					}
+
+				}
+
+			}
+
+		}else{
+			//直接绘制
+			g.drawString(strContent, loc_X, loc_Y);
+		}
+
+	}
+
+
+	/**
+	 * 圈子使用
+	 * 根据指定宽度自动换行
+	 * @param g
+	 * @param maxWdith
+	 * @param strContent
+	 * @param loc_X
+	 * @param loc_Y
+	 * @param font
+	 */
+	private  void  drawStringWithFontStyleLineFeedCircle(Graphics g, String strContent,int maxWdith, int loc_X, int loc_Y, Font font){
+		g.setFont(font);
+		g.setColor(Color.BLACK);
+		//获取字符串 字符的总宽度
+		int strWidth =getStringLength(g,strContent);
+
+		if(strWidth>3000){
+			String strsub=strContent.substring(0,strContent.length()-80);//0到56的字符串
 			strContent=strsub+"......";
 		}
 

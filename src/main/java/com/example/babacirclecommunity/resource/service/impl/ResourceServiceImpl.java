@@ -465,8 +465,6 @@ public class ResourceServiceImpl implements IResourceService {
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
 
-
-
         if(resources.getType()==0){
             int addImg = resourceMapper.addImg(resources.getId(), split, System.currentTimeMillis() / 1000 + "", 0);
             if(addImg<=0){
