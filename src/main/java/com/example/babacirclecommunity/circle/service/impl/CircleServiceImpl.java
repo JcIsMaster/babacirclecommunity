@@ -15,17 +15,21 @@ import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.tags.dao.TagMapper;
 import com.example.babacirclecommunity.tags.entity.Tag;
 import com.example.babacirclecommunity.user.vo.UserVo;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.io.IOException;
+import java.security.Key;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -63,6 +67,13 @@ public class CircleServiceImpl implements ICircleService {
 
     @Autowired
     private CommunityMapper communityMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedisConfig redisConfig;
+
 
     @Override
     public List<CircleClassificationVo> queryPostsPeopleFollow(int userId, Paging paging) {
@@ -103,45 +114,44 @@ public class CircleServiceImpl implements ICircleService {
         return circleClassificationVos;
     }
 
-    @Cacheable(key = "#userId+'-'+#type")
     @Override
     public List<CircleClassificationVo> queryImagesOrVideos(int type, Paging paging, int userId) {
         Integer pages=(paging.getPage()-1)*paging.getLimit();
         String pagings=" limit "+pages+","+paging.getLimit()+"";
 
-        List<CircleClassificationVo> circles = circleMapper.queryImagesOrVideos(type, pagings);
-        for (int i=0;i< circles.size();i++){
+            List<CircleClassificationVo> circles = circleMapper.queryImagesOrVideos(type, pagings);
+            for (int i=0;i< circles.size();i++){
+                //得到图片组
+                String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
+                circles.get(i).setImg(strings);
 
-            //得到图片组
-            String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
-            circles.get(i).setImg(strings);
-
-            //得到看过这个帖子人的头像
-            String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
-            circles.get(i).setGiveAvatar(strings1);
+                //得到看过这个帖子人的头像
+                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+                circles.get(i).setGiveAvatar(strings1);
 
 
-            //等于0在用户没有到登录的情况下 直接设置没有点赞
-            if(userId!=0){
-                //查看我是否关注了此人
-                int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
-                if(i1>0){
-                    circles.get(i).setWhetherAttention(1);
+                //等于0在用户没有到登录的情况下 直接设置没有点赞
+                if(userId!=0){
+                    //查看我是否关注了此人
+                    int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                    if(i1>0){
+                        circles.get(i).setWhetherAttention(1);
+                    }
+
+                    //查询是否对帖子点了赞   0没有 1有
+                    Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                    if(integer>0){
+                        circles.get(i).setWhetherGive(1);
+                    }
                 }
 
-                //查询是否对帖子点了赞   0没有 1有
-                Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
-                if(integer>0){
-                    circles.get(i).setWhetherGive(1);
-                }
+
+                //将时间戳转换为多少天或者多少个小时和多少年
+                String time = DateUtils.getTime(circles.get(i).getCreateAt());
+                circles.get(i).setCreateAt(time);
             }
 
-
-            //将时间戳转换为多少天或者多少个小时和多少年
-            String time = DateUtils.getTime(circles.get(i).getCreateAt());
-            circles.get(i).setCreateAt(time);
-        }
-        return circles;
+            return circles;
     }
 
     @Override
@@ -282,28 +292,35 @@ public class CircleServiceImpl implements ICircleService {
         Integer pages=(paging.getPage()-1)*paging.getLimit();
         String pagings=" limit "+pages+","+paging.getLimit()+"";
 
-        //如果communityName不等于空 就根据communityName查询圈子
-        if(communityName!=null && !communityName.equals("") && !"undefined".equals(communityName)){
-            List<CircleVo> circleVos = circleMapper.searchFundCircle(userId, communityName, pagings);
+            //如果communityName不等于空 就根据communityName查询圈子
+            if(communityName!=null && !communityName.equals("") && !"undefined".equals(communityName)){
+                List<CircleVo> circleVos = circleMapper.searchFundCircle(userId, communityName, pagings);
+                for (int i=0;i<circleVos.size();i++){
+                    List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
+                    circleVos.get(i).setCircleVoList(circleVos1);
+                }
+                return circleVos;
+
+        }
+
+        //查看缓存是否存在 如果存在就查询缓存中的数据，否则查询数据库加入缓存
+        if(redisTemplate.hasKey("MyCirclesSquare::"+userId)){
+            //查询缓存数据
+            List range = redisConfig.getList("MyCirclesSquare::" + userId, pages, paging.getPage() * paging.getLimit() - 1);
+            return range;
+        }else{
+            //查询我创建的圈子
+            List<CircleVo> circleVos = circleMapper.myCircleAndCircleJoined(userId, pagings);
             for (int i=0;i<circleVos.size();i++){
                 List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
                 circleVos.get(i).setCircleVoList(circleVos1);
-
-
             }
+            //存入redis缓存
+            redisTemplate.opsForList().rightPushAll("MyCirclesSquare::"+userId,circleVos);
+
             return circleVos;
         }
 
-
-        //查询我创建的圈子
-        List<CircleVo> circleVos = circleMapper.myCircleAndCircleJoined(userId, pagings);
-        for (int i=0;i<circleVos.size();i++){
-            List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
-            circleVos.get(i).setCircleVoList(circleVos1);
-
-        }
-
-        return circleVos;
     }
 
     @Override
@@ -370,7 +387,8 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public void publishingCircles(Circle circle, String imgUrl) throws ParseException, IOException {
+    public void publishingCircles(Circle circle, String imgUrl) throws Exception {
+
         //获取token
         String token = ConstantUtil.getToken();
         String identifyTextContent = ConstantUtil.identifyText(circle.getContent(), token);
@@ -398,6 +416,9 @@ public class CircleServiceImpl implements ICircleService {
         //如果状态等于0说明发布的是图文
         if(circle.getType()==0){
             String[] split =imgUrl.split(",");
+            if(split.length>9){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"最多只能上传9张图片！");
+            }
             int addImg = circleMapper.addImg(circle.getId(), split, System.currentTimeMillis() / 1000 + "", 1);
             if(addImg<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
@@ -461,69 +482,73 @@ public class CircleServiceImpl implements ICircleService {
     public List<CircleClassificationVo> queryClickUnitNavigationBar(int typeId, int userId, int tagId, Paging paging) {
         List<CircleClassificationVo> circles=null;
 
+
+
         String str="";
         int page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
 
 
         //查询最新的数据
-        if(typeId==0){
+        if(typeId==1){
             str = "order by a.create_at desc " + sql;
             circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId,str);
         }
 
         //查询最热的数据
-        if(typeId==1){
-            str="order by a.favour desc " + sql;
+        if(typeId==2){
+            str="order by a.browse desc " + sql;
             circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId,str);
         }
 
         //其他导航栏点击
-        if(typeId>1){
+        if(typeId>2){
             circles = circleMapper.queryPostByHaplontType(typeId, sql, tagId);
         }
 
 
+        if(circles.size()!=0 || circles!=null){
+            for (int i=0;i<circles.size();i++){
+                //得到图片组
+                String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
+                circles.get(i).setImg(strings);
 
-        for (int i=0;i<circles.size();i++){
-            //得到图片组
-            String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
-            circles.get(i).setImg(strings);
+                //得到点过赞人的头像
+                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+                circles.get(i).setGiveAvatar(strings1);
 
-            //得到点过赞人的头像
-            String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
-            circles.get(i).setGiveAvatar(strings1);
-
-            //得到点赞数量
-            Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
-            circles.get(i).setGiveNumber(integer1);
+                //得到点赞数量
+                Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+                circles.get(i).setGiveNumber(integer1);
 
 
-            //等于0在用户没有到登录的情况下 直接设置没有点赞
-            if(userId==0){
-                circles.get(i).setWhetherGive(0);
-                circles.get(i).setWhetherAttention(0);
-            }else{
-                //查看我是否关注了此人
-                int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
-                if(i1>0){
-                    circles.get(i).setWhetherAttention(1);
+                //等于0在用户没有到登录的情况下 直接设置没有点赞
+                if(userId==0){
+                    circles.get(i).setWhetherGive(0);
+                    circles.get(i).setWhetherAttention(0);
+                }else{
+                    //查看我是否关注了此人
+                    int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                    if(i1>0){
+                        circles.get(i).setWhetherAttention(1);
+                    }
+
+                    //查询是否对帖子点了赞   0没有 1有
+                    Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                    if(integer>0){
+                        circles.get(i).setWhetherGive(1);
+                    }
                 }
 
-                //查询是否对帖子点了赞   0没有 1有
-                Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
-                if(integer>0){
-                    circles.get(i).setWhetherGive(1);
-                }
+
+                //得到帖子评论数量
+                Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+                circles.get(i).setNumberPosts(integer2);
+
+
             }
-
-
-            //得到帖子评论数量
-            Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
-            circles.get(i).setNumberPosts(integer2);
-
-
         }
+
 
         return circles;
     }
@@ -576,6 +601,13 @@ public class CircleServiceImpl implements ICircleService {
 
     @Override
     public void updateCircle(Community community) {
+        String key="MyCirclesSquare::"+community.getUserId();
+
+        //查看该缓存是否存在
+        if(redisTemplate.hasKey(key)){
+            redisConfig.remove(key);
+        }
+
         int i = communityMapper.updateCircle(community);
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"修改失败");

@@ -73,7 +73,7 @@ public interface ICircleService {
      * @param circle
      * @param imgUrl 图片地址
      */
-    void publishingCircles(Circle circle, String imgUrl) throws ParseException, IOException;
+    void publishingCircles(Circle circle, String imgUrl) throws ParseException, IOException, InterruptedException, Exception;
 
     /**
      * 进入单元体的接口

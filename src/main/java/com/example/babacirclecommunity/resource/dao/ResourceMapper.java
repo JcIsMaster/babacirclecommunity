@@ -77,7 +77,7 @@ public interface ResourceMapper {
      * @param id
      * @return
      */
-    @Select("select img_url from tb_img where z_id=${id}")
+    @Select("select img_url from tb_img where z_id=${id} and type=0")
     String[] selectImgByPostId(@Param("id") int id);
 
     /**

@@ -120,7 +120,7 @@ public interface CircleMapper {
      * @param id
      * @return
      */
-    @Select("select img_url from tb_img where z_id=${id}")
+    @Select("select img_url from tb_img where z_id=${id} and type=1")
     String[] selectImgByPostId(@Param("id") int id);
 
     /**
@@ -148,7 +148,7 @@ public interface CircleMapper {
             "LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id " +
             "INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
-            " where a.type=${type} and a.is_delete=1 GROUP BY d.zq_id order by a.create_at desc ${paging}")
+            " where a.type=${type} and a.is_delete=1  order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryImagesOrVideos(@Param("type") int type, @Param("paging") String paging);
 
     /**
