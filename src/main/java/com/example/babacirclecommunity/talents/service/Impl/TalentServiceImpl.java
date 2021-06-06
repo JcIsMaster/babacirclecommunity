@@ -1,6 +1,8 @@
 package com.example.babacirclecommunity.talents.service.Impl;
 
 import com.example.babacirclecommunity.circle.dao.AttentionMapper;
+import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.talents.dao.TalentsMapper;
 import com.example.babacirclecommunity.talents.entity.Talents;
@@ -62,5 +64,24 @@ public class TalentServiceImpl implements ITalentService {
         }
         TalentsVo talentsVo = talentsMapper.queryTalentById(userId);
         return talentsVo;
+    }
+
+    @Override
+    public int updatePersonalTalent(Talents talents) {
+        TalentsVo talentsVo = talentsMapper.queryTalentById(talents.getId());
+        int i = 0;
+        //名片数据不为空则修改名片
+        if (talentsVo != null){
+            i = talentsMapper.updatePersonalTalent(talents);
+        }
+        //反之新增名片
+        else {
+            talents.setCreateAt(System.currentTimeMillis() / 1000 + "");
+            i = talentsMapper.addPersonalTalent(talents);
+        }
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+        return i;
     }
 }

@@ -28,4 +28,11 @@ public interface ITalentService {
      */
     TalentsVo queryTalentById(int userId);
 
+    /**
+     * 修改个人名片
+     * @param talents
+     * @return
+     */
+    int updatePersonalTalent(Talents talents);
+
 }

@@ -2,8 +2,10 @@ package com.example.babacirclecommunity.talents.dao;
 
 import com.example.babacirclecommunity.talents.entity.Talents;
 import com.example.babacirclecommunity.talents.vo.TalentsVo;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -39,4 +41,23 @@ public interface TalentsMapper {
             "a.introduction,b.picture,b.introduce from tb_talents a inner join tb_user b on a.id = b.id " +
             "where a.id = ${userId} and a.is_delete = 1")
     TalentsVo queryTalentById(@Param("userId") int userId);
+
+    /**
+     * 修改个人名片
+     * @param talents
+     * @return
+     */
+    @Update("update tb_talents set city = #{talents.city},tag_primary = #{talents.tagPrimary},tag_individuality_one = #{talents.tagIndividualityOne}," +
+            "tag_individuality_two = #{talents.tagIndividualityTwo},introduction = #{talents.introduction} where id = ${talents.id}")
+    int updatePersonalTalent(@Param("talents") Talents talents);
+
+    /**
+     * 新增个人名片
+     * @param talents
+     * @return
+     */
+    @Insert("insert into tb_talents(id,avatar,nick_name,sex,city,tag_primary,tag_individuality_one,tag_individuality_two,introduction,create_at) " +
+            "values(${talents.id},#{talents.avatar},#{talents.nickName},${talents.sex},#{talents.city},#{talents.tagPrimary},#{tagPrimary.tagIndividualityOne}," +
+            "#{talents.tagIndividualityTwo},#{talents.introduction},#{talents.createAt})")
+    int addPersonalTalent(@Param("talents") Talents talents);
 }
