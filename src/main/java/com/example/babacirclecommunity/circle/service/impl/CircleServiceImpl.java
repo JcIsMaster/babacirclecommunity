@@ -92,7 +92,6 @@ public class CircleServiceImpl implements ICircleService {
             circleClassificationVos.get(i).setGiveAvatar(strings1);
 
 
-
             //等于0在用户没有到登录的情况下 直接设置没有点赞
             if(userId==0){
                 circleClassificationVos.get(i).setWhetherGive(0);

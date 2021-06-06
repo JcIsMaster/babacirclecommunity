@@ -284,21 +284,13 @@ public class WxPoster {
 	 * @param img
 	 * @return
 	 */
-	public BufferedImage modifyImageYe(BufferedImage img,String userName,int x,int y,Font font) {
-
- 
-
+	public BufferedImage modifyImageYe(BufferedImage img,String userName,int x,int y,Font font,Color black) {
 		try {
-
-//			int w = img.getWidth();
-//
-//			int h = img.getHeight();
 			//得到画笔对象
 			g = img.createGraphics();
-
-			//g.setBackground(Color.WHITE);
-			
-			g.setColor(Color.black);// 设置字体颜色
+			//消除文字锯齿
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g.setColor(black);// 设置字体颜色
 			if (this.font != null) {
 				g.setFont(font);
 			}
@@ -306,7 +298,6 @@ public class WxPoster {
 			g.dispose();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-
 		}
 
 		return img;
@@ -330,6 +321,8 @@ public class WxPoster {
      		int h = high;
      		
 			g = d.createGraphics();
+			//消除画图锯齿
+			g .setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g.drawImage(b, X, Y, w, h, null);
 
 			g.dispose();
@@ -523,6 +516,7 @@ public class WxPoster {
 		// 头像如果是长方形：
 		// 1:高度与宽度的最大值为maxSize进行等比缩放,
 		// 2:高度与宽度的最小值为maxSize进行等比缩放
+
 		if (type == 1) {
 			w = w0 > h0 ? maxSize : (maxSize * w0 / h0);
 			h = w0 > h0 ? (maxSize * h0 / w0) : maxSize;
@@ -747,17 +741,17 @@ public class WxPoster {
 			//二维码
 			BufferedImage k = tt.loadImageLocal(rightUrl);
 
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,280, 630,160,160));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,295, 640,160,160));
 
 			//头像
 			BufferedImage ka = getRemoteBufferedImage(headUrl);
 			//切圆角
 			BufferedImage bufferedImage2 = setRadius(ka);
-			BufferedImage convertCircular = getScaledImage(bufferedImage2,80,1);
+			BufferedImage convertCircular = getScaledImage(bufferedImage2,150,2);
 			if(convertCircular==null){
 				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
 			}
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,17, 20,60,60));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,22, 20,60,60));
 
 			//帖子第一张图片的地址
 			//网络图片
@@ -766,17 +760,17 @@ public class WxPoster {
 			BufferedImage bufferedImage1 = setRadius(bufferedImage);
 			//等比例缩放
 			BufferedImage remoteBufferedImage2 = getScaledImage(bufferedImage1,1000,1);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,17, 115,415,365));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,27, 115,415,375));
 
 			//设置用户名
 			Font userNameFont = new Font("Microsoft YaHei", Font.BOLD, 18);
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,95,50,userNameFont);
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,105,50,userNameFont,Color.black);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
 			//设置时间
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
 			Font dataFont = new Font("Microsoft YaHei", Font.BOLD, 18);
-			BufferedImage modifyImageYe1 = tt.modifyImageYe(j,df.format(new Date()),95,72,dataFont);
+			BufferedImage modifyImageYe1 = tt.modifyImageYe(j,df.format(new Date()),105,72,dataFont,Color.GRAY);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
 			if(title!=null){
@@ -791,8 +785,10 @@ public class WxPoster {
 			//得到画图
 			g= j.createGraphics();
 			//设置内容  文字换行
-			Font font2 = new Font("Microsoft YaHei", Font.BOLD, 18);
-			drawStringWithFontStyleLineFeedCircle(g,postContent ,400 , 15, 510,font2);
+			//消除文字锯齿
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			Font font2 = new Font("Microsoft YaHei", Font.BOLD, 15);
+			drawStringWithFontStyleLineFeedCircle(g,postContent ,400 , 25, 510,font2);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -851,7 +847,7 @@ public class WxPoster {
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
 
 			//设置用户名
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font);
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font,Color.black);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
 
@@ -921,7 +917,7 @@ public class WxPoster {
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
 
 			//设置用户名
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font);
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font,Color.black);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
 
@@ -991,7 +987,7 @@ public class WxPoster {
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
 
 			//设置用户名
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font);
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font,Color.black);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
 
@@ -1060,7 +1056,7 @@ public class WxPoster {
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
 
 			//设置用户名
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font);
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font,Color.black);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
 
@@ -1305,11 +1301,11 @@ public class WxPoster {
 	private  void  drawStringWithFontStyleLineFeedCircle(Graphics g, String strContent,int maxWdith, int loc_X, int loc_Y, Font font){
 		g.setFont(font);
 		g.setColor(Color.BLACK);
+
 		//获取字符串 字符的总宽度
 		int strWidth =getStringLength(g,strContent);
-
 		if(strWidth>3000){
-			String strsub=strContent.substring(0,strContent.length()-80);//0到56的字符串
+			String strsub=strContent.substring(0,180);//0到56的字符串
 			strContent=strsub+"......";
 		}
 
