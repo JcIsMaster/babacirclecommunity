@@ -62,16 +62,16 @@ public class TalentServiceImpl implements ITalentService {
         if (userId == 0){
             return null;
         }
-        TalentsVo talentsVo = talentsMapper.queryTalentById(userId);
+        TalentsVo talentsVo = talentsMapper.queryTalentByUserId(userId);
         return talentsVo;
     }
 
     @Override
     public int updatePersonalTalent(Talents talents) {
-        TalentsVo talentsVo = talentsMapper.queryTalentById(talents.getId());
+        Talents talent = talentsMapper.queryTalentById(talents.getId());
         int i = 0;
         //名片数据不为空则修改名片
-        if (talentsVo != null){
+        if (talent != null){
             i = talentsMapper.updatePersonalTalent(talents);
         }
         //反之新增名片

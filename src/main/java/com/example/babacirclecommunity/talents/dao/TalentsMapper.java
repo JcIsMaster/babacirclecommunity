@@ -26,21 +26,30 @@ public interface TalentsMapper {
      */
     @Select("<script>"+
             "select id,avatar,nick_name,sex,city,tag_primary,tag_individuality_one,tag_individuality_two,introduction from tb_talents where " +
-            "<if test='city != null'> city = #{city} and </if>"+
+            "<if test='city != null'> city LIKE CONCAT('%',#{city},'%') and </if    >"+
             "<if test='content != null'>nick_name LIKE CONCAT('%',#{content},'%') or introduction LIKE CONCAT('%',#{content},'%') and </if>"+
             "is_delete = 1 ${sql}" +
             "</script>")
     List<Talents> queryTalentsList(@Param("content") String content, @Param("city") String city, @Param("sql") String sql);
 
     /**
-     * 根据id查询人才名片
+     * 根据user_id查询人才名片
      * @param userId
      * @return
      */
-    @Select("select a.id,a.avatar,a.nick_name,IFNULL(b.user_sex,1) as sex,a.city,a.tag_primary,a.tag_individuality_one,a.tag_individuality_two," +
-            "a.introduction,b.picture,b.introduce from tb_talents a inner join tb_user b on a.id = b.id " +
-            "where a.id = ${userId} and a.is_delete = 1")
-    TalentsVo queryTalentById(@Param("userId") int userId);
+    @Select("select b.id,b.avatar,b.user_name as nickName,IFNULL(b.user_sex,1) as sex,a.city,a.tag_primary,a.tag_individuality_one,a.tag_individuality_two," +
+            "a.introduction,b.picture,b.introduce from tb_talents a right join tb_user b on a.id = b.id " +
+            "where b.id = ${userId} and b.is_delete = 1")
+    TalentsVo queryTalentByUserId(@Param("userId") int userId);
+
+    /**
+     * 根据id查询人才名片
+     * @param id
+     * @return
+     */
+    @Select("select id,avatar,nick_name,sex,city,tag_primary,tag_individuality_one,tag_individuality_two,introduction from tb_talents where " +
+            "id = ${id} and is_delete = 1")
+    Talents queryTalentById(@Param("id") int id);
 
     /**
      * 修改个人名片
@@ -57,7 +66,7 @@ public interface TalentsMapper {
      * @return
      */
     @Insert("insert into tb_talents(id,avatar,nick_name,sex,city,tag_primary,tag_individuality_one,tag_individuality_two,introduction,create_at) " +
-            "values(${talents.id},#{talents.avatar},#{talents.nickName},${talents.sex},#{talents.city},#{talents.tagPrimary},#{tagPrimary.tagIndividualityOne}," +
+            "values(${talents.id},#{talents.avatar},#{talents.nickName},${talents.sex},#{talents.city},#{talents.tagPrimary},#{talents.tagIndividualityOne}," +
             "#{talents.tagIndividualityTwo},#{talents.introduction},#{talents.createAt})")
     int addPersonalTalent(@Param("talents") Talents talents);
 }
