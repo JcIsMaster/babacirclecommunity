@@ -533,49 +533,9 @@ public class WxPoster {
 
 
 
-	/**
-	 * 对图片进行强制放大或缩小
-	 *
-	 * @param originalImage
-	 *            原始图片
-	 * @return
-	 */
-	public static BufferedImage zoomInImage(BufferedImage originalImage, int width, int height) {
-		BufferedImage newImage = new BufferedImage(width, height, originalImage.getType());
-
-		Graphics g = newImage.getGraphics();
-		g.drawImage(originalImage, 0, 0, width, height, null);
-		g.dispose();
-		return newImage;
-	}
 
 
-	/**
-	 * 实现图像的等比缩放
-	 *
-	 * @param source
-	 *            待处理的图片流
-	 * @param targetW
-	 *            宽度
-	 * @param targetH
-	 *            高度
-	 * @return
-	 */
-	public static BufferedImage resize(BufferedImage source, int targetW, int targetH) {
-		int width = source.getWidth();// 图片宽度
-		int height = source.getHeight();// 图片高度
-		return zoomInImage(source, targetW, targetH);
-		// 图片宽高都太小时，强制放大图片
-      /*
-      if (width < targetW && height < targetH) {
-         return zoomInImage(source, targetW, targetH);
-      } else if ((width < targetW && width == height) || (height < targetH && width == height)) {
-         return zoomInImage(source, targetW, targetH);
-      }
-      return null;
-      */
 
-	}
 
 
 
@@ -807,7 +767,7 @@ public class WxPoster {
 			//切圆角
 			BufferedImage bufferedImage1 = setRadius(bufferedImage);
 			//等比例缩放
-			BufferedImage remoteBufferedImage2 = zoomInImage(bufferedImage1,500,2000);
+			BufferedImage remoteBufferedImage2 = getScaledImage(bufferedImage1,800,1);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,27, 115,415,375));
 
 			//设置用户名
