@@ -345,6 +345,11 @@ public class CircleServiceImpl implements ICircleService {
             throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
         }
 
+        String key="MyCirclesSquare::"+community.getUserId();
+        if(redisTemplate.hasKey(key)){
+            redisConfig.remove(key);
+        }
+
         Tag tag=new Tag();
         tag.setImgUrl(community.getPosters());
         tag.setTagName(community.getCommunityName());
@@ -486,6 +491,7 @@ public class CircleServiceImpl implements ICircleService {
         String str="";
         int page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
+
 
 
         //查询最新的数据
