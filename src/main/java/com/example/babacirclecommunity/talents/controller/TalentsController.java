@@ -39,4 +39,11 @@ public class TalentsController {
     public TalentsVo queryTalentById(int userId){
         return iTalentService.queryTalentById(userId);
     }
+
+    @ApiOperation(value = "修改个人名片",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/updatePersonalTalent")
+    public int updatePersonalTalent(Talents talents){
+        return iTalentService.updatePersonalTalent(talents);
+    }
 }
