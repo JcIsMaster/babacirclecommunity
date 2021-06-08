@@ -40,7 +40,7 @@ public interface ResourceMapper {
             " order by a.create_at DESC " +
             "</if>" +
             "<if test='orderRule==2'>" +
-            " order by a.favour DESC" +
+            " order by a.browse DESC" +
             "</if>" +
             " ${paging}"+
             "</script>"})
