@@ -104,11 +104,11 @@ public class MyServiceImpl implements IMyService {
     }
 
     @Override
-    public void ClickInterfaceHeadImageEnter(int bUserId, int gUserId) {
+    public void ClickInterfaceHeadImageEnter(int bUserId, int userId) {
         //如果是自己观看自己则不添加观看记录数据
-        if(bUserId!=gUserId){
-            if(gUserId!=0){
-                int i = myMapper.addViewingRecord(bUserId, gUserId, System.currentTimeMillis() / 1000 + "");
+        if(bUserId!=userId){
+            if(userId!=0){
+                int i = myMapper.addViewingRecord(bUserId, userId, System.currentTimeMillis() / 1000 + "");
                 if(i<=0){
                     throw new ApplicationException(CodeType.SERVICE_ERROR);
                 }

@@ -72,11 +72,11 @@ public class MyController {
     @ApiOperation(value = "点击头像进入的接口", notes = "成功返回成功")
     @ResponseBody
     @PostMapping("/ClickInterfaceHeadImageEnter")
-    public void ClickInterfaceHeadImageEnter(int bUserId, int gUserId) {
+    public void ClickInterfaceHeadImageEnter(int bUserId, int userId) {
         if(bUserId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-         iMyService.ClickInterfaceHeadImageEnter(bUserId,gUserId);
+         iMyService.ClickInterfaceHeadImageEnter(bUserId,userId);
     }
 
     @ApiOperation(value ="查询看过我的人", notes = "成功返回数据 反则为空")
