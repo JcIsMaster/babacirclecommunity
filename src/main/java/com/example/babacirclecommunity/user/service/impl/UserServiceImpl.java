@@ -106,7 +106,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User queryUserById(int userId) {
-        return userMapper.queryUserById(userId);
+        return userMapper.queryAllUser(userId);
     }
 
     /**

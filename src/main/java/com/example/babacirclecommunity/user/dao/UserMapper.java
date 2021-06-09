@@ -24,8 +24,16 @@ public interface UserMapper {
      * @param userId 当前登录id
      * @return
      */
+    @Select("select id,user_name,introduce,picture,avatar from tb_user where id=${userId}")
+    PersonalCenterUserVo queryUserById(@Param("userId") int userId);
+
+    /**
+     * 根据用户id查询个别用户字段信息
+     * @param userId 当前登录id
+     * @return
+     */
     @Select("select * from tb_user where id=${userId}")
-    User queryUserById(@Param("userId") int userId);
+    User queryAllUser(@Param("userId") int userId);
 
     /**
      * 根据用户名称模糊查询
