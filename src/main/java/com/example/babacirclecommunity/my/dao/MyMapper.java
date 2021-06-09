@@ -68,7 +68,7 @@ public interface MyMapper {
      * @param user 用户
      * @return
      */
-    @Update("update tb_user set user_name=#{user.userName},user_sex=${user.userSex},birthday=#{user,birthday},introduce=#{user.introduce},picture=#{user.picture},avatar=#{user.avatar} where id=${user.id}")
+    @Update("update tb_user set user_name=#{user.userName},user_sex=${user.userSex},birthday=#{user.birthday},curr_province=#{user.currProvince},city=#{user.city},county=#{user.county},introduce=#{user.introduce},picture=#{user.picture},avatar=#{user.avatar} where id=${user.id}")
     int updateUserMessage(@Param("user") User user);
 
     /**

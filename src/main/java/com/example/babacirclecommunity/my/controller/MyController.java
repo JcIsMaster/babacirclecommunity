@@ -59,7 +59,7 @@ public class MyController {
      * 建议
      * @return
      */
-    @ApiOperation(value = "建议 ",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "建议",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addComplaintsSuggestions")
     public int addComplaintsSuggestions(ComplaintsSuggestions complaintsSuggestions)  {

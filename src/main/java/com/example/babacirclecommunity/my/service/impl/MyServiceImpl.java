@@ -150,7 +150,7 @@ public class MyServiceImpl implements IMyService {
 
         //获取token
         String token2 = ConstantUtil.getToken();
-        String identifyTextContent2 = ConstantUtil.identifyText(user.getIntroduce(), token1);
+        String identifyTextContent2 = ConstantUtil.identifyText(user.getIntroduce(), token2);
         if(identifyTextContent2.equals("87014")){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
         }
