@@ -1,5 +1,7 @@
 package com.example.babacirclecommunity.common.utils;
 
+import cn.hutool.core.date.DateTime;
+
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -93,6 +95,25 @@ public class TimeUtil {
 		String d = format.format(time);
 		return d;
 	}
+
+	public static void main(String[] args) throws ParseException {
+		boolean flag = isSameDate(1623224084,1623224654);
+
+	}
+
+	/**
+	 * 两天时间相比是否同一天
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static boolean isSameDate(long a, long b) {
+		return a / (24*60*60) == b / (24*60*60);
+	}
+
+
+
+
 
 	
 	 

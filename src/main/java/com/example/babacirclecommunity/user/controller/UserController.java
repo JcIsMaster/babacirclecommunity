@@ -33,7 +33,7 @@ public class UserController {
     @ApiOperation(value = "小程序登陆",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/wxLogin")
-    public User wxLogin(String code, String userName, String avatar, String address, String sex) {
+    public User wxLogin(String code, String userName, String avatar, String address, int sex) {
         if("undefined".equals(code)){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }

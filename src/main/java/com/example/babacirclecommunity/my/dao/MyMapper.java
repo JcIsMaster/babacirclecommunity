@@ -76,6 +76,15 @@ public interface MyMapper {
      * @param userId 被观看人id
      * @return
      */
-    @Select("select count(*) from tb_viewing_record a INNER JOIN tb_user b on a.viewers_id=b.id where to_days(FROM_UNIXTIME(a.create_at)) = to_days(now()) and  a.beholder_id=${userId} GROUP BY a.viewers_id ORDER BY a.create_at desc limit 4")
-    Integer queryPeopleWhoHaveSeenMeAvatar(@Param("userId") int userId);
+    @Select("select COALESCE(count(*),0) from (select DISTINCT * from tb_viewing_record  ORDER BY create_at desc) a INNER JOIN tb_user b on a.viewers_id=b.id where to_days(FROM_UNIXTIME(a.create_at)) = to_days(now()) and  a.beholder_id=${userId} ")
+    int queryPeopleWhoHaveSeenMeAvatar(@Param("userId") int userId);
+
+    /**
+     * 查询观看时间
+     * @param viewersId
+     * @param beholderId
+     * @return
+     */
+    @Select("select create_at from tb_viewing_record where viewers_id=${viewersId} and beholder_id=${beholderId}")
+    Long queryCreateAt(@Param("viewersId") int viewersId,@Param("beholderId") int beholderId);
 }

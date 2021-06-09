@@ -22,7 +22,7 @@ public class User {
 	/**
 	 * 性别
 	 */
-	String userSex;
+	int userSex;
 
 	/**
 	 * 生日

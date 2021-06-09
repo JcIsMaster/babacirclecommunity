@@ -18,7 +18,7 @@ public interface IUserService {
      * @param sex 性别
      * @return
      */
-    User wxLogin(String code, String userName, String avatar, String address, String sex);
+    User wxLogin(String code, String userName, String avatar, String address, int sex);
 
     /**
      * 根据id查询用户部分用户信息 （消息版块用的接口）

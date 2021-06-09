@@ -65,7 +65,7 @@ public interface UserMapper {
      * @param user 用户对象
      * @return
      */
-    @Insert("insert into tb_user(user_name,open_id,avatar,m_code,create_at)values(#{user.userName},#{user.openId},#{user.avatar},#{user.mCode},#{user.createAt})")
+    @Insert("insert into tb_user(user_name,open_id,user_sex,avatar,m_code,create_at)values(#{user.userName},#{user.openId},${user.userSex},#{user.avatar},#{user.mCode},#{user.createAt})")
     @Options(useGeneratedKeys=true, keyProperty="user.id", keyColumn="id")
     int addUser(@Param("user") User user);
 

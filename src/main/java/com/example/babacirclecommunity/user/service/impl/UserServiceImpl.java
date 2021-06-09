@@ -38,7 +38,7 @@ public class UserServiceImpl implements IUserService {
     private UserMapper userMapper;
 
     @Override
-    public User wxLogin(String code, String userName, String avatar, String address, String sex) {
+    public User wxLogin(String code, String userName, String avatar, String address, int sex) {
         //微信登录的code值
         String wxCode = code;
 
