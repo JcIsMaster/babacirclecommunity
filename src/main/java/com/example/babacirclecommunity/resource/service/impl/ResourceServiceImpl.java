@@ -357,7 +357,9 @@ public class ResourceServiceImpl implements IResourceService {
 
         //根据id查询帖子信息
         ResourcesVo resourcesVo = resourceMapper.selectSingleResourcePost(id);
-
+        if((resourcesVo==null)){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"帖子不存在");
+        }
         String time = "";
 
         List<String> posterList=new ArrayList<>();

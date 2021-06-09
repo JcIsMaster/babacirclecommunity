@@ -29,4 +29,9 @@ public class PeopleCareAboutVo {
      * 用户介绍
      */
     private String introduce;
+
+    /**
+     * 是否关注 0没有 1关注
+     */
+    private int whetherFocus;
 }

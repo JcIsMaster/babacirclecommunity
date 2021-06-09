@@ -4,6 +4,8 @@ import com.example.babacirclecommunity.CircleFriends.dao.CircleFriendsMapper;
 import com.example.babacirclecommunity.CircleFriends.service.ICircleFriendsService;
 import com.example.babacirclecommunity.circle.dao.CircleMapper;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
+import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
 import com.example.babacirclecommunity.common.utils.WxPoster;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +52,9 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
         //根据id查询帖子信息
         CircleClassificationVo circleClassificationVo = circleMapper.querySingleCircle(id);
-
+        if(circleClassificationVo==null){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"贴子不存在！");
+        }
         String time = "";
 
         List<String> posterList=new ArrayList<>();
