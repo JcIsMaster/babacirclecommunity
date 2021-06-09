@@ -41,10 +41,10 @@ public interface IMyService {
     /**
      * 点击头像进入的接口
      * @param bUserId 被观看人id
-     * @param gUserId 观看人id
+     * @param userId 观看人id
      * @return
      */
-    void ClickInterfaceHeadImageEnter(int bUserId, int gUserId);
+    void ClickInterfaceHeadImageEnter(int bUserId, int userId);
 
     /**
      * 查询看过我的人

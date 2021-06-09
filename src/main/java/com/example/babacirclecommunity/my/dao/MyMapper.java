@@ -47,12 +47,12 @@ public interface MyMapper {
     /**
      * 添加观看记录
      * @param bUserId 被观看人id
-     * @param gUserId 观看人id
+     * @param userId 观看人id
      * @param createAt 创建时间
      * @return
      */
-    @Insert("insert into tb_viewing_record(viewers_id,beholder_id,create_at)values(${gUserId},${bUserId},#{createAt})")
-    int addViewingRecord(@Param("bUserId") int bUserId,@Param("gUserId") int gUserId,@Param("createAt") String createAt);
+    @Insert("insert into tb_viewing_record(viewers_id,beholder_id,create_at)values(${userId},${bUserId},#{createAt})")
+    int addViewingRecord(@Param("bUserId") int bUserId,@Param("userId") int userId,@Param("createAt") String createAt);
 
     /**
      * 查询观看我的人
