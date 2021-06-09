@@ -52,63 +52,12 @@ public interface IMyService {
      * @param paging 分页
      * @return
      */
-    List<User> queryPeopleWhoHaveSeenMe(int userId,Paging paging);
+    Map<String,Object> queryPeopleWhoHaveSeenMe(int userId,Paging paging);
 
     /**
-     * 修改用户介绍
-     * @param introduction 内容
-     * @param userId 用户id
+     * 修改用户信息
+     * @param user
      * @return
      */
-    int updateUserDataByIntroduction(String introduction,int userId) throws ParseException;
-
-    /**
-     * 修改用户地址
-     * @param domicileProvince 省
-     * @param domicileCity 市
-     * @param domicileCounty 县
-     * @param userId 用户id
-     * @return
-     */
-    int updateUserAddress(String domicileProvince,String domicileCity,String domicileCounty,int userId);
-
-    /**
-     * 修改用户头像
-     * @param avatar 地址
-     * @param userId 用户id
-     * @return
-     */
-    int updateUserAvatar(String avatar, int userId);
-
-    /**
-     * 修改用户生日
-     * @param birthday 内容
-     * @param userId 用户id
-     * @return
-     */
-    int updateUserBirthday(String birthday, int userId);
-
-    /**
-     * 修改背景图
-     * @param backgroundPicture 地址
-     * @param userId 用户id
-     * @return
-     */
-    int updateUserBackgroundPicture(String backgroundPicture, int userId);
-
-    /**
-     * 修改用户名称
-     * @param name 名称
-     * @param userId 用户id
-     * @return
-     */
-    int updateUserName(String name, int userId) throws ParseException;
-
-    /**
-     * 修改性别
-     * @param sex 用户性别（1男，0女）
-     * @param userId 用户id
-     * @return
-     */
-    int updateUserSex(String sex, int userId);
+    int updateUserInformation(User user) throws ParseException;
 }

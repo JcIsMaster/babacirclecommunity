@@ -27,4 +27,11 @@ public interface IUserService {
      * @return
      */
     UserVo QueryUserInformationBasedUserId(int id, int userId);
+
+    /**
+     * 根据用户id插叙所有用户信息字段
+     * @param userId
+     * @return
+     */
+    User queryUserById(int userId);
 }

@@ -118,7 +118,10 @@ public class MyServiceImpl implements IMyService {
     }
 
     @Override
-    public List<User> queryPeopleWhoHaveSeenMe(int userId, Paging paging) {
+    public Map<String,Object> queryPeopleWhoHaveSeenMe(int userId, Paging paging) {
+
+        Map<String,Object> map=new HashMap<>(2);
+
         //查询看过我的用户信息
         List<User> users = myMapper.queryPeopleWhoHaveSeenMe(userId, getPaging(paging));
         users.stream().forEach(u->{
@@ -127,99 +130,33 @@ public class MyServiceImpl implements IMyService {
             u.setCreateAt(time);
         });
 
-        return users;
+        //查询今天看过我的人数
+        Integer integer = myMapper.queryPeopleWhoHaveSeenMeAvatar(userId);
+
+        map.put("users",users);
+        map.put("integer",integer);
+
+        return map;
     }
 
     @Override
-    public int updateUserDataByIntroduction(String introduction, int id) throws ParseException {
+    public int updateUserInformation(User user) throws ParseException {
         //获取token
-        String token = ConstantUtil.getToken();
-        String identifyTextContent = ConstantUtil.identifyText(introduction, token);
-        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+        String token1 = ConstantUtil.getToken();
+        String identifyTextContent1 = ConstantUtil.identifyText(user.getUserName(), token1);
+        if(identifyTextContent1.equals("87014")){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
         }
 
-        String sql=" introduce='"+introduction+"'";
-
-        int i=myMapper.updateUserMessage(sql,id);
-        if(i<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-        return i;
-    }
-
-    @Override
-    public int updateUserAddress(String domicileProvince, String domicileCity, String domicileCounty, int id) {
-        String sql=" curr_province='"+domicileProvince+"',city='"+domicileCity+"',county='"+domicileCounty+"'";
-
-        int n=myMapper.updateUserMessage(sql, id);
-        if(n<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-
-        return n;
-    }
-
-    @Override
-    public int updateUserAvatar(String avatar, int id) {
-        String sql=" avatar='"+avatar+"'";
-        int n=myMapper.updateUserMessage(sql, id);
-        if(n<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-        return n;
-    }
-
-    @Override
-    public int updateUserBirthday(String birthday, int id) {
-
-        String sql=" birthday='"+birthday+"'";
-
-        int updateUserMessage = myMapper.updateUserMessage(sql, id);
-        if(updateUserMessage<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-        return updateUserMessage;
-    }
-
-    @Override
-    public int updateUserBackgroundPicture(String backgroundPicture, int id) {
-
-        String sql=" picture='"+backgroundPicture+"'";
-
-        int updateUserMessage = myMapper.updateUserMessage(sql, id);
-        if(updateUserMessage<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-        return updateUserMessage;
-    }
-
-    @Override
-    public int updateUserName(String name, int id) throws ParseException {
         //获取token
-        String token = ConstantUtil.getToken();
-        String identifyTextContent = ConstantUtil.identifyText(name, token);
-        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+        String token2 = ConstantUtil.getToken();
+        String identifyTextContent2 = ConstantUtil.identifyText(user.getIntroduce(), token1);
+        if(identifyTextContent2.equals("87014")){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
         }
 
-        String sql=" user_name='"+name+"'";
-
-        int updateUserMessage = myMapper.updateUserMessage(sql, id);
-        if(updateUserMessage<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-        return updateUserMessage;
+        return myMapper.updateUserMessage(user);
     }
 
-    @Override
-    public int updateUserSex(String sex, int id) {
-        String sql=" user_sex='"+sex+"'";
 
-        int updateUserMessage = myMapper.updateUserMessage(sql, id);
-        if(updateUserMessage<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-        return updateUserMessage;
-    }
 }

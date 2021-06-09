@@ -82,72 +82,24 @@ public class MyController {
     @ApiOperation(value ="查询看过我的人", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryPeopleWhoHaveSeenMe")
-    public List<User> queryPeopleWhoHaveSeenMe(int userId,Paging paging) {
+    public Map<String,Object> queryPeopleWhoHaveSeenMe(int userId,Paging paging) {
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         return iMyService.queryPeopleWhoHaveSeenMe(userId,paging);
     }
 
-
-    @ApiOperation(value = "修改单个介绍", notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "修改用户信息", notes = "成功返回数据 反则为空")
     @ResponseBody
-    @PostMapping("/updateUserDataByIntroduction")
-    public int updateUserDataByIntroduction(String introduction,int userId) throws ParseException {
-        int i=iMyService.updateUserDataByIntroduction(introduction,userId);
+    @PostMapping("/updateUserInformation")
+    public int updateUserInformation(User user) throws ParseException {
+        if(user.getId()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        int i=iMyService.updateUserInformation(user);
         return i;
     }
 
 
-    @ApiOperation(value = "修改用户地址", notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/updateUserAddress")
-    public int updateUserAddress(String domicileProvince,String domicileCity,String domicileCounty,int userId) {
-        int n=iMyService.updateUserAddress(domicileProvince,domicileCity,domicileCounty, userId);
-        return n;
-    }
-
-
-    @ApiOperation(value = "修改用户头像", notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/updateUserAvatar")
-    public int updateUserAvatar(String avatar, int userId) {
-        int updateUserMessage = iMyService.updateUserAvatar(avatar, userId);
-        return updateUserMessage;
-    }
-
-    @ApiOperation(value = "修改用户生日", notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/updateUserBirthday")
-    public int updateUserBirthday(String birthday, int userId) {
-        int updateUserMessage = iMyService.updateUserBirthday(birthday, userId);
-        return updateUserMessage;
-    }
-
-    @ApiOperation(value = "修改用户背景图片", notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/updateUserBackgroundPicture")
-    public int updateUserBackgroundPicture(String backgroundPicture, int userId) {
-        int updateUserMessage = iMyService.updateUserBackgroundPicture(backgroundPicture, userId);
-        return updateUserMessage;
-    }
-
-
-    @ApiOperation(value = "修改用户名称", notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/updateUserName")
-    public int updateUserName(String name, int userId) throws ParseException {
-        int updateUserMessage = iMyService.updateUserName(name, userId);
-        return updateUserMessage;
-    }
-
-
-    @ApiOperation(value = "修改用户性别", notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/updateUserSex")
-    public int updateUserSex(String sex, int userId) {
-        int updateUserMessage = iMyService.updateUserSex(sex, userId);
-        return updateUserMessage;
-    }
 
 }

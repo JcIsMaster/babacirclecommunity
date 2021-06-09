@@ -65,10 +65,17 @@ public interface MyMapper {
 
     /**
      * 修改用户信息
-     * @param sql 拼接内容
-     * @param id 用户id
+     * @param user 用户
      * @return
      */
-    @Update("update tb_user set ${sql} where id=${id}")
-    int updateUserMessage(@Param("sql") String sql,@Param("id") int id);
+    @Update("update tb_user set user_name=#{user.userName},user_sex=${user.userSex},birthday=#{user,birthday},introduce=#{user.introduce},picture=#{user.picture},avatar=#{user.avatar} where id=${user.id}")
+    int updateUserMessage(@Param("user") User user);
+
+    /**
+     * 今天有多少人看过我（今天）
+     * @param userId 被观看人id
+     * @return
+     */
+    @Select("select count(*) from tb_viewing_record a INNER JOIN tb_user b on a.viewers_id=b.id where to_days(FROM_UNIXTIME(a.create_at)) = to_days(now()) and  a.beholder_id=${userId} GROUP BY a.viewers_id ORDER BY a.create_at desc limit 4")
+    Integer queryPeopleWhoHaveSeenMeAvatar(@Param("userId") int userId);
 }

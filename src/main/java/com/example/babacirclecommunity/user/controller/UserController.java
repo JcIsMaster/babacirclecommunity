@@ -57,4 +57,21 @@ public class UserController {
 
     }
 
+    /**
+     * 查询用户信息
+     * @return
+     */
+    @ApiOperation(value = "查询用户信息",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryUserById")
+    public User queryUserById(int userId) {
+        if (userId == 0) {
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iUserService.queryUserById(userId);
+
+    }
+
+
+
 }

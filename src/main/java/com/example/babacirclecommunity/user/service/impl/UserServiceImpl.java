@@ -104,6 +104,11 @@ public class UserServiceImpl implements IUserService {
         return userMapper.queryUserPartialInformation(id);
     }
 
+    @Override
+    public User queryUserById(int userId) {
+        return userMapper.queryUserById(userId);
+    }
+
     /**
      * 向指定 URL 发送POST方法的请求
      *
