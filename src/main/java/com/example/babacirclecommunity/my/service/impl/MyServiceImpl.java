@@ -198,23 +198,17 @@ public class MyServiceImpl implements IMyService {
         //查询评论过的圈子信息
         List<CommentsDifferentVo> commentsDifferentVos = myMapper.queryCommentsDifferentCircle(userId,getPaging(paging));
 
-        //根据id字段去重
-        List<CommentsDifferentVo>  collect = commentsDifferentVos.stream().filter(distinctByKey1(s -> s.getId())).collect(Collectors.toList());
 
         //查询评论过的干货信息
         List<CommentsDifferentVo> commentsDifferentVos1 = myMapper.queryCommentsDifferentDryGoods(userId, getPaging(paging));
 
-        //根据id字段去重
-        List<CommentsDifferentVo> collect1 = commentsDifferentVos1.stream().filter(distinctByKey1(s -> s.getId())).collect(Collectors.toList());
 
         //查询评论过的提问信息
         List<CommentsDifferentVo> commentsDifferentVos2 = myMapper.queryCommentsDifferentQuestion(userId, getPaging(paging));
 
-        //根据id字段去重
-        List<CommentsDifferentVo>  collect2 = commentsDifferentVos2.stream().filter(distinctByKey1(s -> s.getId())).collect(Collectors.toList());
 
         //将三个集合合并为一个集合响应给前端
-        List<CommentsDifferentVo> res = Stream.of(collect, collect1,collect2).flatMap(Collection::stream).collect(Collectors.toList());
+        List<CommentsDifferentVo> res = Stream.of(commentsDifferentVos, commentsDifferentVos1,commentsDifferentVos2).flatMap(Collection::stream).collect(Collectors.toList());
 
         return res;
     }
