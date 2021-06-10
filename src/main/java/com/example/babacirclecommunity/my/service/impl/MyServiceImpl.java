@@ -8,11 +8,15 @@ import com.example.babacirclecommunity.common.utils.DateUtils;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.TimeUtil;
 import com.example.babacirclecommunity.home.entity.SearchHistory;
+import com.example.babacirclecommunity.learn.vo.DryGoodsVo;
+import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
+import com.example.babacirclecommunity.learn.vo.QuestionVo;
 import com.example.babacirclecommunity.my.dao.MyMapper;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.service.IMyService;
 import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
 import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
+import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
@@ -211,6 +215,42 @@ public class MyServiceImpl implements IMyService {
         List<CommentsDifferentVo> res = Stream.of(commentsDifferentVos, commentsDifferentVos1,commentsDifferentVos2).flatMap(Collection::stream).collect(Collectors.toList());
 
         return res;
+    }
+
+    @Override
+    public Object queryFavoritesDifferentModulesAccordingStatus(Paging paging, Integer status, Integer userId) {
+
+        //货源
+        if(status==0){
+            List<ResourceClassificationVo> resourceClassificationVos = myMapper.queryFavoritePosts(userId, 0, getPaging(paging));
+            return resourceClassificationVos;
+        }
+
+        //合作
+        if(status==1){
+            List<ResourceClassificationVo> resourceClassificationVos = myMapper.queryFavoritePosts(userId, 1, getPaging(paging));
+            return resourceClassificationVos;
+        }
+
+        //干货
+        if(status==2){
+            List<DryGoodsVo> dryGoodsVos = myMapper.queryCollectDry(userId, getPaging(paging));
+            return dryGoodsVos;
+        }
+
+        //提问
+        if(status==3){
+            List<QuestionVo> questionVos = myMapper.queryCollectQuestion(userId, getPaging(paging));
+            return questionVos;
+        }
+
+        //公开课
+        if(status==4){
+            List<PublicClassTagVo> publicClassTagVos = myMapper.queryCollectPublicClass(userId, getPaging(paging));
+            return publicClassTagVos;
+        }
+
+        return null;
     }
 
 

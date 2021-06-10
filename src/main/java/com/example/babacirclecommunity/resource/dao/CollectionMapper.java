@@ -20,8 +20,8 @@ public interface CollectionMapper {
      * @param tid 帖子id
      * @return
      */
-    @Select("select * from tb_user_collection where u_id=${userId} and t_id=${tid}")
-    Collection selectCountWhether(@Param("userId") int userId, @Param("tid") int tid);
+    @Select("select * from tb_user_collection where u_id=${userId} and t_id=${tid} and type_collection=${typeCollection}")
+    Collection selectCountWhether(@Param("userId") int userId, @Param("tid") int tid,@Param("typeCollection") int typeCollection);
 
     /**
      * 根据用户id和帖子id查看是否收藏着帖子
@@ -40,8 +40,8 @@ public interface CollectionMapper {
      * @param remarks 备注
      * @return
      */
-    @Insert("insert into tb_user_collection(u_id,t_id,create_at,remarks) values(${uId},${tId},#{createAt},#{remarks})")
-    int addCollectionPost(@Param("uId") int uId,@Param("tId") int tId,@Param("createAt") String createAt,@Param("remarks") String remarks);
+    @Insert("insert into tb_user_collection(u_id,t_id,create_at,remarks,type_collection) values(${uId},${tId},#{createAt},#{remarks},${typeCollection})")
+    int addCollectionPost(@Param("uId") int uId,@Param("tId") int tId,@Param("createAt") String createAt,@Param("remarks") String remarks,@Param("typeCollection") int typeCollection);
 
     /**
      * 修改帖子收藏的状态
@@ -49,8 +49,8 @@ public interface CollectionMapper {
      * @param status 状态id
      * @return
      */
-    @Update("update tb_user_collection set is_delete=${status} where id=${id}")
-    int updateCollectionStatus(@Param("id") int id,@Param("status") int status);
+    @Update("update tb_user_collection set is_delete=${status} where id=${id} and type_collection=${typeCollection}")
+    int updateCollectionStatus(@Param("id") int id,@Param("status") int status,@Param("typeCollection") int typeCollection);
 
     /**
      * 得到帖子的收藏数量

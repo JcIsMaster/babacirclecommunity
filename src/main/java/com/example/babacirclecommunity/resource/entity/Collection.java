@@ -36,4 +36,9 @@ public class Collection {
      * （1收藏，0取消收藏）
      */
     private int isDelete;
+
+    /**
+     * 收藏类型 0货源 1合作
+     */
+    private int typeCollection;
 }

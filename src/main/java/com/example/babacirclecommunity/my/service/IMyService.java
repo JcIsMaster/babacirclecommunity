@@ -68,4 +68,13 @@ public interface IMyService {
      * @return
      */
     List<CommentsDifferentVo> queryCommentsDifferentModulesBasedStatus(Paging paging, Integer userId);
+
+    /**
+     * 根据状态查询不同模块的收藏
+     * @param paging 分页
+     * @param status 状态  0货源1合作2干货
+     * @param userId 用户id
+     * @return
+     */
+    Object queryFavoritesDifferentModulesAccordingStatus(Paging paging,Integer status,Integer userId);
 }
