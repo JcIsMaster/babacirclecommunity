@@ -138,7 +138,7 @@ public interface MyMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.id,a.title,d.user_name,d.avatar,a.cover_img,c.create_at" +
+    @Select("select a.id,a.title,d.user_name,d.avatar,a.cover_img,c.create_at,a.description" +
             " from tb_dry_goods a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_learn_collect c on a.id=c.zq_id " +
             " where c.u_id=${userId} and a.is_delete=1 and c.give_cancel=1 and c.learn_type=1 order by c.create_at desc ${paging}")
     List<DryGoodsVo> queryCollectDry(@Param("userId") int userId,@Param("paging") String paging);
@@ -149,7 +149,7 @@ public interface MyMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.id,a.title,d.user_name,d.avatar,a.cover_img,c.create_at,b.tag_name,a.favour,a.collect,a.comment" +
+    @Select("select a.id,a.title,d.user_name,d.avatar,a.cover_img,c.create_at,b.tag_name,a.favour,a.collect,a.comment,a.description" +
             " from tb_question a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_tags b on a.tags_two=b.id INNER JOIN tb_learn_collect c on a.id=c.zq_id " +
             " where c.u_id=${userId} and a.is_delete=1 and c.give_cancel=1 and c.learn_type=0 order by c.create_at desc ${paging}")
     List<QuestionVo> queryCollectQuestion(@Param("userId") int userId,@Param("paging") String paging);
