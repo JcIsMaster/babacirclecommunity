@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.my.dao;
 
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
+import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
 import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
 import com.example.babacirclecommunity.user.entity.User;
 import org.apache.ibatis.annotations.Insert;
@@ -87,4 +88,32 @@ public interface MyMapper {
      */
     @Select("select create_at from tb_viewing_record where viewers_id=${viewersId} and beholder_id=${beholderId}")
     Long queryCreateAt(@Param("viewersId") int viewersId,@Param("beholderId") int beholderId);
+
+    /**
+     * 根据用户id查询评论过的圈子帖子
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select b.id,a.comment_content,b.cover,b.content,a.create_at,b.is_delete,IFNULL(NULL, 0) AS type_name from tb_comment a INNER JOIN tb_circles b on a.t_id=b.id where  a.p_id=${userId} and a.is_delete=1 ORDER BY a.create_at desc ${paging}")
+    List<CommentsDifferentVo> queryCommentsDifferentCircle(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 根据用户id查询评论过的干货帖子
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select b.id, a.comment_content,b.cover_img as cover,b.title as content,a.create_at,b.is_delete,IFNULL(NULL, 1) AS type_name from tb_learn_comment a INNER JOIN tb_dry_goods b on a.t_id=b.id where  a.p_id=${userId} and a.is_delete=1 and a.t_type=1 ORDER BY a.create_at desc ${paging}")
+    List<CommentsDifferentVo> queryCommentsDifferentDryGoods(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 根据用户id查询评论过的提问帖子
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select b.id,a.comment_content,b.cover_img as cover,b.title as content,a.create_at,b.is_delete,IFNULL(NULL, 2) AS type_name from tb_learn_comment a INNER JOIN tb_question b on a.t_id=b.id where  a.p_id=${userId} and a.is_delete=1 and a.t_type=0 ORDER BY a.create_at desc ${paging}")
+    List<CommentsDifferentVo> queryCommentsDifferentQuestion(@Param("userId") int userId,@Param("paging") String paging);
+
 }

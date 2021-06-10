@@ -45,7 +45,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
     @Override
     public List<String> selectCircleFriendsFigure(String pageUrl,int id) {
 
-
+        System.out.println(pageUrl);
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;

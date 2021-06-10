@@ -193,6 +193,8 @@ public class QuestionServiceImpl implements IQuestionService {
         InputStream inputStream = null;
         OutputStream outputStream = null;
 
+        System.out.println("提问=="+pageUrl);
+
         QuestionTagVo questionTagVo = questionMapper.queryQuestionPosters(id);
         if(questionTagVo.getAnonymous()==1){
             questionTagVo.setUName("匿名用户");
@@ -216,7 +218,7 @@ public class QuestionServiceImpl implements IQuestionService {
             //秘钥
             param.put("scene", ConstantUtil.secret);
             //二维码指向的地址
-            param.put("page", pageUrl);
+            param.put("page", "pages/onlineRetailers/question/desc/desc");
             param.put("width", 430);
             param.put("auto_color", false);
             //去掉二维码底色

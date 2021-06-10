@@ -2,6 +2,7 @@ package com.example.babacirclecommunity.my.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
+import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
 import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
 import com.example.babacirclecommunity.user.entity.User;
 
@@ -60,4 +61,11 @@ public interface IMyService {
      * @return
      */
     int updateUserInformation(User user) throws ParseException;
+
+    /**
+     * 根据状态查询不同模块的评论
+     * @param userId 用户id
+     * @return
+     */
+    List<CommentsDifferentVo> queryCommentsDifferentModulesBasedStatus(Paging paging, Integer userId);
 }

@@ -274,7 +274,7 @@ public class PublicClassServiceImpl implements IPublicClassService {
         OutputStream outputStream = null;
 
         PublicClassVo publicClassVo = publicClassMapper.queryPublicClassPosters(id);
-
+        System.out.println("公开课=="+pageUrl);
         String time = "";
 
         List<String> posterList=new ArrayList<>();

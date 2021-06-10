@@ -916,45 +916,47 @@ public class WxPoster {
 
 			//二维码
 			BufferedImage k = tt.loadImageLocal(rightUrl);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,150, 560,160,160));
 
-			//将头像图改为圆形
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,295, 640,160,160));
+
+			//头像
 			BufferedImage ka = getRemoteBufferedImage(headUrl);
-			if(ka==null){
-				throw new ApplicationException(CodeType.SERVICE_ERROR);
-			}
-			//将图片设置为圆形
-			BufferedImage convertCircular = convertCircular(ka);
+			//切圆角
+			BufferedImage bufferedImage2 = setRadius(ka);
+			BufferedImage convertCircular = getScaledImage(bufferedImage2,150,2);
 			if(convertCircular==null){
 				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
 			}
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,70,70));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,27, 20,60,60));
 
 			//帖子第一张图片的地址
 			//网络图片
-			BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
+			BufferedImage bufferedImage = getRemoteBufferedImage(postImg);
+			//切圆角
+			BufferedImage bufferedImage1 = setRadius(bufferedImage);
+			//等比例缩放
+			BufferedImage remoteBufferedImage2 = getScaledImage(bufferedImage1,800,1);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,27, 115,415,375));
 
 			//设置用户名
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font,Color.black);
+			Font userNameFont = new Font("Microsoft YaHei", Font.BOLD, 18);
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,105,50,userNameFont,Color.black);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
+			//设置时间
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+			Font dataFont = new Font("Microsoft YaHei", Font.BOLD, 18);
+			BufferedImage modifyImageYe1 = tt.modifyImageYe(j,df.format(new Date()),105,72,dataFont,Color.GRAY);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
-			if(title!=null){
-				Font font1 = new Font("Monospaced", Font.BOLD, 20);
-				g= j.createGraphics();
-				//设置标题 文字换行
-				drawStringWithFontStyleLineFeedTitle(g,title,300 , 15, 480,font1);
-				tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
-			}
-
-
-			/*//得到画图
+			//得到画图
 			g= j.createGraphics();
-			//设置内容  文字换行
-			Font font2 = new Font("Monospaced", Font.PLAIN, 15);
-			drawStringWithFontStyleLineFeed(g,postContent ,400 , 15, 530,font2);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));*/
+			//设置标题 文字换行
+			//消除文字锯齿
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			Font font2 = new Font("Microsoft YaHei", Font.BOLD, 18);
+			drawStringWithFontStyleLineFeedCircle(g,title ,400 , 27, 515,font2);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++"+e);
@@ -986,45 +988,47 @@ public class WxPoster {
 
 			//二维码
 			BufferedImage k = tt.loadImageLocal(rightUrl);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,150, 560,160,160));
 
-			//将头像图改为圆形
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,295, 640,160,160));
+
+			//头像
 			BufferedImage ka = getRemoteBufferedImage(headUrl);
-			if(ka==null){
-				throw new ApplicationException(CodeType.SERVICE_ERROR);
-			}
-			//将图片设置为圆形
-			BufferedImage convertCircular = convertCircular(ka);
+			//切圆角
+			BufferedImage bufferedImage2 = setRadius(ka);
+			BufferedImage convertCircular = getScaledImage(bufferedImage2,150,2);
 			if(convertCircular==null){
 				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
 			}
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,70,70));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,27, 20,60,60));
 
 			//帖子第一张图片的地址
 			//网络图片
-			BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
+			BufferedImage bufferedImage = getRemoteBufferedImage(postImg);
+			//切圆角
+			BufferedImage bufferedImage1 = setRadius(bufferedImage);
+			//等比例缩放
+			BufferedImage remoteBufferedImage2 = getScaledImage(bufferedImage1,800,1);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,27, 115,415,375));
 
 			//设置用户名
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font,Color.black);
+			Font userNameFont = new Font("Microsoft YaHei", Font.BOLD, 18);
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,105,50,userNameFont,Color.black);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
+			//设置时间
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+			Font dataFont = new Font("Microsoft YaHei", Font.BOLD, 18);
+			BufferedImage modifyImageYe1 = tt.modifyImageYe(j,df.format(new Date()),105,72,dataFont,Color.GRAY);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
-			if(title!=null){
-				Font font1 = new Font("Monospaced", Font.BOLD, 20);
-				g= j.createGraphics();
-				//设置标题 文字换行
-				drawStringWithFontStyleLineFeedTitle(g,title,300 , 15, 480,font1);
-				tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
-			}
-
-
-			/*//得到画图
+			//得到画图
 			g= j.createGraphics();
-			//设置内容  文字换行
-			Font font2 = new Font("Monospaced", Font.PLAIN, 15);
-			drawStringWithFontStyleLineFeed(g,postContent ,400 , 15, 530,font2);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));*/
+			//设置标题 文字换行
+			//消除文字锯齿
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			Font font2 = new Font("Microsoft YaHei", Font.BOLD, 18);
+			drawStringWithFontStyleLineFeedCircle(g,title ,400 , 27, 515,font2);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++"+e);
@@ -1055,45 +1059,47 @@ public class WxPoster {
 
 			//二维码
 			BufferedImage k = tt.loadImageLocal(rightUrl);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,150, 560,160,160));
 
-			//将头像图改为圆形
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,295, 640,160,160));
+
+			//头像
 			BufferedImage ka = getRemoteBufferedImage(headUrl);
-			if(ka==null){
-				throw new ApplicationException(CodeType.SERVICE_ERROR);
-			}
-			//将图片设置为圆形
-			BufferedImage convertCircular = convertCircular(ka);
+			//切圆角
+			BufferedImage bufferedImage2 = setRadius(ka);
+			BufferedImage convertCircular = getScaledImage(bufferedImage2,150,2);
 			if(convertCircular==null){
 				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
 			}
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,70,70));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,27, 20,60,60));
 
 			//帖子第一张图片的地址
 			//网络图片
-			BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,0, 115,445,340));
+			BufferedImage bufferedImage = getRemoteBufferedImage(postImg);
+			//切圆角
+			BufferedImage bufferedImage1 = setRadius(bufferedImage);
+			//等比例缩放
+			BufferedImage remoteBufferedImage2 = getScaledImage(bufferedImage1,800,1);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,27, 115,415,375));
 
 			//设置用户名
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,110,65,font,Color.black);
+			Font userNameFont = new Font("Microsoft YaHei", Font.BOLD, 18);
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,105,50,userNameFont,Color.black);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
+			//设置时间
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+			Font dataFont = new Font("Microsoft YaHei", Font.BOLD, 18);
+			BufferedImage modifyImageYe1 = tt.modifyImageYe(j,df.format(new Date()),105,72,dataFont,Color.GRAY);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 
-			if(title!=null){
-				Font font1 = new Font("Monospaced", Font.BOLD, 20);
-				g= j.createGraphics();
-				//设置标题 文字换行
-				drawStringWithFontStyleLineFeedTitle(g,title,300 , 15, 480,font1);
-				tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
-			}
-
-
-			/*//得到画图
+			//得到画图
 			g= j.createGraphics();
-			//设置内容  文字换行
-			Font font2 = new Font("Monospaced", Font.PLAIN, 15);
-			drawStringWithFontStyleLineFeed(g,postContent ,400 , 15, 530,font2);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));*/
+			//设置标题 文字换行
+			//消除文字锯齿
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			Font font2 = new Font("Microsoft YaHei", Font.BOLD, 18);
+			drawStringWithFontStyleLineFeedCircle(g,title ,400 , 27, 515,font2);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,0, 0,0,0));
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++"+e);

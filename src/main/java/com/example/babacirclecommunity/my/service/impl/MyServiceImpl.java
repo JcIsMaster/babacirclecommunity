@@ -7,9 +7,11 @@ import com.example.babacirclecommunity.common.utils.ConstantUtil;
 import com.example.babacirclecommunity.common.utils.DateUtils;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.TimeUtil;
+import com.example.babacirclecommunity.home.entity.SearchHistory;
 import com.example.babacirclecommunity.my.dao.MyMapper;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.service.IMyService;
+import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
 import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.entity.User;
@@ -19,9 +21,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author MQ
@@ -177,6 +185,38 @@ public class MyServiceImpl implements IMyService {
         }
 
         return myMapper.updateUserMessage(user);
+    }
+
+    static <T> Predicate<T> distinctByKey1(Function<? super T, ?> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    @Override
+    public List<CommentsDifferentVo> queryCommentsDifferentModulesBasedStatus(Paging paging,Integer userId) {
+
+        //查询评论过的圈子信息
+        List<CommentsDifferentVo> commentsDifferentVos = myMapper.queryCommentsDifferentCircle(userId,getPaging(paging));
+
+        //根据id字段去重
+        List<CommentsDifferentVo>  collect = commentsDifferentVos.stream().filter(distinctByKey1(s -> s.getId())).collect(Collectors.toList());
+
+        //查询评论过的干货信息
+        List<CommentsDifferentVo> commentsDifferentVos1 = myMapper.queryCommentsDifferentDryGoods(userId, getPaging(paging));
+
+        //根据id字段去重
+        List<CommentsDifferentVo> collect1 = commentsDifferentVos1.stream().filter(distinctByKey1(s -> s.getId())).collect(Collectors.toList());
+
+        //查询评论过的提问信息
+        List<CommentsDifferentVo> commentsDifferentVos2 = myMapper.queryCommentsDifferentQuestion(userId, getPaging(paging));
+
+        //根据id字段去重
+        List<CommentsDifferentVo>  collect2 = commentsDifferentVos2.stream().filter(distinctByKey1(s -> s.getId())).collect(Collectors.toList());
+
+        //将三个集合合并为一个集合响应给前端
+        List<CommentsDifferentVo> res = Stream.of(collect, collect1,collect2).flatMap(Collection::stream).collect(Collectors.toList());
+
+        return res;
     }
 
 

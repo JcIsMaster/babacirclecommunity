@@ -355,6 +355,8 @@ public class ResourceServiceImpl implements IResourceService {
         InputStream inputStream = null;
         OutputStream outputStream = null;
 
+        System.out.println("货源=="+pageUrl);
+
         //根据id查询帖子信息
         ResourcesVo resourcesVo = resourceMapper.selectSingleResourcePost(id);
         if((resourcesVo==null)){

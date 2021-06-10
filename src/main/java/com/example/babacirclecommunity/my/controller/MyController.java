@@ -5,8 +5,7 @@ import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.service.IMyService;
-import com.example.babacirclecommunity.my.service.impl.MyServiceImpl;
-import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
+import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
 import com.example.babacirclecommunity.user.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -99,6 +98,18 @@ public class MyController {
         int i=iMyService.updateUserInformation(user);
         return i;
     }
+
+    @ApiOperation(value = "根据状态查询不同模块的评论", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCommentsDifferentModulesBasedStatus")
+    public List<CommentsDifferentVo> queryCommentsDifferentModulesBasedStatus(Paging paging,Integer userId){
+
+        List<CommentsDifferentVo> commentsDifferentVos = iMyService.queryCommentsDifferentModulesBasedStatus(paging, userId);
+
+        return commentsDifferentVos;
+    }
+
+
 
 
 
