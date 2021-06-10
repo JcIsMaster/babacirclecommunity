@@ -156,7 +156,7 @@ public class CircleServiceImpl implements ICircleService {
     @Override
     public CircleClassificationVo querySingleCircle(int id, int userId) throws ParseException {
         //查询单个圈子
-        CircleClassificationVo circleClassificationVo = circleMapper.querySingleCircle(id);
+        CircleClassificationVo circleClassificationVo = circleMapper.selectSingleCircle(id);
         if(circleClassificationVo==null){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"该圈子的帖子不存在");
         }
