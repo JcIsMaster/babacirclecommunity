@@ -188,7 +188,7 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public List<String> getQuestionPosters(int id, String pageUrl) {
+    public List<String> getQuestionPosters(String id, String pageUrl) {
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -216,9 +216,9 @@ public class QuestionServiceImpl implements IQuestionService {
 
             Map<String,Object> param = new HashMap<>(15);
             //秘钥
-            param.put("scene", ConstantUtil.secret);
+            param.put("scene", id);
             //二维码指向的地址
-            param.put("page", "pages/onlineRetailers/question/desc/desc");
+            param.put("page", pageUrl);
             param.put("width", 430);
             param.put("auto_color", false);
             //去掉二维码底色

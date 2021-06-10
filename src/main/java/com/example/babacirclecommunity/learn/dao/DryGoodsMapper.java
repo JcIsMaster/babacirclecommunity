@@ -59,8 +59,8 @@ public interface DryGoodsMapper {
      * @return
      */
     @Select("select a.title,a.cover_img,b.user_name,b.avatar from tb_dry_goods a inner join tb_user b on a.u_id=b.id " +
-            "where a.id = ${id} and a.is_delete = 1")
-    DryGoodsPostersVo queryDryGoodsPosters(@Param("id") int id);
+            "where a.id = #{id} and a.is_delete = 1")
+    DryGoodsPostersVo queryDryGoodsPosters(@Param("id") String id);
 
     /**
      * 增加干货帖

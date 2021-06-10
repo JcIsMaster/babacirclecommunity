@@ -143,7 +143,7 @@ public class DryGoodsController {
     @ApiOperation(value = "得到干货海报",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/getDryPosters")
-    public List<String> getDryPosters(int id, String pageUrl){
+    public List<String> getDryPosters(String id, String pageUrl){
         return iDryGoodsService.getDryPosters(id,pageUrl);
     }
 

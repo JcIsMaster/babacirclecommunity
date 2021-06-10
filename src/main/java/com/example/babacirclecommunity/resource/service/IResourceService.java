@@ -84,5 +84,5 @@ public interface IResourceService {
      * @return
      * @throws Exception
      */
-    List<String> getPosterImage(String pageUrl,int id) throws Exception;
+    List<String> getPosterImage(String pageUrl,String id) throws Exception;
 }

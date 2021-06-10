@@ -350,7 +350,7 @@ public class ResourceServiceImpl implements IResourceService {
     }
 
     @Override
-    public List<String> getPosterImage(String pageUrl, int id) throws Exception {
+    public List<String> getPosterImage(String pageUrl, String id) throws Exception {
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -358,7 +358,7 @@ public class ResourceServiceImpl implements IResourceService {
         System.out.println("货源=="+pageUrl);
 
         //根据id查询帖子信息
-        ResourcesVo resourcesVo = resourceMapper.selectSingleResourcePost(id);
+        ResourcesVo resourcesVo = resourceMapper.querySingleResourcePost(id);
         if((resourcesVo==null)){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"帖子不存在");
         }
@@ -374,7 +374,7 @@ public class ResourceServiceImpl implements IResourceService {
 
             Map<String,Object> param = new HashMap<>(15);
             //秘钥
-            param.put("scene", ConstantUtil.secret);
+            param.put("scene", id);
             //二维码指向的地址
             param.put("page", pageUrl);
             param.put("width", 430);

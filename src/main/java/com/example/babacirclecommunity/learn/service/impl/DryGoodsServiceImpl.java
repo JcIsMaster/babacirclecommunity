@@ -372,7 +372,7 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
     }
 
     @Override
-    public List<String> getDryPosters(int id, String pageUrl) {
+    public List<String> getDryPosters(String id, String pageUrl) {
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -391,7 +391,7 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
 
             Map<String,Object> param = new HashMap<>(15);
             //秘钥
-            param.put("scene", ConstantUtil.secret);
+            param.put("scene",id);
             //二维码指向的地址
             param.put("page", pageUrl);
             param.put("width", 430);

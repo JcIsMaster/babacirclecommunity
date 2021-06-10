@@ -52,5 +52,5 @@ public interface IPublicClassService {
      * @param pageUrl 二维码指向的地址
      * @return
      */
-    List<String> getPublicClass(int id, String pageUrl);
+    List<String> getPublicClass(String id, String pageUrl);
 }
