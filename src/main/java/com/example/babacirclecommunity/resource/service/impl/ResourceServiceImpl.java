@@ -299,12 +299,12 @@ public class ResourceServiceImpl implements IResourceService {
         collection.setCreateAt(System.currentTimeMillis()/1000+"");
 
         //查看是否有数据存在
-        Collection collection1 = collectionMapper.selectCountWhether(collection.getUserId(),collection.getTId());
+        Collection collection1 = collectionMapper.selectCountWhether(collection.getUserId(),collection.getTId(),0);
 
         //如果不存在
         if(collection1==null){
             //添加收藏信息
-            int addCollection = collectionMapper.addCollectionPost(collection.getUserId(),collection.getTId(),collection.getCreateAt(),collection.getRemarks());
+            int addCollection = collectionMapper.addCollectionPost(collection.getUserId(),collection.getTId(),collection.getCreateAt(),collection.getRemarks(),0);
             if(addCollection<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR,"添加收藏信息错误");
             }
@@ -314,12 +314,12 @@ public class ResourceServiceImpl implements IResourceService {
         int i =0;
         //如果当前状态是1 那就改为0 取消收藏
         if(collection1.getIsDelete()==1){
-            i=collectionMapper.updateCollectionStatus(collection1.getId(), 0);
+            i=collectionMapper.updateCollectionStatus(collection1.getId(), 0,0);
         }
 
         //如果当前状态是0 那就改为1 为收藏状态
         if(collection1.getIsDelete()==0){
-            i = collectionMapper.updateCollectionStatus(collection1.getId(), 1);
+            i = collectionMapper.updateCollectionStatus(collection1.getId(), 1,0);
         }
 
         if(i<=0){

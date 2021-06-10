@@ -1,8 +1,12 @@
 package com.example.babacirclecommunity.my.dao;
 
+import com.example.babacirclecommunity.learn.vo.DryGoodsVo;
+import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
+import com.example.babacirclecommunity.learn.vo.QuestionVo;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
 import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
+import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.user.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
@@ -115,5 +119,50 @@ public interface MyMapper {
      */
     @Select("select b.id,a.comment_content,b.cover_img as cover,b.title as content,a.create_at,b.is_delete,IFNULL(NULL, 2) AS type_name from tb_learn_comment a INNER JOIN tb_question b on a.t_id=b.id where  a.p_id=${userId} and a.is_delete=1 and a.t_type=0 ORDER BY a.create_at desc ${paging}")
     List<CommentsDifferentVo> queryCommentsDifferentQuestion(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 查询我收藏的货源帖子
+     * @param userId 用户id
+     * @param status 状态 0 查货源收藏，1查合作收藏
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.id,d.id as uId,d.user_name,d.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId " +
+            "from tb_resources a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_tags b on a.tags_two=b.id INNER JOIN tb_user_collection c on a.id=c.t_id  " +
+            "where c.u_id=${userId} and a.is_delete=1 and c.is_delete=1 and c.type_collection=${status} order by c.create_at desc ${paging}")
+    List<ResourceClassificationVo> queryFavoritePosts(@Param("userId") int userId,@Param("status") int status, @Param("paging") String paging);
+
+    /**
+     * 查询收藏的干货
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.id,a.title,d.user_name,d.avatar,a.cover_img,c.create_at" +
+            " from tb_dry_goods a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_learn_collect c on a.id=c.zq_id " +
+            " where c.u_id=${userId} and a.is_delete=1 and c.give_cancel=1 and c.learn_type=1 order by c.create_at desc ${paging}")
+    List<DryGoodsVo> queryCollectDry(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 查询收藏的提问
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.id,a.title,d.user_name,d.avatar,a.cover_img,c.create_at,b.tag_name,a.favour,a.collect,a.comment" +
+            " from tb_question a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_tags b on a.tags_two=b.id INNER JOIN tb_learn_collect c on a.id=c.zq_id " +
+            " where c.u_id=${userId} and a.is_delete=1 and c.give_cancel=1 and c.learn_type=0 order by c.create_at desc ${paging}")
+    List<QuestionVo> queryCollectQuestion(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 查询收藏的公开课
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.id,a.title,d.user_name,d.avatar,a.cover_img,c.create_at,b.tag_name,a.collect,a.price,a.buyer_num" +
+            " from tb_public_class a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_tags b on a.tags_two=b.id INNER JOIN tb_learn_collect c on a.id=c.zq_id" +
+            " where c.u_id=${userId} and a.is_delete=1 and c.give_cancel=1 and c.learn_type=2 order by c.create_at desc ${paging}")
+    List<PublicClassTagVo> queryCollectPublicClass(@Param("userId") int userId,@Param("paging") String paging);
 
 }
