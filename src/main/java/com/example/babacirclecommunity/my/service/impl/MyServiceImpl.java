@@ -228,7 +228,7 @@ public class MyServiceImpl implements IMyService {
 
         //合作
         if(status==1){
-            List<ResourceClassificationVo> resourceClassificationVos = myMapper.queryFavoritePosts(userId, 1, getPaging(paging));
+            List<ResourceClassificationVo> resourceClassificationVos = myMapper.queryFavoritePostsCollaborate(userId, 1, getPaging(paging));
             return resourceClassificationVos;
         }
 
