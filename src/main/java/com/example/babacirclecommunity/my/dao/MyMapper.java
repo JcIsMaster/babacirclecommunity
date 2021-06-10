@@ -129,7 +129,7 @@ public interface MyMapper {
      */
     @Select("select a.id,d.id as uId,d.user_name,d.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId " +
             "from tb_resources a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_tags b on a.tags_two=b.id INNER JOIN tb_user_collection c on a.id=c.t_id  " +
-            "where c.u_id=${userId} and a.is_delete=1 and c.is_delete=1 and c.type_collection=${status} order by c.create_at desc ${paging}")
+            "where c.u_id=${userId} and a.is_delete=1 and a.tags_one=12 and c.is_delete=1 and c.type_collection=${status} order by c.create_at desc ${paging}")
     List<ResourceClassificationVo> queryFavoritePosts(@Param("userId") int userId,@Param("status") int status, @Param("paging") String paging);
 
     /**
@@ -140,8 +140,8 @@ public interface MyMapper {
      * @return
      */
     @Select("select a.id,d.id as uId,d.user_name,d.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId " +
-            "from tb_collaborate a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_tags b on a.tags_two=b.id INNER JOIN tb_user_collection c on a.id=c.t_id  " +
-            "where c.u_id=${userId} and a.is_delete=1 and c.is_delete=1 and c.type_collection=${status} order by c.create_at desc ${paging}")
+            "from tb_resources a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_tags b on a.tags_two=b.id INNER JOIN tb_user_collection c on a.id=c.t_id  " +
+            "where c.u_id=${userId} and a.is_delete=1 and a.tags_one=13 and c.is_delete=1 and c.type_collection=${status} order by c.create_at desc ${paging}")
     List<ResourceClassificationVo> queryFavoritePostsCollaborate(@Param("userId") int userId,@Param("status") int status, @Param("paging") String paging);
 
     /**
