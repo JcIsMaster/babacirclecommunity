@@ -114,7 +114,7 @@ public class QuestionController {
     @ApiOperation(value = "得到提问海报",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/getQuestionPosters")
-    public List<String> getQuestionPosters(int id, String pageUrl){
+    public List<String> getQuestionPosters(String id, String pageUrl){
         return iQuestionService.getQuestionPosters(id,pageUrl);
     }
 

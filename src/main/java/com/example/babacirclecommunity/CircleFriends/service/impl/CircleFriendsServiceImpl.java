@@ -43,13 +43,12 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
     private CircleMapper circleMapper;
 
     @Override
-    public List<String> selectCircleFriendsFigure(String pageUrl,int id) {
+    public List<String> selectCircleFriendsFigure(String pageUrl,String id) {
 
-        System.out.println(pageUrl);
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
-
+        System.out.println(id);
         //根据id查询帖子信息
         CircleClassificationVo circleClassificationVo = circleMapper.querySingleCircle(id);
         if(circleClassificationVo==null){
@@ -67,7 +66,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
             Map<String,Object> param = new HashMap<>(15);
             //秘钥
-            param.put("scene", ConstantUtil.secret);
+            param.put("scene", id);
             //二维码指向的地址
             param.put("page", pageUrl);
             param.put("width", 430);

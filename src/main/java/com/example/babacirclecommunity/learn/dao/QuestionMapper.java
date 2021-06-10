@@ -75,8 +75,8 @@ public interface QuestionMapper {
      * @param id
      * @return
      */
-    @Select("select a.title,a.cover_img,a.anonymous,b.user_name as uName,b.avatar from tb_question a inner join tb_user b on a.u_id=b.id where a.id = ${id} and a.is_delete = 1")
-    QuestionTagVo queryQuestionPosters(@Param("id") int id);
+    @Select("select a.title,a.cover_img,a.anonymous,b.user_name as uName,b.avatar from tb_question a inner join tb_user b on a.u_id=b.id where a.id = #{id} and a.is_delete = 1")
+    QuestionTagVo queryQuestionPosters(@Param("id") String id);
 
     /**
      * 修改帖子点赞数

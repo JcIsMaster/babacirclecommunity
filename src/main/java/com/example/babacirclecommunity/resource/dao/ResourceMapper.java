@@ -55,6 +55,15 @@ public interface ResourceMapper {
     @Select("select a.cover,a.id,a.tags_one,a.content,c.avatar,c.id as uId,c.user_name,a.title,a.favour,a.collect,a.browse,a.create_at,a.type,a.video,b.tag_name,b.id as tagId " +
             "from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.id=${id} and a.is_delete=1")
     ResourcesVo selectSingleResourcePost(@Param("id") int id);
+
+    /**
+     * 查询单个资源帖子
+     * @param id 单个资源帖子id
+     * @return
+     */
+    @Select("select a.cover,a.id,a.tags_one,a.content,c.avatar,c.id as uId,c.user_name,a.title,a.favour,a.collect,a.browse,a.create_at,a.type,a.video,b.tag_name,b.id as tagId " +
+            "from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.id=#{id} and a.is_delete=1")
+    ResourcesVo querySingleResourcePost(@Param("id") String id);
     /**
      * 根据用户id和帖子id查看是否收藏着帖子
      * @param userId 用户id

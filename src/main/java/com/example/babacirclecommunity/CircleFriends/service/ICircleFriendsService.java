@@ -16,7 +16,7 @@ public interface ICircleFriendsService {
      * @param id 帖子id
      * @return
      */
-    List<String> selectCircleFriendsFigure(String pageUrl,int id);
+    List<String> selectCircleFriendsFigure(String pageUrl,String id);
 
     /**
      * 查询圈子海报图

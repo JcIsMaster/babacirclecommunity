@@ -60,5 +60,5 @@ public interface IQuestionService {
      * @param pageUrl 二维码指向的地址
      * @return
      */
-    List<String> getQuestionPosters(int id, String pageUrl);
+    List<String> getQuestionPosters(String id, String pageUrl);
 }

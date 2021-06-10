@@ -79,5 +79,5 @@ public interface IDryGoodsService {
      * @param pageUrl 二维码指向的地址
      * @return
      */
-    List<String> getDryPosters(int id, String pageUrl);
+    List<String> getDryPosters(String id, String pageUrl);
 }

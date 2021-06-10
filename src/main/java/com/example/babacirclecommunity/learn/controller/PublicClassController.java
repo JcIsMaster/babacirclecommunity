@@ -98,7 +98,7 @@ public class PublicClassController {
     @ApiOperation(value = "得到公开课海报",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/getPublicClass")
-    public List<String> getPublicClass(int id, String pageUrl){
+    public List<String> getPublicClass(String id, String pageUrl){
         return iPublicClassService.getPublicClass(id,pageUrl);
     }
 }

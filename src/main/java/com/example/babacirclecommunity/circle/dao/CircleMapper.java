@@ -161,8 +161,8 @@ public interface CircleMapper {
             " from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id " +
             "INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
-            " where a.id=${id} and a.is_delete=1")
-    CircleClassificationVo querySingleCircle(@Param("id") int id);
+            " where a.id=#{id} and a.is_delete=1")
+    CircleClassificationVo querySingleCircle(@Param("id") String id);
 
     /**
      * 浏览量加一
