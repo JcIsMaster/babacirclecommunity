@@ -42,6 +42,6 @@ public class CommentsDifferentVo {
     /**
      * 类型名字
      */
-    private String typeName;
+    private int typeName;
 
 }
