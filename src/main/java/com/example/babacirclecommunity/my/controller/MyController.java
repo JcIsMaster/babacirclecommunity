@@ -110,6 +110,16 @@ public class MyController {
     }
 
 
+    @ApiOperation(value = "根据状态查询不同模块的收藏", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryFavoritesDifferentModulesAccordingStatus")
+    public List<CommentsDifferentVo> queryFavoritesDifferentModulesAccordingStatus(Paging paging,Integer userId){
+
+        List<CommentsDifferentVo> commentsDifferentVos = iMyService.queryCommentsDifferentModulesBasedStatus(paging, userId);
+
+        return commentsDifferentVos;
+    }
+
 
 
 
