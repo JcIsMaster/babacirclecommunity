@@ -193,7 +193,6 @@ public class QuestionServiceImpl implements IQuestionService {
         InputStream inputStream = null;
         OutputStream outputStream = null;
 
-        System.out.println("提问=="+pageUrl);
 
         QuestionTagVo questionTagVo = questionMapper.queryQuestionPosters(id);
         if(questionTagVo.getAnonymous()==1){

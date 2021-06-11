@@ -314,8 +314,12 @@ public class CircleServiceImpl implements ICircleService {
                 List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
                 circleVos.get(i).setCircleVoList(circleVos1);
             }
+
             //存入redis缓存
-            redisTemplate.opsForList().rightPushAll("MyCirclesSquare::"+userId,circleVos);
+            if(circleVos.size()!=0 && circleVos!=null){
+                redisTemplate.opsForList().rightPushAll("MyCirclesSquare::"+userId,circleVos);
+            }
+
 
             return circleVos;
         }

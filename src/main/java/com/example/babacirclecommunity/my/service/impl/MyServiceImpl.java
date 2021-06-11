@@ -1,6 +1,10 @@
 package com.example.babacirclecommunity.my.service.impl;
 
 import com.example.babacirclecommunity.circle.dao.AttentionMapper;
+import com.example.babacirclecommunity.circle.dao.CircleGiveMapper;
+import com.example.babacirclecommunity.circle.dao.CircleMapper;
+import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
+import com.example.babacirclecommunity.circle.vo.CommentUserVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
@@ -52,6 +56,12 @@ public class MyServiceImpl implements IMyService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private CircleMapper circleMapper;
+
+    @Autowired
+    private CircleGiveMapper circleGiveMapper;
     /**
      * 得到分页
      * @param paging
@@ -235,6 +245,11 @@ public class MyServiceImpl implements IMyService {
         //干货
         if(status==2){
             List<DryGoodsVo> dryGoodsVos = myMapper.queryCollectDry(userId, getPaging(paging));
+            for (DryGoodsVo s:dryGoodsVos){
+                //将时间戳转换为多少天或者多少个小时和多少年
+                String time = DateUtils.getTime(s.getCreateAt());
+                s.setCreateAt(time);
+            }
             return dryGoodsVos;
         }
 
@@ -250,6 +265,29 @@ public class MyServiceImpl implements IMyService {
             return publicClassTagVos;
         }
 
+        return null;
+    }
+
+    @Override
+    public List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int tagsOne, Paging paging) {
+
+        //资源
+        if(tagsOne==12){
+            List<CircleClassificationVo> circleClassificationVos = myMapper.queryCheckPostsBeenReadingPastMonthResource(userId, tagsOne,getPaging(paging));
+            return circleClassificationVos;
+        }
+
+        //资源
+        if(tagsOne==13){
+            List<CircleClassificationVo> circleClassificationVos = myMapper.queryCheckPostsBeenReadingPastMonthResource(userId, tagsOne,getPaging(paging));
+            return circleClassificationVos;
+        }
+
+        //圈子
+        if(tagsOne==0){
+            List<CircleClassificationVo> circles = myMapper.queryCheckPostsBeenReadingPastMonth(userId,getPaging(paging));
+            return circles;
+        }
         return null;
     }
 

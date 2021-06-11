@@ -48,7 +48,6 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
-        System.out.println(id);
         //根据id查询帖子信息
         CircleClassificationVo circleClassificationVo = circleMapper.querySingleCircle(id);
         if(circleClassificationVo==null){

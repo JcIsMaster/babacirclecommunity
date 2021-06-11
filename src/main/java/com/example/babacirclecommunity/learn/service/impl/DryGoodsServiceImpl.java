@@ -378,7 +378,6 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
         OutputStream outputStream = null;
 
         DryGoodsPostersVo dryGoodsPostersVo = dryGoodsMapper.queryDryGoodsPosters(id);
-        System.out.println("干货=="+pageUrl);
         String time = "";
 
         List<String> posterList=new ArrayList<>();
