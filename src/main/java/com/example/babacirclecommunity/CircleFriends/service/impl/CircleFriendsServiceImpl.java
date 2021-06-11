@@ -44,15 +44,16 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
     @Override
     public List<String> selectCircleFriendsFigure(String pageUrl,String id) {
-
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
+
         //根据id查询帖子信息
         CircleClassificationVo circleClassificationVo = circleMapper.querySingleCircle(id);
         if(circleClassificationVo==null){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"贴子不存在！");
         }
+
         String time = "";
 
         List<String> posterList=new ArrayList<>();
@@ -72,6 +73,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
             param.put("auto_color", false);
             //去掉二维码底色
             param.put("is_hyaline", true);
+
             Map<String,Object> lineColor = new HashMap<>(10);
             lineColor.put("r", 0);
             lineColor.put("g", 0);
@@ -107,7 +109,6 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
             outputStream.flush();
 
             time=System.currentTimeMillis()/1000+13+"";
-
 
             WxPoster wxPoster=new WxPoster();
             //生成海报5

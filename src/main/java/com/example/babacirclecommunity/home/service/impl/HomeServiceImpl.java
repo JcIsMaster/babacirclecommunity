@@ -65,28 +65,28 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public Object selectAllSearch(int strata, String postingName, int userId, Paging paging) {
-        if(postingName.equals("undefined")){
+        if (postingName.equals("undefined")) {
             return null;
         }
 
-        if(userId != 0 && !postingName.equals("")){
+        if (userId != 0 && !postingName.equals("")) {
             //增加搜索记录
-            int i = searchRecordMapper.addSearchRecord(postingName, System.currentTimeMillis() / 1000 + "",userId);
-            if(i<=0){
-                throw new ApplicationException(CodeType.SERVICE_ERROR,"增加历史记录错误");
+            int i = searchRecordMapper.addSearchRecord(postingName, System.currentTimeMillis() / 1000 + "", userId);
+            if (i <= 0) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR, "增加历史记录错误");
             }
         }
 
-        Integer page=(paging.getPage()-1)*paging.getLimit();
-        String sql="limit "+page+","+paging.getLimit()+"";
+        Integer page = (paging.getPage() - 1) * paging.getLimit();
+        String sql = "limit " + page + "," + paging.getLimit() + "";
 
         //查用户
-        if(strata==0){
-            List<PersonalUserVo> personalUserVos = userMapper.queryUserLike(postingName,sql);
-            for (int i = 0;i < personalUserVos.size();i++){
+        if (strata == 0) {
+            List<PersonalUserVo> personalUserVos = userMapper.queryUserLike(postingName, sql);
+            for (int i = 0; i < personalUserVos.size(); i++) {
                 //查看我是否关注了此人
                 int i1 = attentionMapper.queryWhetherAttention(userId, personalUserVos.get(i).getId());
-                if (i1 > 0){
+                if (i1 > 0) {
                     personalUserVos.get(i).setWhetherAttention(1);
                 }
             }
@@ -94,8 +94,8 @@ public class HomeServiceImpl implements IHomeService {
         }
 
         //查圈子
-        if(strata==1){
-            List<CircleClassificationVo> circles = circleMapper.queryFuzzyCircle(postingName,sql);
+        if (strata == 1) {
+            List<CircleClassificationVo> circles = circleMapper.queryFuzzyCircle(postingName, sql);
             for (int i = 0; i < circles.size(); i++) {
                 //得到图片组
                 String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
@@ -140,7 +140,7 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public Map<String, Object> querySearchRecords(int userId) {
 
-        Map<String,Object> map = new HashMap<>(15);
+        Map<String, Object> map = new HashMap<>(15);
 
         List<TagVo> tagVoList = new ArrayList<>();
 
@@ -180,7 +180,7 @@ public class HomeServiceImpl implements IHomeService {
 //            }
 //        }
 
-        map.put("searchHistories",collect);
+        map.put("searchHistories", collect);
 //        map.put("collect1",tagVoList1);
         return map;
 

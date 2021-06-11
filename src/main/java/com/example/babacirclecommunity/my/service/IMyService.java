@@ -46,7 +46,7 @@ public interface IMyService {
      * @param userId 观看人id
      * @return
      */
-    void ClickInterfaceHeadImageEnter(int bUserId, int userId);
+    void clickInterfaceHeadImageEnter(int bUserId, int userId);
 
     /**
      * 查询看过我的人

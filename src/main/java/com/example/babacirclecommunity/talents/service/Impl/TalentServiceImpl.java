@@ -31,25 +31,25 @@ public class TalentServiceImpl implements ITalentService {
     private AttentionMapper attentionMapper;
 
     @Override
-    public List<Talents> queryTalentsList(int userId,String content, String city, Paging paging) {
+    public List<Talents> queryTalentsList(int userId, String content, String city, Paging paging) {
 
-        Integer page=(paging.getPage()-1)*paging.getLimit();
-        String sql="limit "+page+","+paging.getLimit()+"";
+        int page = (paging.getPage() - 1) * paging.getLimit();
+        String sql = "limit " + page + "," + paging.getLimit() + "";
 
-        if (content.equals("undefined") || content.equals("") || content == null){
+        if ("undefined".equals(content) || "".equals(content) || content == null) {
             content = null;
         }
 
-        if (city.equals("undefined") || city.equals("") || city == null){
+        if ("undefined".equals(city) || "".equals(city) || city == null) {
             city = null;
         }
 
         List<Talents> talents = talentsMapper.queryTalentsList(content, city, sql);
-        if(userId != 0){
+        if (userId != 0) {
             for (Talents talent : talents) {
                 //查看我是否关注了此人
                 int i = attentionMapper.queryWhetherAttention(userId, talent.getId());
-                if (i > 0){
+                if (i > 0) {
                     talent.setWhetherAttention(1);
                 }
             }
@@ -59,19 +59,18 @@ public class TalentServiceImpl implements ITalentService {
 
     @Override
     public TalentsVo queryTalentById(int userId) {
-        if (userId == 0){
+        if (userId == 0) {
             return null;
         }
-        TalentsVo talentsVo = talentsMapper.queryTalentByUserId(userId);
-        return talentsVo;
+        return talentsMapper.queryTalentByUserId(userId);
     }
 
     @Override
     public int updatePersonalTalent(Talents talents) {
         Talents talent = talentsMapper.queryTalentById(talents.getId());
-        int i = 0;
+        int i;
         //名片数据不为空则修改名片
-        if (talent != null){
+        if (talent != null) {
             i = talentsMapper.updatePersonalTalent(talents);
         }
         //反之新增名片
@@ -79,7 +78,7 @@ public class TalentServiceImpl implements ITalentService {
             talents.setCreateAt(System.currentTimeMillis() / 1000 + "");
             i = talentsMapper.addPersonalTalent(talents);
         }
-        if(i<=0){
+        if (i <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
         return i;

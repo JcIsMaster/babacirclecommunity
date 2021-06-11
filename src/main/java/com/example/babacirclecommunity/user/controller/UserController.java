@@ -48,12 +48,12 @@ public class UserController {
     @ApiOperation(value = "查询用户id，名称，头像",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/QueryUserInformationBasedUserId")
-    public UserVo QueryUserInformationBasedUserId(int id, int userId) {
+    public UserVo queryUserInformationBasedUserId(int id, int userId) {
         if (id == 0) {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
-        return iUserService.QueryUserInformationBasedUserId(id, userId);
+        return iUserService.queryUserInformationBasedUserId(id, userId);
 
     }
 

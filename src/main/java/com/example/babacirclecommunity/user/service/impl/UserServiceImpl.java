@@ -100,7 +100,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserVo QueryUserInformationBasedUserId(int id, int userId) {
+    public UserVo queryUserInformationBasedUserId(int id, int userId) {
         return userMapper.queryUserPartialInformation(id);
     }
 
@@ -121,10 +121,8 @@ public class UserServiceImpl implements IUserService {
         String result = "";
 
         String param = "";
-        Iterator<String> it = paramMap.keySet().iterator();
 
-        while(it.hasNext()) {
-            String key = it.next();
+        for (String key : paramMap.keySet()) {
             param += key + "=" + paramMap.get(key) + "&";
         }
 
