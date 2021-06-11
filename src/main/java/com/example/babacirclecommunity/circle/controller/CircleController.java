@@ -112,9 +112,6 @@ public class CircleController {
     @ResponseBody
     @PostMapping("/fundCircle")
     public Map<String,Object> fundCircle(int userId, String communityName,Paging paging)  {
-        if(userId==0){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR);
-        }
         return  iCircleService.fundCircle(userId,communityName,paging);
     }
 
@@ -175,6 +172,9 @@ public class CircleController {
     @ResponseBody
     @PostMapping("/joinCircle")
     public int joinCircle(CommunityUser communityUser)  {
+        if(communityUser.getUserId()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"请先登录！");
+        }
         return iCircleService.joinCircle(communityUser);
     }
 

@@ -554,13 +554,13 @@ public class CircleServiceImpl implements ICircleService {
         List<CircleImgIdVo> collect = circleImgIdVos.stream().limit(3).collect(Collectors.toList());
 
         //如果communityName不等于空就查询圈子
-        if (communityName != null && !communityName.equals("") && !"undefined".equals(communityName)) {
+        if (communityName != null && !"".equals(communityName) && !"undefined".equals(communityName)) {
             //查询圈子
             List<CircleVo> circleVos = circleMapper.queryCircles(communityName);
-            for (int i = 0; i < circleVos.size(); i++) {
+            /*for (int i = 0; i < circleVos.size(); i++) {
                 List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
                 circleVos.get(i).setCircleVoList(circleVos1);
-            }
+            }*/
 
             map.put("circleVos", circleVos);
             map.put("circleImgIdVos", circleImgIdVos);
@@ -569,16 +569,11 @@ public class CircleServiceImpl implements ICircleService {
 
         //查询热门的圈子
         List<CircleVo> circleVos = circleMapper.queryPopularCircles(getPaging(paging));
-        for (int i = 0; i < circleVos.size(); i++) {
-            if (circleVos.get(i).getWhetherPublic() == 0) {
-                if (circleVos.get(i).getUserId() != userId) {
-                    circleVos.remove(i);
-                }
-            }
+        /*for (int i = 0; i < circleVos.size(); i++) {
+            //根据圈子对应的标签id查询封面和id
             List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
             circleVos.get(i).setCircleVoList(circleVos1);
-        }
-
+        }*/
 
         map.put("circleVos", circleVos);
         map.put("circleImgIdVos", collect);
@@ -592,6 +587,7 @@ public class CircleServiceImpl implements ICircleService {
 
         //查看该缓存是否存在
         if (redisTemplate.hasKey(key)) {
+            //删除缓存
             redisConfig.remove(key);
         }
 
