@@ -45,15 +45,15 @@ public class CommentServiceImpl implements ICommentService {
         //获取token
         String token = ConstantUtil.getToken();
         String identifyTextContent = ConstantUtil.identifyText(comment.getCommentContent(), token);
-        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        if ("87014".equals(identifyTextContent)) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR, "内容违规");
         }
 
-        comment.setCreateAt(System.currentTimeMillis()/1000+"");
+        comment.setCreateAt(System.currentTimeMillis() / 1000 + "");
         comment.setGiveStatus(0);
         //添加评论
         int i = commentMapper.addComment(comment);
-        if(i<=0){
+        if (i <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
         return i;
@@ -61,20 +61,20 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public int addSecondLevelComment(PostReply postReply) throws ParseException {
-        postReply.setCreateAt(System.currentTimeMillis()/1000+"");
+        postReply.setCreateAt(System.currentTimeMillis() / 1000 + "");
         postReply.setReplyGiveStatus(0);
 
 
         //获取token
         String token = ConstantUtil.getToken();
         String identifyTextContent = ConstantUtil.identifyText(postReply.getHContent(), token);
-        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        if ("87014".equals(identifyTextContent)) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR, "内容违规");
         }
 
         //添加二级评论
         int i = postReplyMapper.addSecondLevelComment(postReply);
-        if(i<=0){
+        if (i <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
         return i;
@@ -85,17 +85,17 @@ public class CommentServiceImpl implements ICommentService {
         //查询一级评论
         List<CommentReplyVo> commentReplyVos = commentMapper.queryComment(tId);
         //根据一级评论id查询二级评论
-        for (CommentReplyVo s : commentReplyVos){
+        for (CommentReplyVo s : commentReplyVos) {
             //得到评论点赞数量
             int i = commentMapper.queryCommentGiveNum(s.getId(), 0);
             s.setCommentGiveNum(i);
 
 
             //查看一级评论是否点赞
-            if(userId!=0){
+            if (userId != 0) {
                 //是否点赞
-                CommentGive commentGive = commentMapper.queryWhetherGives(userId, 0,s.getId());
-                if(commentGive!=null){
+                CommentGive commentGive = commentMapper.queryWhetherGives(userId, 0, s.getId());
+                if (commentGive != null) {
                     s.setCommentGiveStatus(1);
                 }
             }
@@ -107,22 +107,22 @@ public class CommentServiceImpl implements ICommentService {
             //得到每个一级评论下面的二级评论数量
             s.setCommentSize(postReplies.size());
 
-            for (PostReplyVo a :postReplies){
+            for (PostReplyVo a : postReplies) {
                 //得到二级评论评论点赞数量
                 int i1 = commentMapper.queryCommentGiveNum(a.getId(), 1);
                 a.setTwoCommentGiveNum(i1);
 
                 //查看二级评论是否点赞
-                if(userId!=0){
+                if (userId != 0) {
                     //是否点赞
-                    CommentGive commentGive = commentMapper.queryWhetherGives(userId, 1,a.getId());
-                    if(commentGive!=null){
+                    CommentGive commentGive = commentMapper.queryWhetherGives(userId, 1, a.getId());
+                    if (commentGive != null) {
                         a.setTwoCommentGiveStatus(1);
                     }
                 }
 
                 String userName = userMapper.selectUserById(a.getBhId()).getUserName();
-                if(userName==null){
+                if (userName == null) {
                     throw new ApplicationException(CodeType.SERVICE_ERROR);
                 }
 
@@ -137,65 +137,65 @@ public class CommentServiceImpl implements ICommentService {
     @Override
     public int addCommentGive(CommentGive commentGive) {
 
-        CommentGive commentGive1=null;
+        CommentGive commentGive1 = null;
 
-        int i=0;
+        int i = 0;
 
-        commentGive.setCreateAt(System.currentTimeMillis()/1000+"");
+        commentGive.setCreateAt(System.currentTimeMillis() / 1000 + "");
         //添加一级评论点赞信息
-        if(commentGive.getType()==0){
+        if (commentGive.getType() == 0) {
             commentGive.setType(0);
-            commentGive1= commentMapper.queryWhetherGive(commentGive.getDId(), 0, commentGive.getCommentId());
+            commentGive1 = commentMapper.queryWhetherGive(commentGive.getDId(), 0, commentGive.getCommentId());
 
-            if(commentGive1!=null){
+            if (commentGive1 != null) {
                 //如果等于1就是点赞的状态 在进去就是取消点赞 状态改为0
-                if(commentGive1.getGiveStatus()==1){
+                if (commentGive1.getGiveStatus() == 1) {
                     i = commentMapper.updateCommentGiveStatus(0, commentGive.getDId(), commentGive.getCommentId(), 0);
-                    if(i<=0){
+                    if (i <= 0) {
                         throw new ApplicationException(CodeType.SERVICE_ERROR);
                     }
                 }
 
-                if(commentGive1.getGiveStatus()==0){
-                     i = commentMapper.updateCommentGiveStatus(1, commentGive.getDId(), commentGive.getCommentId(), 0);
-                     if(i<=0){
+                if (commentGive1.getGiveStatus() == 0) {
+                    i = commentMapper.updateCommentGiveStatus(1, commentGive.getDId(), commentGive.getCommentId(), 0);
+                    if (i <= 0) {
                         throw new ApplicationException(CodeType.SERVICE_ERROR);
-                     }
+                    }
                 }
-            }else{
-                 i = commentMapper.addCommentGive(commentGive);
-                if(i<=0){
-                    throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+            } else {
+                i = commentMapper.addCommentGive(commentGive);
+                if (i <= 0) {
+                    throw new ApplicationException(CodeType.SERVICE_ERROR, "评论失败");
                 }
             }
 
         }
 
         //添加二级评论信息
-        if(commentGive.getType()==1){
-             commentGive.setType(1);
+        if (commentGive.getType() == 1) {
+            commentGive.setType(1);
 
-             commentGive1= commentMapper.queryWhetherGive(commentGive.getDId(), 1, commentGive.getCommentId());
+            commentGive1 = commentMapper.queryWhetherGive(commentGive.getDId(), 1, commentGive.getCommentId());
 
-            if(commentGive1!=null){
+            if (commentGive1 != null) {
                 //如果等于1就是点赞的状态 在进去就是取消点赞 状态改为0
-                if(commentGive1.getGiveStatus()==1){
+                if (commentGive1.getGiveStatus() == 1) {
                     i = commentMapper.updateCommentGiveStatus(0, commentGive.getDId(), commentGive.getCommentId(), 1);
-                    if(i<=0){
+                    if (i <= 0) {
                         throw new ApplicationException(CodeType.SERVICE_ERROR);
                     }
                 }
 
-                if(commentGive1.getGiveStatus()==0){
-                     i = commentMapper.updateCommentGiveStatus(1, commentGive.getDId(), commentGive.getCommentId(), 1);
-                     if(i<=0){
+                if (commentGive1.getGiveStatus() == 0) {
+                    i = commentMapper.updateCommentGiveStatus(1, commentGive.getDId(), commentGive.getCommentId(), 1);
+                    if (i <= 0) {
                         throw new ApplicationException(CodeType.SERVICE_ERROR);
-                     }
+                    }
                 }
-            }else{
-                 i = commentMapper.addCommentGive(commentGive);
-                if(i<=0){
-                    throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+            } else {
+                i = commentMapper.addCommentGive(commentGive);
+                if (i <= 0) {
+                    throw new ApplicationException(CodeType.SERVICE_ERROR, "评论失败");
                 }
             }
         }

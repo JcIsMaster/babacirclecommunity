@@ -50,10 +50,10 @@ public class OrdersServiceImpl implements IOrdersService {
     private UserMapper userMapper;
 
     @Override
-    public Map<String, Object> orders(String openid, HttpServletRequest request, BigDecimal price, String body,int userId) throws Exception {
-        System.out.println("================="+openid);
+    public Map<String, Object> orders(String openid, HttpServletRequest request, BigDecimal price, String body, int userId) throws Exception {
+        System.out.println("=================" + openid);
         // 支付金额，单位：分，这边需要转成字符串类型，否则后面的签名会失败
-        String payment =""+((price.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_HALF_UP).intValue()));
+        String payment = "" + ((price.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_HALF_UP).intValue()));
         System.out.println(payment);
 
         // 拼接统一下单地址参数
@@ -75,11 +75,10 @@ public class OrdersServiceImpl implements IOrdersService {
         }
 
 
-
-        String nonceStr=idGenerator.getUuid();
+        String nonceStr = idGenerator.getUuid();
 
         //获取订单号
-        String orderId=idGenerator.getOrderCode();
+        String orderId = idGenerator.getOrderCode();
 
         // 商家平台ID
         paraMap.put("appid", ConstantUtil.appid);
@@ -119,7 +118,7 @@ public class OrdersServiceImpl implements IOrdersService {
 
         // MD5运算生成签名，这里是第一次签名，用于调用统一下单接口
         String mysign = PayUtil.sign(prestr, ConstantUtil.PATERNERKEY, "utf-8").toUpperCase();
-        System.out.println("第一次签名+="+mysign);
+        System.out.println("第一次签名+=" + mysign);
 
         // 拼接统一下单接口使用的xml数据，要将上一步生成的签名一起拼接进去
         String xml = "<xml>" + "<appid>" + ConstantUtil.appid + "</appid>" + "<body><![CDATA[" + body + "]]></body>"
@@ -132,7 +131,7 @@ public class OrdersServiceImpl implements IOrdersService {
 
         // 调用统一下单接口，并接受返回的结果
         String result = PayUtil.httpRequest(ConstantUtil.payUrl, "POST", xml);
-        System.out.println("======"+result);
+        System.out.println("======" + result);
 
 
         // 将解析结果存储在HashMap中
@@ -151,7 +150,7 @@ public class OrdersServiceImpl implements IOrdersService {
             response.put("nonceStr", nonceStr);
             response.put("package", "prepay_id=" + prepayId);
 
-            String timeStamp = System.currentTimeMillis() / 1000+"";
+            String timeStamp = System.currentTimeMillis() / 1000 + "";
 
             // 这边要将返回的时间戳转化成字符串，不然小程序端调用wx.requestPayment方法会报签名错误
             response.put("timeStamp", timeStamp);
@@ -164,20 +163,20 @@ public class OrdersServiceImpl implements IOrdersService {
             log.info("=======================第二次签名：" + paySign + "=====================");
 
             response.put("paySign", paySign);
-             //添加订单
-            GoldCoinOrders goldCoinOrders=new GoldCoinOrders();
-            goldCoinOrders.setCreateAt(System.currentTimeMillis()/1000+"");
+            //添加订单
+            GoldCoinOrders goldCoinOrders = new GoldCoinOrders();
+            goldCoinOrders.setCreateAt(System.currentTimeMillis() / 1000 + "");
             goldCoinOrders.setOrderNumber(paraMap.get("out_trade_no"));
             goldCoinOrders.setGoodsNo(0);
             goldCoinOrders.setOrderStatus(0);
             //分转元
             String s = fenToYuan(payment);
-            BigDecimal bd=new BigDecimal(s);
+            BigDecimal bd = new BigDecimal(s);
             goldCoinOrders.setMoney(bd);
             goldCoinOrders.setUserId(userId);
             int i = orderMapper.addOrder(goldCoinOrders);
-            if(i<=0){
-                throw new ApplicationException(CodeType.SERVICE_ERROR,"订单生成失败");
+            if (i <= 0) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR, "订单生成失败");
             }
 
             //业务逻辑代码
@@ -185,7 +184,6 @@ public class OrdersServiceImpl implements IOrdersService {
 
         return response;
     }
-
 
 
     @Override
@@ -229,40 +227,40 @@ public class OrdersServiceImpl implements IOrdersService {
                 //分转元
                 String s = fenToYuan(totalFee);
 
-                Integer integer = Integer.valueOf(s);
+                int integer = Integer.parseInt(s);
 
                 //得到算过后得到的金币数量
-                Integer gold=integer*100;
+                int gold = integer * 100;
 
                 //修改订单状态为 已支付
                 int i = orderMapper.updateOrderStatus(1, outTradeNo);
-                if(i<=0){
-                    throw new ApplicationException(CodeType.SERVICE_ERROR,"订单修改失败");
+                if (i <= 0) {
+                    throw new ApplicationException(CodeType.SERVICE_ERROR, "订单修改失败");
                 }
                 //得到openid
                 String openid = map.get("openid").toString();
 
                 //得到用户id
                 Integer userId = userMapper.queryUserIdByOpenId(openid);
-                if ("null".equals(userId) || userId.equals("0") || userId.equals("")){
+                if ("null".equals(userId) || "0".equals(userId) || "".equals(userId)) {
                     throw new ApplicationException(CodeType.SERVICE_ERROR);
                 }
 
                 //修改不可提现金币数量
-                int i2 = goldMapper.updateUserGold("may_not_withdraw_gold_coins=may_not_withdraw_gold_coins+" + gold,userId);
-                if(i2<=0){
-                    throw new ApplicationException(CodeType.SERVICE_ERROR,"修改金币失败");
+                int i2 = goldMapper.updateUserGold("may_not_withdraw_gold_coins=may_not_withdraw_gold_coins+" + gold, userId);
+                if (i2 <= 0) {
+                    throw new ApplicationException(CodeType.SERVICE_ERROR, "修改金币失败");
                 }
 
                 //添加金币变化数据
-                GoldCoinChange goldCoinChange=new GoldCoinChange();
-                goldCoinChange.setCreateAt(System.currentTimeMillis()/1000+"");
+                GoldCoinChange goldCoinChange = new GoldCoinChange();
+                goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
                 goldCoinChange.setUserId(userId);
                 goldCoinChange.setSourceGoldCoin("充值");
-                goldCoinChange.setPositiveNegativeGoldCoins("+"+gold);
+                goldCoinChange.setPositiveNegativeGoldCoins("+" + gold);
                 int i1 = orderMapper.addGoldCoinChange(goldCoinChange);
-                if(i1<=0){
-                    throw new ApplicationException(CodeType.SERVICE_ERROR,"金币充值失败");
+                if (i1 <= 0) {
+                    throw new ApplicationException(CodeType.SERVICE_ERROR, "金币充值失败");
                 }
 
                 /** 此处添加自己的业务逻辑代码end **/
@@ -270,7 +268,7 @@ public class OrdersServiceImpl implements IOrdersService {
                 response.getWriter().write("<xml><return_code><![CDATA[SUCCESS]]></return_code></xml>");
                 response.getWriter().flush();
                 response.getWriter().close();
-            }else{
+            } else {
                 response.getWriter().write("<xml><return_code><![CDATA[FAIL]]></return_code></xml>");
                 response.getWriter().flush();
                 response.getWriter().close();
@@ -285,19 +283,20 @@ public class OrdersServiceImpl implements IOrdersService {
 
     /**
      * 分转元
+     *
      * @param amount 分
      * @return
      */
-    private String fenToYuan(String amount){
+    private String fenToYuan(String amount) {
         NumberFormat format = NumberFormat.getInstance();
-        try{
+        try {
             Number number = format.parse(amount);
             double temp = number.doubleValue() / 100.0;
             format.setGroupingUsed(false);
             // 设置返回的小数部分所允许的最大位数
             format.setMaximumFractionDigits(2);
             amount = format.format(temp);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return amount;

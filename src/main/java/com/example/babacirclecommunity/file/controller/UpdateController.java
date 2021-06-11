@@ -42,7 +42,7 @@ public class UpdateController {
     @ResponseBody
     @PostMapping("/deleteFile")
     public void deleteFile(int type,String imgUrl) {
-        if(type>1){
+        if(type>1 || "undefined".equals(imgUrl)){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         iFileService.deleteFile(type,imgUrl);

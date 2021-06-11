@@ -44,4 +44,9 @@ public class CommentsDifferentVo {
      */
     private int typeName;
 
+    /**
+     * 0 图文 1视频
+     */
+    private int type;
+
 }

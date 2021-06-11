@@ -1,5 +1,6 @@
 package com.example.babacirclecommunity.my.controller;
 
+import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
@@ -70,12 +71,12 @@ public class MyController {
 
     @ApiOperation(value = "点击头像进入的接口", notes = "成功返回成功")
     @ResponseBody
-    @PostMapping("/ClickInterfaceHeadImageEnter")
-    public void ClickInterfaceHeadImageEnter(int bUserId, int userId) {
+    @PostMapping("/clickInterfaceHeadImageEnter")
+    public void clickInterfaceHeadImageEnter(int bUserId, int userId) {
         if(bUserId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-         iMyService.ClickInterfaceHeadImageEnter(bUserId,userId);
+         iMyService.clickInterfaceHeadImageEnter(bUserId,userId);
     }
 
     @ApiOperation(value ="查询看过我的人", notes = "成功返回数据 反则为空")
@@ -116,6 +117,17 @@ public class MyController {
     public Object queryFavoritesDifferentModulesAccordingStatus(Paging paging,Integer status,Integer userId){
         return iMyService.queryFavoritesDifferentModulesAccordingStatus(paging,status,userId);
     }
+
+    @ApiOperation(value ="查询我近一个月浏览过的货源，合作，圈子帖子", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCheckPostsBeenReadingPastMonth")
+    public List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int tagsOne, Paging paging) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iMyService.queryCheckPostsBeenReadingPastMonth(userId,tagsOne,paging);
+    }
+
 
 
 

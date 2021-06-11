@@ -62,7 +62,7 @@ public interface CircleMapper {
      * @return
      */
     @Select("select a.whether_public,a.user_id,a.community_name,a.id,count(b.tags_two) as cnt,a.tag_id,a.introduce,a.posters from tb_community a " +
-            "INNER JOIN tb_circles b on a.tag_id=b.tags_two where b.is_delete=1 GROUP BY b.tags_two order by cnt desc ${paging}")
+            "INNER JOIN tb_circles b on a.tag_id=b.tags_two where b.is_delete=1 and a.whether_public=1 GROUP BY b.tags_two order by cnt desc ${paging}")
     List<CircleVo> queryPopularCircles(@Param("paging") String paging);
 
     /**

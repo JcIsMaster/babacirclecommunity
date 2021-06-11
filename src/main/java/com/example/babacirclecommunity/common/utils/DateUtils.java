@@ -1,5 +1,6 @@
 package com.example.babacirclecommunity.common.utils;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -54,7 +55,8 @@ public class DateUtils {
      * @return
      */
     public static String getTime(String hqtime){
-        Long s = System.currentTimeMillis()/1000 - Integer.parseInt(hqtime);
+        BigDecimal add = new BigDecimal(System.currentTimeMillis()/1000).subtract(new BigDecimal(Integer.parseInt(hqtime)));
+        Long s =  add.longValue();
         if(s<60) {
             return s+"秒前";
         }else {
@@ -72,7 +74,7 @@ public class DateUtils {
                     }else {
                         long month = day/30;
                         if(month<12) {
-                            return day+"月前";
+                            return month+"月前";
                         }else {
                             long year = month/12;
                             return year+"年前";

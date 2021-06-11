@@ -1,5 +1,6 @@
 package com.example.babacirclecommunity.my.service;
 
+import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
@@ -45,7 +46,7 @@ public interface IMyService {
      * @param userId 观看人id
      * @return
      */
-    void ClickInterfaceHeadImageEnter(int bUserId, int userId);
+    void clickInterfaceHeadImageEnter(int bUserId, int userId);
 
     /**
      * 查询看过我的人
@@ -77,4 +78,13 @@ public interface IMyService {
      * @return
      */
     Object queryFavoritesDifferentModulesAccordingStatus(Paging paging,Integer status,Integer userId);
+
+    /**
+     * 查询我近一个月浏览过的帖子
+     * @param userId 用户id
+     * @param tagsOne 12货源源  13合作
+     * @param paging 分页
+     * @return
+     */
+    List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int tagsOne, Paging paging);
 }
