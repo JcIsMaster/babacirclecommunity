@@ -271,21 +271,37 @@ public class MyServiceImpl implements IMyService {
     @Override
     public List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int tagsOne, Paging paging) {
 
-        //资源
-        if(tagsOne==12){
-            List<CircleClassificationVo> circleClassificationVos = myMapper.queryCheckPostsBeenReadingPastMonthResource(userId, tagsOne,getPaging(paging));
+        //货源源
+        if(tagsOne==1){
+            List<CircleClassificationVo> circleClassificationVos = myMapper.queryCheckPostsBeenReadingPastMonthResource(userId, 12,getPaging(paging));
+            for(CircleClassificationVo s:circleClassificationVos){
+                //将时间戳转换为多少天或者多少个小时和多少年
+                String time = DateUtils.getTime(s.getCreateAt());
+                s.setCreateAt(time);
+            }
+
             return circleClassificationVos;
         }
 
-        //资源
-        if(tagsOne==13){
-            List<CircleClassificationVo> circleClassificationVos = myMapper.queryCheckPostsBeenReadingPastMonthResource(userId, tagsOne,getPaging(paging));
+        //合作
+        if(tagsOne==2){
+            List<CircleClassificationVo> circleClassificationVos = myMapper.queryCheckPostsBeenReadingPastMonthResource(userId, 13,getPaging(paging));
+            for(CircleClassificationVo s:circleClassificationVos){
+                //将时间戳转换为多少天或者多少个小时和多少年
+                String time = DateUtils.getTime(s.getCreateAt());
+                s.setCreateAt(time);
+            }
             return circleClassificationVos;
         }
 
         //圈子
         if(tagsOne==0){
             List<CircleClassificationVo> circles = myMapper.queryCheckPostsBeenReadingPastMonth(userId,getPaging(paging));
+            for(CircleClassificationVo s:circles){
+                //将时间戳转换为多少天或者多少个小时和多少年
+                String time = DateUtils.getTime(s.getCreateAt());
+                s.setCreateAt(time);
+            }
             return circles;
         }
         return null;
