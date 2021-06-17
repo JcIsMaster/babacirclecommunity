@@ -91,8 +91,8 @@ public interface MyMapper {
      * @param beholderId
      * @return
      */
-    @Select("select create_at from tb_viewing_record where viewers_id=${viewersId} and beholder_id=${beholderId}")
-    Long queryCreateAt(@Param("viewersId") int viewersId,@Param("beholderId") int beholderId);
+    @Select("select create_at from tb_viewing_record where viewers_id=${viewersId} and beholder_id=${beholderId} order by create_at desc")
+    String[] queryCreateAt(@Param("viewersId") int viewersId,@Param("beholderId") int beholderId);
 
     /**
      * 根据用户id查询评论过的圈子帖子

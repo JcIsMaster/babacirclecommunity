@@ -72,8 +72,8 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
     @Override
     public Object queryLearnList(int type, Paging paging, int orderRule, Integer tagId, String content) {
 
-        Integer page = (paging.getPage() - 1) * paging.getLimit();
-        if (content.equals("undefined") || content.equals("") || content == null) {
+        int page = (paging.getPage() - 1) * paging.getLimit();
+        if ("undefined".equals(content) || "".equals(content) || content == null) {
             content = null;
         }
         //提问

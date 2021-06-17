@@ -111,7 +111,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
             time=System.currentTimeMillis()/1000+13+"";
 
             WxPoster wxPoster=new WxPoster();
-            //生成海报5
+            //生成海报
             String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMaster("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", circleClassificationVo.getAvatar(), circleClassificationVo.getCover(),circleClassificationVo.getContent(),circleClassificationVo.getUserName(),circleClassificationVo.getTitle());
             String newGreat = posterUrlGreatMaster.replace("e:/file/img/", "https://www.gofatoo.com/img/");
             /*if(newGreat!=null){

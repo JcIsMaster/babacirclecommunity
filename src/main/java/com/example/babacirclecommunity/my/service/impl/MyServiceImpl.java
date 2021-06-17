@@ -126,10 +126,11 @@ public class MyServiceImpl implements IMyService {
 
     @Override
     public void clickInterfaceHeadImageEnter(int bUserId, int userId) {
-        Long l = myMapper.queryCreateAt(userId, bUserId);
-        if (l != null) {
+        //得到上次访问的时间进行比较
+        String[] strings = myMapper.queryCreateAt(userId, bUserId);
+        if (strings.length !=0) {
             //判断两个时间是否同一天
-            boolean sameDate = TimeUtil.isSameDate(System.currentTimeMillis() / 1000, l);
+            boolean sameDate = TimeUtil.isSameDate(System.currentTimeMillis() / 1000, Long.parseLong(strings[0]));
             if (!sameDate) {
                 //如果是自己观看自己则不添加观看记录数据
                 if (bUserId != userId) {
