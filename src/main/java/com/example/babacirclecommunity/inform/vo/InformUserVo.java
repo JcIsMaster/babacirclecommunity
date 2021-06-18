@@ -64,5 +64,10 @@ public class InformUserVo {
      */
     private int isDelete;
 
+    /**
+     * 是否已读 （0未读 1已读） 默认0
+     */
+    private int readUnread;
+
 
 }

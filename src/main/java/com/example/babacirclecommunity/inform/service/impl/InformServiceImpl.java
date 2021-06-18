@@ -67,4 +67,12 @@ public class InformServiceImpl implements IInformService {
 
         throw new ApplicationException(CodeType.SERVICE_ERROR);
     }
+
+    @Override
+    public void modifyMessageState(int id) {
+        int i = informMapper.modifyMessageState(id);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"读取失败");
+        }
+    }
 }

@@ -40,4 +40,34 @@ public class InformController {
         }
         return iInformService.queryCommentsNotice(userId,type,paging);
     }
+
+    /**
+     * 修改消息状态为已读
+     * @return
+     */
+    @ApiOperation(value = "修改消息状态为已读",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/modifyMessageState")
+    public void modifyMessageState(int userId)  {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+         iInformService.modifyMessageState(userId);
+    }
+
+    /**
+     * 根据用户id查询未读的消息数量
+     * @return
+     */
+    @ApiOperation(value = "根据用户id查询未读的消息数量",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryNumberUnreadMessagesBasedUserId")
+    public void queryNumberUnreadMessagesBasedUserId(int userId)  {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        iInformService.modifyMessageState(userId);
+    }
+
+
 }

@@ -22,4 +22,10 @@ public interface IInformService {
      * @return
      */
     List<InformUserVo> queryCommentsNotice(int userId, int type, Paging paging);
+
+    /**
+     * 修改消息状态为已读
+     * @param id 消息id
+     */
+    void modifyMessageState(int id);
 }

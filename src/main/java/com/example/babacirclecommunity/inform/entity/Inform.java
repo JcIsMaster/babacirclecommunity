@@ -46,6 +46,11 @@ public class Inform {
     private int oneType;
 
     /**
+     * 是否已读 （0未读 1已读） 默认0
+     */
+    private int readUnread;
+
+    /**
      * 创建时间
      */
     private String createAt;
