@@ -35,12 +35,12 @@ public class  GoEasyConfig {
         goEasy.publish(channel, content,new PublishListener(){
             @Override
             public void onSuccess() {
-                log.info("评论消息推送成功！");
+                log.info("消息推送成功！");
             }
 
             @Override
             public void onFailed(GoEasyError error) {
-                log.info("评论消息推送失败！"+ error.getCode()+","+error.getContent());
+                log.info("消息推送失败！"+ error.getCode()+","+error.getContent());
             }
         });
     }

@@ -61,6 +61,14 @@ public class CommentServiceImpl implements ICommentService {
         comment.setCreateAt(System.currentTimeMillis() / 1000 + "");
         comment.setGiveStatus(0);
 
+
+
+        //添加评论
+        int i = commentMapper.addComment(comment);
+        if (i <= 0) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+        }
+
         //通知对象
         Inform inform=new Inform();
         inform.setContent(comment.getCommentContent());
@@ -71,12 +79,6 @@ public class CommentServiceImpl implements ICommentService {
         inform.setNotifiedPartyId(comment.getBId());
         inform.setNotifierId(comment.getPId());
 
-        //添加评论
-        int i = commentMapper.addComment(comment);
-        if (i <= 0) {
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
-        }
-
         //添加评论通知
         int i1 = informMapper.addCommentInform(inform);
         if(i1<=0){
@@ -84,7 +86,7 @@ public class CommentServiceImpl implements ICommentService {
         }
 
         //发送消息通知
-        GoEasyConfig.goEasy("channel"+comment.getBId(),comment.getCommentContent());
+        GoEasyConfig.goEasy("channel"+comment.getBId(),"0");
         log.info("{}","消息通知成功");
 
         return i;

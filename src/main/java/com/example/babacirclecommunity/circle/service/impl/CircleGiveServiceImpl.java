@@ -100,6 +100,7 @@ public class CircleGiveServiceImpl implements ICircleGiveService {
             if(i<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
+
             return i;
         }
 

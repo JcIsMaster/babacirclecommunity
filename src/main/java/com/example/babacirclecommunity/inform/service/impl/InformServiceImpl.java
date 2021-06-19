@@ -6,6 +6,7 @@ import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.inform.dao.InformMapper;
 import com.example.babacirclecommunity.inform.service.IInformService;
+import com.example.babacirclecommunity.inform.vo.InformCommentVo;
 import com.example.babacirclecommunity.inform.vo.InformUserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,5 +74,21 @@ public class InformServiceImpl implements IInformService {
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"读取失败");
         }
+    }
+
+    @Override
+    public InformCommentVo queryNumberUnreadMessagesBasedUserId(int userId) {
+
+        //查询评论未读消息数量
+        int i = informMapper.queryNumberUnreadMessagesBasedUserId(userId, 0);
+
+        //查询点赞未读消息数量
+        int i1 = informMapper.queryNumberUnreadMessagesBasedUserId(userId, 1);
+
+        InformCommentVo informCommentVo=new InformCommentVo();
+        informCommentVo.setCommentNumber(i);
+        informCommentVo.setThumbNumber(i1);
+
+        return informCommentVo;
     }
 }

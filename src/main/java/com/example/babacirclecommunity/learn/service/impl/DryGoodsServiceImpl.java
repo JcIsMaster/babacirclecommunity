@@ -6,6 +6,8 @@ import com.example.babacirclecommunity.common.utils.*;
 import com.example.babacirclecommunity.gold.dao.GoldMapper;
 import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
 import com.example.babacirclecommunity.gold.entity.UserGoldCoins;
+import com.example.babacirclecommunity.inform.dao.InformMapper;
+import com.example.babacirclecommunity.inform.entity.Inform;
 import com.example.babacirclecommunity.learn.dao.*;
 import com.example.babacirclecommunity.learn.entity.Collect;
 import com.example.babacirclecommunity.learn.entity.DryGoods;
@@ -68,6 +70,9 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
 
     @Autowired
     private GoldMapper goldMapper;
+
+    @Autowired
+    private InformMapper informMapper;
 
     @Override
     public Object queryLearnList(int type, Paging paging, int orderRule, Integer tagId, String content) {
@@ -177,7 +182,7 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
     }
 
     @Override
-    public int giveLike(int id, int userId) {
+    public int giveLike(int id, int userId,int thumbUpId) {
         //查询数据库是否存在该条数据
         Give give = dryGoodsGiveMapper.selectCountWhether(1, userId, id);
         if (give == null) {
@@ -189,6 +194,31 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
             if (j <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
+
+
+            //通知对象
+            Inform inform=new Inform();
+            inform.setContent(userId+"点赞"+thumbUpId);
+            inform.setCreateAt(System.currentTimeMillis()/1000+"");
+            inform.setOneType(2);
+            inform.setTId(id);
+            inform.setInformType(1);
+            inform.setNotifiedPartyId(thumbUpId);
+            inform.setNotifierId(userId);
+
+            //添加评论通知
+            int i1 = informMapper.addCommentInform(inform);
+            if(i1<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+            }
+
+            //不给自己帖子点赞进入判断发送消息
+            if(userId!=thumbUpId){
+                //发送消息通知
+                GoEasyConfig.goEasy("channel"+thumbUpId,"1");
+                log.info("{}","点赞消息通知成功");
+            }
+
             return j;
         }
         int i = 0;
@@ -208,6 +238,8 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
         if (i <= 0 || j <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
+
+
 
         return j;
     }

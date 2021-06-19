@@ -4,6 +4,7 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.inform.service.IInformService;
+import com.example.babacirclecommunity.inform.vo.InformCommentVo;
 import com.example.babacirclecommunity.inform.vo.InformUserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,25 +49,25 @@ public class InformController {
     @ApiOperation(value = "修改消息状态为已读",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/modifyMessageState")
-    public void modifyMessageState(int userId)  {
-        if(userId==0){
+    public void modifyMessageState(int id)  {
+        if(id==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-         iInformService.modifyMessageState(userId);
+         iInformService.modifyMessageState(id);
     }
 
     /**
-     * 根据用户id查询未读的消息数量
+     * 根据用户id查询未读的消息数量(评论，点赞)
      * @return
      */
-    @ApiOperation(value = "根据用户id查询未读的消息数量",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "根据用户id查询未读的消息数量(评论，点赞)",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryNumberUnreadMessagesBasedUserId")
-    public void queryNumberUnreadMessagesBasedUserId(int userId)  {
+    public InformCommentVo queryNumberUnreadMessagesBasedUserId(int userId)  {
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        iInformService.modifyMessageState(userId);
+        return iInformService.queryNumberUnreadMessagesBasedUserId(userId);
     }
 
 

@@ -107,6 +107,14 @@ public interface InformMapper {
     @Update("update tb_inform set read_unread=1 where id=${id}")
     int modifyMessageState(@Param("id") int id);
 
+    /**
+     * 查询评论,和点赞消息未读数量
+     * @param userId 用户id
+     * @param informType（0评论我，1获赞）
+     * @return
+     */
+    @Select("select COALESCE(count(*),0) from tb_inform where read_unread=0 and notified_party_id=${userId} and inform_type=${informType} ")
+    int queryNumberUnreadMessagesBasedUserId(@Param("userId") int userId,@Param("informType") int informType);
 
 
 }

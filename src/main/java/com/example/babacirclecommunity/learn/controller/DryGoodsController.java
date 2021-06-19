@@ -86,11 +86,11 @@ public class DryGoodsController {
     @ApiOperation(value = "点赞",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/giveLike")
-    public int giveLike(int id,int userId){
+    public int giveLike(int id,int userId,int thumbUpId){
         if(id==0 || userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return iDryGoodsService.giveLike(id,userId);
+        return iDryGoodsService.giveLike(id,userId,thumbUpId);
     }
 
     /**

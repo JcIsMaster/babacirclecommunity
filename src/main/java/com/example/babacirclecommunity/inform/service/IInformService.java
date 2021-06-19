@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.inform.service;
 
 
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.inform.vo.InformCommentVo;
 import com.example.babacirclecommunity.inform.vo.InformUserVo;
 
 import java.util.List;
@@ -28,4 +29,11 @@ public interface IInformService {
      * @param id 消息id
      */
     void modifyMessageState(int id);
+
+    /**
+     * 根据用户id查询未读的消息数量
+     * @param userId 用户id
+     * @return
+     */
+    InformCommentVo queryNumberUnreadMessagesBasedUserId(int userId);
 }
