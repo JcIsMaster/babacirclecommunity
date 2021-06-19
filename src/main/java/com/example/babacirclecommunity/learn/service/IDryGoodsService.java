@@ -45,9 +45,10 @@ public interface IDryGoodsService {
      * 干货帖点赞
      * @param id 干货帖子id
      * @param userId 点赞人id
+     * @param thumbUpId 被点赞人用户id
      * @return
      */
-    int giveLike(int id, int userId);
+    int giveLike(int id, int userId,int thumbUpId);
 
     /**
      * 干货帖收藏

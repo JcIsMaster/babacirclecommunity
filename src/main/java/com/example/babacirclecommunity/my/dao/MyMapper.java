@@ -91,8 +91,8 @@ public interface MyMapper {
      * @param beholderId
      * @return
      */
-    @Select("select create_at from tb_viewing_record where viewers_id=${viewersId} and beholder_id=${beholderId}")
-    Long queryCreateAt(@Param("viewersId") int viewersId,@Param("beholderId") int beholderId);
+    @Select("select create_at from tb_viewing_record where viewers_id=${viewersId} and beholder_id=${beholderId} order by create_at desc")
+    String[] queryCreateAt(@Param("viewersId") int viewersId,@Param("beholderId") int beholderId);
 
     /**
      * 根据用户id查询评论过的圈子帖子
@@ -187,7 +187,7 @@ public interface MyMapper {
     @Select("select b.id,b.content,c.id as uId,b.cover,c.avatar,c.user_name ,a.create_at,b.type from tb_browse a " +
             "INNER JOIN tb_circles b on a.zq_id=b.id INNER JOIN tb_user c on b.user_id=c.id " +
             "INNER JOIN tb_tags d on b.tags_two=d.id where UNIX_TIMESTAMP(DATE_SUB(FROM_UNIXTIME(unix_timestamp(now()),'%Y-%m-%d %H:%i:%s'), INTERVAL 30 DAY))<=a.create_at " +
-            "and a.u_id=${userId} and b.is_delete=1 and a.type=1 GROUP BY a.zq_id ORDER BY a.create_at desc ${paging}")
+            "and a.u_id=${userId} and b.is_delete=1 and a.type=1 ORDER BY a.create_at desc ${paging}")
     List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(@Param("userId")int userId, @Param("paging") String paging);
 
     /**
@@ -200,7 +200,7 @@ public interface MyMapper {
     @Select("select b.id,b.title as content,c.id as uId,b.cover,c.avatar,c.user_name,a.create_at,b.type from tb_browse a " +
             "INNER JOIN tb_resources b on a.zq_id=b.id INNER JOIN tb_user c on b.u_id=c.id " +
             "INNER JOIN tb_tags d on b.tags_two=d.id where UNIX_TIMESTAMP(DATE_SUB(FROM_UNIXTIME(unix_timestamp(now()),'%Y-%m-%d %H:%i:%s'), INTERVAL 30 DAY))<=a.create_at " +
-            "and a.u_id=${userId} and b.is_delete=1 and b.tags_one=${tagsOne} and a.type=0 GROUP BY a.zq_id ORDER BY a.create_at desc ${paging}")
+            "and a.u_id=${userId} and b.is_delete=1 and b.tags_one=${tagsOne} and a.type=0  ORDER BY a.create_at desc ${paging}")
     List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonthResource(@Param("userId")int userId,@Param("tagsOne") int tagsOne, @Param("paging") String paging);
 
 

@@ -1,7 +1,6 @@
 package com.example.babacirclecommunity.CircleFriends.controller;
 
 import com.example.babacirclecommunity.CircleFriends.service.ICircleFriendsService;
-import com.example.babacirclecommunity.CircleFriends.vo.CircleFriendsVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

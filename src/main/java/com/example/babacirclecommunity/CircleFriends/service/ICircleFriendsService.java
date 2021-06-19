@@ -1,7 +1,5 @@
 package com.example.babacirclecommunity.CircleFriends.service;
 
-import com.example.babacirclecommunity.CircleFriends.vo.CircleFriendsVo;
-
 import java.util.List;
 
 /**

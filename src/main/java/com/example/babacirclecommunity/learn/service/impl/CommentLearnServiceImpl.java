@@ -3,6 +3,9 @@ package com.example.babacirclecommunity.learn.service.impl;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
+import com.example.babacirclecommunity.common.utils.GoEasyConfig;
+import com.example.babacirclecommunity.inform.dao.InformMapper;
+import com.example.babacirclecommunity.inform.entity.Inform;
 import com.example.babacirclecommunity.learn.dao.LearnCommentMapper;
 import com.example.babacirclecommunity.learn.dao.PostReplyLearnMapper;
 import com.example.babacirclecommunity.learn.dao.QuestionMapper;
@@ -14,6 +17,7 @@ import com.example.babacirclecommunity.learn.vo.LearnCommentReplyVo;
 import com.example.babacirclecommunity.learn.vo.LearnPostReplyVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +46,9 @@ public class CommentLearnServiceImpl implements ICommentLearnService {
     @Autowired
     private QuestionMapper questionMapper;
 
+    @Autowired
+    private InformMapper informMapper;
+
     @Override
     public int addComment(LearnComment comment) throws ParseException {
         //获取token
@@ -65,6 +72,26 @@ public class CommentLearnServiceImpl implements ICommentLearnService {
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
         }
+
+        //通知对象
+        Inform inform=new Inform();
+        inform.setContent(comment.getCommentContent());
+        inform.setCreateAt(System.currentTimeMillis()/1000+"");
+        inform.setOneType(comment.getTType());
+        inform.setTId(comment.getTId());
+        inform.setInformType(0);
+        inform.setNotifiedPartyId(comment.getBId());
+        inform.setNotifierId(comment.getPId());
+
+        //添加评论通知
+        int i1 = informMapper.addCommentInform(inform);
+        if(i1<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+        }
+
+        //发送消息通知
+        GoEasyConfig.goEasy("channel"+comment.getBId(),comment.getCommentContent());
+        log.info("{}","消息通知成功");
         return i;
     }
 

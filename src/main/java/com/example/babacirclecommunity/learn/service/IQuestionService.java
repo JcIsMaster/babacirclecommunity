@@ -35,7 +35,7 @@ public interface IQuestionService {
      * @param userId
      * @return
      */
-    int giveLike(int id,int userId);
+    int giveLike(int id,int userId,int thumbUpId);
 
     /**
      * 提问帖收藏

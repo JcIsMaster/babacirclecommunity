@@ -12,7 +12,13 @@ import com.example.babacirclecommunity.circle.vo.PostReplyVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
+import com.example.babacirclecommunity.common.utils.GoEasyConfig;
+import com.example.babacirclecommunity.inform.dao.InformMapper;
+import com.example.babacirclecommunity.inform.entity.Inform;
 import com.example.babacirclecommunity.user.dao.UserMapper;
+import io.goeasy.GoEasy;
+import io.goeasy.publish.GoEasyError;
+import io.goeasy.publish.PublishListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +45,9 @@ public class CommentServiceImpl implements ICommentService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private InformMapper informMapper;
+
     @Override
     public int addComment(Comment comment) throws ParseException {
 
@@ -51,11 +60,39 @@ public class CommentServiceImpl implements ICommentService {
 
         comment.setCreateAt(System.currentTimeMillis() / 1000 + "");
         comment.setGiveStatus(0);
+
+
+
         //添加评论
         int i = commentMapper.addComment(comment);
         if (i <= 0) {
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
         }
+
+        //评论人id不等于被评论人id时添加和发送消息
+        if(comment.getPId()!=comment.getBId()){
+            //通知对象
+            Inform inform=new Inform();
+            inform.setContent(comment.getCommentContent());
+            inform.setCreateAt(System.currentTimeMillis()/1000+"");
+            inform.setOneType(0);
+            inform.setTId(comment.getTId());
+            inform.setInformType(0);
+            inform.setNotifiedPartyId(comment.getBId());
+            inform.setNotifierId(comment.getPId());
+
+            //添加评论通知
+            int i1 = informMapper.addCommentInform(inform);
+            if(i1<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+            }
+
+            //发送消息通知
+            GoEasyConfig.goEasy("channel"+comment.getBId(),"0");
+            log.info("{}","消息通知成功");
+        }
+
+
         return i;
     }
 
@@ -64,7 +101,6 @@ public class CommentServiceImpl implements ICommentService {
         postReply.setCreateAt(System.currentTimeMillis() / 1000 + "");
         postReply.setReplyGiveStatus(0);
 
-
         //获取token
         String token = ConstantUtil.getToken();
         String identifyTextContent = ConstantUtil.identifyText(postReply.getHContent(), token);
@@ -72,11 +108,23 @@ public class CommentServiceImpl implements ICommentService {
             throw new ApplicationException(CodeType.SERVICE_ERROR, "内容违规");
         }
 
+        //通知对象
+/*        Inform inform=new Inform();
+        inform.setContent(postReply.getHContent());
+        inform.setCreateAt(System.currentTimeMillis()/1000+"");
+        inform.setOneType(0);
+        inform.setTId(postReply.get);
+        inform.setInformType(0);
+        inform.setNotifiedPartyId(postReply.getBId());
+        inform.setNotifierId(postReply.getPId());*/
+
         //添加二级评论
         int i = postReplyMapper.addSecondLevelComment(postReply);
         if (i <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
+
+
         return i;
     }
 

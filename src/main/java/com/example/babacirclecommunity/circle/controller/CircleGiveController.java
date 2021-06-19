@@ -51,11 +51,11 @@ public class CircleGiveController {
     @ApiOperation(value = "点赞",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/givePost")
-    public int givePost(int id,int userId){
+    public int givePost(int id,int userId,int thumbUpId){
         if(id==0 || userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  iCircleGiveService.givePost(id, userId);
+        return  iCircleGiveService.givePost(id, userId,thumbUpId);
     }
 
 

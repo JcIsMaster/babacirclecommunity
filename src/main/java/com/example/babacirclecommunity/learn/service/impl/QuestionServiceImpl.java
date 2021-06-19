@@ -3,8 +3,11 @@ package com.example.babacirclecommunity.learn.service.impl;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
+import com.example.babacirclecommunity.common.utils.GoEasyConfig;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.WxPoster;
+import com.example.babacirclecommunity.inform.dao.InformMapper;
+import com.example.babacirclecommunity.inform.entity.Inform;
 import com.example.babacirclecommunity.learn.dao.DryGoodsCollectMapper;
 import com.example.babacirclecommunity.learn.dao.DryGoodsGiveMapper;
 import com.example.babacirclecommunity.learn.dao.QuestionMapper;
@@ -56,6 +59,9 @@ public class QuestionServiceImpl implements IQuestionService {
     @Autowired
     private DryGoodsCollectMapper dryGoodsCollectMapper;
 
+    @Autowired
+    private InformMapper informMapper;
+
     @Override
     public int addQuestion(Question question) {
         question.setCreateAt(System.currentTimeMillis() / 1000 + "");
@@ -97,7 +103,7 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public int giveLike(int id, int userId) {
+    public int giveLike(int id, int userId,int thumbUpId) {
         //查询数据库是否存在该条数据
         Give give = dryGoodsGiveMapper.selectCountWhether(0, userId, id);
         if (give == null) {
@@ -109,6 +115,32 @@ public class QuestionServiceImpl implements IQuestionService {
             if (j <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
+
+
+
+            //不给自己帖子点赞进入判断发送消息
+            if(userId!=thumbUpId){
+                //通知对象
+                Inform inform=new Inform();
+                inform.setContent(userId+"点赞了"+thumbUpId);
+                inform.setCreateAt(System.currentTimeMillis()/1000+"");
+                inform.setOneType(1);
+                inform.setTId(id);
+                inform.setInformType(1);
+                inform.setNotifiedPartyId(thumbUpId);
+                inform.setNotifierId(userId);
+
+                //添加评论通知
+                int i1 = informMapper.addCommentInform(inform);
+                if(i1<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+                }
+
+                //发送消息通知
+                GoEasyConfig.goEasy("channel"+thumbUpId,"1");
+                log.info("{}","点赞消息通知成功");
+            }
+
             return j;
         }
         int i = 0;
