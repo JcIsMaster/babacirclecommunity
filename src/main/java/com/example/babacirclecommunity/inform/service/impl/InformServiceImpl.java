@@ -53,13 +53,13 @@ public class InformServiceImpl implements IInformService {
 
         //查询点赞通知
         if (type == 1) {
-            //圈子评论
+            //圈子点赞
             List<InformUserVo> informUserVos = informMapper.queryCommentsNoticeCircleGive(userId, type, getPaging(paging));
 
-            //提问评论
+            //提问点赞
             List<InformUserVo> informUserVos1 = informMapper.queryCommentsNoticeQuestionGive(userId, type, getPaging(paging));
 
-            //干货评论
+            //干货点赞
             List<InformUserVo> informUserVos2 = informMapper.queryCommentsNoticeDryGoodsGive(userId, type, getPaging(paging));
 
             return Stream.of(informUserVos, informUserVos1, informUserVos2).flatMap(Collection::stream).collect(Collectors.toList());

@@ -116,24 +116,26 @@ public class QuestionServiceImpl implements IQuestionService {
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
 
-            //通知对象
-            Inform inform=new Inform();
-            inform.setContent(userId+"点赞了"+thumbUpId);
-            inform.setCreateAt(System.currentTimeMillis()/1000+"");
-            inform.setOneType(1);
-            inform.setTId(id);
-            inform.setInformType(1);
-            inform.setNotifiedPartyId(thumbUpId);
-            inform.setNotifierId(userId);
 
-            //添加评论通知
-            int i1 = informMapper.addCommentInform(inform);
-            if(i1<=0){
-                throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
-            }
 
             //不给自己帖子点赞进入判断发送消息
             if(userId!=thumbUpId){
+                //通知对象
+                Inform inform=new Inform();
+                inform.setContent(userId+"点赞了"+thumbUpId);
+                inform.setCreateAt(System.currentTimeMillis()/1000+"");
+                inform.setOneType(1);
+                inform.setTId(id);
+                inform.setInformType(1);
+                inform.setNotifiedPartyId(thumbUpId);
+                inform.setNotifierId(userId);
+
+                //添加评论通知
+                int i1 = informMapper.addCommentInform(inform);
+                if(i1<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+                }
+
                 //发送消息通知
                 GoEasyConfig.goEasy("channel"+thumbUpId,"1");
                 log.info("{}","点赞消息通知成功");

@@ -165,4 +165,13 @@ public interface ResourceMapper {
             "</foreach>" +
             "</script>")
     int addImg(@Param("zId") int zId, @Param("imgUrl") String[] imgUrl,@Param("createAt") String createAt,@Param("postType") int postType);
+
+    /**
+     * 查询上次观看帖子的时间
+     * @param tid 帖子id
+     * @param userId 用户id
+     * @return
+     */
+    @Select("select create_at from tb_browse where zq_id=${tid} and u_id=${userId} and type=0 and is_delete=1 order by create_at desc limit 1")
+    String queryCreateAt(@Param("tid") int tid,@Param("userId") int userId);
 }

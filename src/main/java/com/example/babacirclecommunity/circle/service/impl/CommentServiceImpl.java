@@ -69,25 +69,29 @@ public class CommentServiceImpl implements ICommentService {
             throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
         }
 
-        //通知对象
-        Inform inform=new Inform();
-        inform.setContent(comment.getCommentContent());
-        inform.setCreateAt(System.currentTimeMillis()/1000+"");
-        inform.setOneType(0);
-        inform.setTId(comment.getTId());
-        inform.setInformType(0);
-        inform.setNotifiedPartyId(comment.getBId());
-        inform.setNotifierId(comment.getPId());
+        //评论人id不等于被评论人id时添加和发送消息
+        if(comment.getPId()!=comment.getBId()){
+            //通知对象
+            Inform inform=new Inform();
+            inform.setContent(comment.getCommentContent());
+            inform.setCreateAt(System.currentTimeMillis()/1000+"");
+            inform.setOneType(0);
+            inform.setTId(comment.getTId());
+            inform.setInformType(0);
+            inform.setNotifiedPartyId(comment.getBId());
+            inform.setNotifierId(comment.getPId());
 
-        //添加评论通知
-        int i1 = informMapper.addCommentInform(inform);
-        if(i1<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+            //添加评论通知
+            int i1 = informMapper.addCommentInform(inform);
+            if(i1<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+            }
+
+            //发送消息通知
+            GoEasyConfig.goEasy("channel"+comment.getBId(),"0");
+            log.info("{}","消息通知成功");
         }
 
-        //发送消息通知
-        GoEasyConfig.goEasy("channel"+comment.getBId(),"0");
-        log.info("{}","消息通知成功");
 
         return i;
     }

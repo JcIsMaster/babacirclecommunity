@@ -27,7 +27,7 @@ public interface BrowseMapper {
      * @param userId
      * @return
      */
-    @Select("select create_at from tb_browse where zq_id=${tid} and u_id=${userId} and type=0 order by create_at desc limit 1")
+    @Select("select create_at from tb_browse where zq_id=${tid} and u_id=${userId} and type=1 and is_delete=1 order by create_at desc limit 1")
     String selectCreateAt(@Param("tid") int tid,@Param("userId") int userId);
 
 

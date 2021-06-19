@@ -26,5 +26,5 @@ public interface ICircleGiveService {
      * @param userId 用户id
      * @return
      */
-    int givePost(int id,int userId);
+    int givePost(int id,int userId,int thumbUpId);
 }
