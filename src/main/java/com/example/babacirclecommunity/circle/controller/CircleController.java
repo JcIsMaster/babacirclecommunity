@@ -186,6 +186,9 @@ public class CircleController {
     @ResponseBody
     @PostMapping("/updateCircle")
     public void updateCircle(Community community)  {
+        if(community.getPosters()==null || "undefined".equals(community.getPosters())){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"请上传封面");
+        }
          iCircleService.updateCircle(community);
     }
 
@@ -207,8 +210,8 @@ public class CircleController {
     @ApiOperation(value = "查询圈子成员",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryCircleMembers")
-    public List<UserVo> queryCircleMembers(int communityId)  {
-        return iCircleService.queryCircleMembers(communityId);
+    public List<UserVo> queryCircleMembers(int communityId,int userId)  {
+        return iCircleService.queryCircleMembers(communityId,userId);
     }
 
     /**

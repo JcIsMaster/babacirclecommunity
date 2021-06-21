@@ -128,7 +128,7 @@ public interface ICircleService {
      * @param communityId 圈子id
      * @return
      */
-    List<UserVo> queryCircleMembers(int communityId);
+    List<UserVo> queryCircleMembers(int communityId,int userId);
 
     /**
      * 添加单元体标签

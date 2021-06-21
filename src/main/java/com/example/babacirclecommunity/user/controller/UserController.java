@@ -52,7 +52,6 @@ public class UserController {
         if (id == 0) {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-
         return iUserService.queryUserInformationBasedUserId(id, userId);
 
     }
