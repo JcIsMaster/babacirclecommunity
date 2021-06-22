@@ -304,6 +304,14 @@ public interface CircleMapper {
             " tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.haplont_type=${haplontType} and a.tags_two=${tagId} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryPostByHaplontType(@Param("haplontType") int haplontType, @Param("paging") String paging, @Param("tagId") int tagId);
 
+    /**
+     * 删除资源 圈子
+     * @param id 帖id
+     * @return
+     */
+    @Update("update tb_circles set is_delete=0 where id=${id}")
+    int deletePosts(@Param("id") int id);
+
 
 
 }

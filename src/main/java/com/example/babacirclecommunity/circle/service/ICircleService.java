@@ -136,4 +136,10 @@ public interface ICircleService {
      * @param hName 名称
      */
     void addTagHaplont(int tagId,String hName );
+
+    /**
+     * 删除帖子
+     * @param id 帖子id
+     */
+    void deletePosts(int id);
 }

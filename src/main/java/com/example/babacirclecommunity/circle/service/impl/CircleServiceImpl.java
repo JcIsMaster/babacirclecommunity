@@ -625,5 +625,13 @@ public class CircleServiceImpl implements ICircleService {
         }
     }
 
+    @Override
+    public void deletePosts(int id) {
+        int i = circleMapper.deletePosts(id);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"删除失败");
+        }
+    }
+
 
 }
