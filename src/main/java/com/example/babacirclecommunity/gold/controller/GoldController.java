@@ -45,8 +45,7 @@ public class GoldController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
-        ResultUtil resultUtil = iGoldService.postExceptional(rewardedUserId, postExceptional);
-        return resultUtil;
+        return iGoldService.postExceptional(rewardedUserId, postExceptional);
     }
 
     /**
