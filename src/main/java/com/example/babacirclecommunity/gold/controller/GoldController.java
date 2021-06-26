@@ -56,6 +56,9 @@ public class GoldController {
     @ResponseBody
     @PostMapping("/signIn")
     public void signIn(int userId,int goldNumber){
+        if(userId==0 || goldNumber==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
          iGoldService.signIn(userId,goldNumber);
     }
 
@@ -79,7 +82,7 @@ public class GoldController {
     @ResponseBody
     @PostMapping("/queryGoldCoinChange")
     public List<GoldCoinChange> queryGoldCoinChange(Integer userId, Paging paging) {
-        if(paging.getPage()==0){
+        if(paging.getPage()==0 || userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0传1");
         }
         return iGoldService.queryGoldCoinChange(userId,paging);
