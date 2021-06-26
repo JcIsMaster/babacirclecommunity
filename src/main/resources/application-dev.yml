@@ -20,7 +20,7 @@ spring:
         max-wait: 1000
         max-active: 20
         min-idle: 1
-  # HTTP ENCODING
+  # 设置单个文件最大上传大小和总文件上传大小
   servlet:
     multipart:
       max-file-size: 30MB
@@ -28,9 +28,9 @@ spring:
 
 mybatis:
   #配置SQL映射文件路径
-  mapper-locations: classpath:com/example/*/dao/mapper/*.xml
+  mapper-locations: classpath:com/example/babacirclecommunity/*/dao/mapper/*.xml
   #配置别名
-  type-aliases-package: com.example.*.entity
+  type-aliases-package: com.example.babacirclecommunity.*.entity
   #驼峰命名
   configuration:
     map-underscore-to-camel-case: true

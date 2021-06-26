@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author JC
@@ -48,26 +49,36 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
 
         String sql="limit 0,4";
         PersonalVo personalVo = new PersonalVo();
+
         //查询用户基本信息
         PersonalCenterUserVo personalCenterUserVo = userMapper.queryUserById(otherId);
+
         //查询我是否关注了他
         int whetherAttention = attentionMapper.queryWhetherAttention(userId, otherId);
+
         //查询他创建的圈子
         List<CircleVo> circleVos = circleMapper.myCircleAndCircleJoined(otherId, sql);
+
         //查询他加入的圈子
         List<CircleVo> circleJoined = circleMapper.circleJoined(otherId, sql);
+        List<CircleVo> collect = circleJoined.stream().filter(u -> u.getUserId() != otherId).collect(Collectors.toList());
+
         personalVo.setPersonalCenterUserVo(personalCenterUserVo);
         personalVo.setCircleVos(circleVos);
-        personalVo.setJoinedCircleVos(circleJoined);
+        personalVo.setJoinedCircleVos(collect);
+
         //查询用户动态帖数量
         int postedCircleNum = circleMapper.queryHavePostedCircleNum(otherId);
         personalVo.setPostedCircleNum(postedCircleNum);
+
         //查询用户点赞帖数量
         int greatCircleNum = circleGiveMapper.countGiveCircle(otherId);
         personalVo.setGreatCircleNum(greatCircleNum);
+
         //查询用户关注帖数量
         int attentionNum = attentionMapper.countAttentionCircle(otherId);
         personalVo.setAttentionNum(attentionNum);
+
         if (userId == 0){
             personalVo.setWhetherAttention(0);
             return personalVo;
@@ -76,6 +87,7 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
             personalVo.setWhetherAttention(2);
             return personalVo;
         }
+
         personalVo.setWhetherAttention(whetherAttention);
 
         return personalVo;
@@ -169,7 +181,9 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
                 List<Haplont> haplonts = communityMapper.selectHaplontByTagId(circleVos.get(i).getTagId());
                 circleVos.get(i).setHaplonts(haplonts);
             }
-            return circleVos;
+
+            List<CircleVo> collect = circleVos.stream().filter(u -> u.getUserId() != otherId).collect(Collectors.toList());
+            return collect;
         }
         return null;
     }

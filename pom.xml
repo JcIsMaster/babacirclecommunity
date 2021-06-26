@@ -45,7 +45,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <!-- 移除嵌入式tomcat插件 -->
-           <!--<exclusions>
+          <!--<exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -55,6 +55,7 @@
 
 
         <!-- redis
+        redis 频繁断开连接
         错误原因：redis连接池lettuce存在bug
 
          解决办法：更换连接池，使用jedis-->

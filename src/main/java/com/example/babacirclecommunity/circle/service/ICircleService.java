@@ -128,7 +128,7 @@ public interface ICircleService {
      * @param communityId 圈子id
      * @return
      */
-    List<UserVo> queryCircleMembers(int communityId);
+    List<UserVo> queryCircleMembers(int communityId,int userId);
 
     /**
      * 添加单元体标签
@@ -136,4 +136,10 @@ public interface ICircleService {
      * @param hName 名称
      */
     void addTagHaplont(int tagId,String hName );
+
+    /**
+     * 删除帖子
+     * @param id 帖子id
+     */
+    void deletePosts(int id);
 }

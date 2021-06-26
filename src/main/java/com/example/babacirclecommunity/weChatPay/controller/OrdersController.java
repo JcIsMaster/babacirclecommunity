@@ -46,7 +46,7 @@ public class OrdersController {
     @ResponseBody
     @PostMapping("/orders")
     public Map<String,Object> orders(String openid,HttpServletRequest request,BigDecimal price,String body,int userId) throws Exception {
-        if("undefined".equals(openid)){
+        if("undefined".equals(openid) || "undefined".equals(price)){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 

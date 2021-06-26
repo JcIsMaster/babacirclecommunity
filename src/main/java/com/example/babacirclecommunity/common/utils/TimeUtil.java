@@ -96,10 +96,6 @@ public class TimeUtil {
 		return d;
 	}
 
-	public static void main(String[] args) throws ParseException {
-		boolean flag = isSameDate(1623224084,1623224654);
-
-	}
 
 	/**
 	 * 两天时间相比是否同一天

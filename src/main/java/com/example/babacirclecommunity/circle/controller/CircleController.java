@@ -34,11 +34,7 @@ public class CircleController {
    @Autowired
    private ICircleService iCircleService;
 
-    /**
-     *
-     * 查询我关注的人发的帖子
-     * @return
-     */
+
     @ApiOperation(value = "查询我关注的人发的帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryPostsPeopleFollow")
@@ -50,10 +46,6 @@ public class CircleController {
     }
 
 
-    /**
-     * 查询视频或者图片帖子
-     * @return
-     */
     @ApiOperation(value = "查询视频或者图片帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryImagesOrVideos")
@@ -61,11 +53,6 @@ public class CircleController {
         return iCircleService.queryImagesOrVideos(type,paging,userId);
     }
 
-    /**
-     *
-     * 查询单个圈子帖子
-     * @return
-     */
     @ApiOperation(value = "查询单个圈子的帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/querySingleCircle")
@@ -76,11 +63,7 @@ public class CircleController {
         return  iCircleService.querySingleCircle(id, userId);
     }
 
-    /**
-     *
-     * 查询推荐圈子
-     * @return
-     */
+
     @ApiOperation(value = "查询推荐圈子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryReferenceCircles")
@@ -88,11 +71,7 @@ public class CircleController {
         return  iCircleService.queryReferenceCircles(userId,paging);
     }
 
-    /**
-     *
-     * 查询我的圈子 查询我创建的圈子 （圈子广场）
-     * @return
-     */
+
     @ApiOperation(value = "查询我的圈子 （圈子广场）",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryCheckMyCirclesSquare")
@@ -103,11 +82,7 @@ public class CircleController {
         return  iCircleService.queryCheckMyCirclesSquare(userId,communityName,paging);
     }
 
-    /**
-     *
-     * 发现圈子
-     * @return
-     */
+
     @ApiOperation(value = "发现圈子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/fundCircle")
@@ -116,11 +91,6 @@ public class CircleController {
     }
 
 
-
-    /**
-     * 发布圈子
-     * @return
-     */
     @ApiOperation(value = "发布圈子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/publishingCircles")
@@ -132,10 +102,6 @@ public class CircleController {
     }
 
 
-    /**
-     * 创建圈子
-     * @return
-     */
     @ApiOperation(value = "创建圈子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addCircle")
@@ -147,7 +113,7 @@ public class CircleController {
     /**
      * 进入单元体的接口
      * 根据社区分类id查询圈子信息
-     * @return
+     * @return CommunityVo
      */
     @ApiOperation(value = "根据社区分类id查询圈子信息 ",notes = "成功返回数据 反则为空")
     @ResponseBody
@@ -164,10 +130,7 @@ public class CircleController {
         return iCircleService.queryClickUnitNavigationBar(typeId,userId,tagId,paging);
     }
 
-    /**
-     * 加入圈子
-     * @return
-     */
+
     @ApiOperation(value = "加入圈子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/joinCircle")
@@ -178,21 +141,17 @@ public class CircleController {
         return iCircleService.joinCircle(communityUser);
     }
 
-    /**
-     * 修改圈子信息
-     * @return
-     */
+
     @ApiOperation(value = "修改圈子信息",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/updateCircle")
     public void updateCircle(Community community)  {
+        if(community.getPosters()==null || "undefined".equals(community.getPosters())){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"请上传封面");
+        }
          iCircleService.updateCircle(community);
     }
 
-    /**
-     * 成员管理
-     * @return
-     */
     @ApiOperation(value = "成员管理",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/memberManagement")
@@ -200,26 +159,26 @@ public class CircleController {
         iCircleService.memberManagement(communityId,otherId);
     }
 
-    /**
-     * 查询圈子成员
-     * @return
-     */
+
     @ApiOperation(value = "查询圈子成员",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryCircleMembers")
-    public List<UserVo> queryCircleMembers(int communityId)  {
-        return iCircleService.queryCircleMembers(communityId);
+    public List<UserVo> queryCircleMembers(int communityId,int userId)  {
+        return iCircleService.queryCircleMembers(communityId,userId);
     }
 
-    /**
-     * 添加单元体标签
-     * @return
-     */
     @ApiOperation(value = "添加单元体标签",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addTagHaplont")
     public void addTagHaplont(int tagId,String hName){
          iCircleService.addTagHaplont(tagId,hName);
+    }
+
+    @ApiOperation(value = "删除帖子", notes = "成功返回1 失败0")
+    @ResponseBody
+    @PostMapping("/deletePosts")
+    public void deletePosts(int id) {
+        iCircleService.deletePosts(id);
     }
 
 

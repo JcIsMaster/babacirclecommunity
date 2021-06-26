@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
+import com.example.babacirclecommunity.gold.dao.GoldMapper;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.entity.User;
 import com.example.babacirclecommunity.user.service.IUserService;
@@ -36,6 +37,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private GoldMapper goldMapper;
 
     @Override
     public User wxLogin(String code, String userName, String avatar, String address, int sex) {
@@ -69,6 +73,8 @@ public class UserServiceImpl implements IUserService {
             if(user.getIsDelete()==0){
                 return null;
             }
+            //算出金币总和
+            user.setSumGoldNumber(user.getCanWithdrawGoldCoins()+user.getMayNotWithdrawGoldCoins());
             return user;
         }else{
             //增加新用户信息
@@ -90,10 +96,10 @@ public class UserServiceImpl implements IUserService {
             }
 
             //初始化金币
-            /*int i2 = goldMapper.addUserGoldCoins(user1.getId());
+            int i2 = goldMapper.addUserGoldCoins(user1.getId());
             if(i2<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR,"初始化金币数据失败");
-            }*/
+            }
             return user1;
         }
 
@@ -107,6 +113,15 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User queryUserById(int userId) {
         return userMapper.queryAllUser(userId);
+    }
+
+    @Override
+    public User selectUserById(int userId) {
+        User user = userMapper.selectUserById(userId);
+        //得到可用金币和不可用金币和
+        int i = user.getMayNotWithdrawGoldCoins() + user.getCanWithdrawGoldCoins();
+        user.setSumGoldNumber(i);
+        return user;
     }
 
     /**

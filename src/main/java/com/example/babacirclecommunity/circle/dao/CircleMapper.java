@@ -30,18 +30,18 @@ public interface CircleMapper {
      */
     @Select("select r.whether_public,r.user_id,r.whether_official,r.id,r.tag_id, r.community_name,r.posters,r.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN" +
             " (SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p  GROUP BY community_id) t1" +
-            " on r.id=t1.community_id where r.user_id=${userId} ORDER BY t1.community_id ${paging}")
+            " on r.id=t1.community_id where r.user_id=${userId} ORDER BY cnt desc ${paging}")
     List<CircleVo> myCircleAndCircleJoined(@Param("userId") int userId, @Param("paging") String paging);
 
     /**
-     * 查询我加入的圈子
+     * 查询我加入的圈子 （根据圈子人数排序）
      * @param userId 用户id
      * @param paging 分页
      * @return
      */
-    @Select("select r.id,r.tag_id, r.community_name, r.posters,r.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN " +
-            "(SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p  GROUP BY id) t1 " +
-            " on r.id=t1.community_id where t1.user_id=${userId} ORDER BY t1.community_id ${paging}")
+    @Select("select b.user_id,b.id,b.tag_id, b.community_name, b.posters,b.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community_user a " +
+            "INNER JOIN tb_community b on a.community_id=b.id LEFT JOIN (SELECT community_id,COUNT(*) AS count1 FROM " +
+            "tb_community_user GROUP BY community_id) t1 on a.community_id=t1.community_id where a.user_id=${userId} ORDER BY cnt desc ${paging}")
     List<CircleVo> circleJoined(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
@@ -199,7 +199,7 @@ public interface CircleMapper {
      * @param tagsTwo 二级标签id
      * @return
      */
-    @Select("select cover,id from tb_circles where tags_two=${tagsTwo} order by create_at desc limit 4")
+    @Select("select cover,id from tb_circles where tags_two=${tagsTwo} and is_delete=1 order by create_at desc limit 4")
     List<CircleImgIdVo> queryCoveId(@Param("tagsTwo") int tagsTwo);
 
     /**
@@ -303,6 +303,14 @@ public interface CircleMapper {
     @Select("select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,a.content,b.tag_name,b.id as tagId from" +
             " tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.haplont_type=${haplontType} and a.tags_two=${tagId} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryPostByHaplontType(@Param("haplontType") int haplontType, @Param("paging") String paging, @Param("tagId") int tagId);
+
+    /**
+     * 删除资源 圈子
+     * @param id 帖id
+     * @return
+     */
+    @Update("update tb_circles set is_delete=0 where id=${id}")
+    int deletePosts(@Param("id") int id);
 
 
 
