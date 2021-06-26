@@ -115,6 +115,15 @@ public class UserServiceImpl implements IUserService {
         return userMapper.queryAllUser(userId);
     }
 
+    @Override
+    public User selectUserById(int userId) {
+        User user = userMapper.selectUserById(userId);
+        //得到可用金币和不可用金币和
+        int i = user.getMayNotWithdrawGoldCoins() + user.getCanWithdrawGoldCoins();
+        user.setSumGoldNumber(i);
+        return user;
+    }
+
     /**
      * 向指定 URL 发送POST方法的请求
      *

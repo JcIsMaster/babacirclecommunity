@@ -70,11 +70,11 @@ public interface UserMapper {
     int addUser(@Param("user") User user);
 
     /**
-     * 根据id查询用户
+     *  查询用户信息和金币信息
      * @param Id
      * @return
      */
-    @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce,a.open_id,b.can_withdraw_gold_coins,b.may_not_withdraw_gold_coins from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where a.id=${Id}")
+    @Select("select a.picture,a.id,a.user_name,a.user_sex,a.avatar,a.introduce,a.open_id,b.can_withdraw_gold_coins,b.may_not_withdraw_gold_coins from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where a.id=${Id}")
     User selectUserById(@Param("Id") int Id);
 
     /**

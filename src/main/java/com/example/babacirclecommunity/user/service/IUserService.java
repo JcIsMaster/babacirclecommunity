@@ -34,4 +34,11 @@ public interface IUserService {
      * @return
      */
     User queryUserById(int userId);
+
+    /**
+     * 查询用户信息和金币信息
+     * @param userId 用户id
+     * @return
+     */
+    User selectUserById(int userId);
 }

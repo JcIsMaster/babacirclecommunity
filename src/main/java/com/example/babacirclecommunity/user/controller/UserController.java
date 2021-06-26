@@ -71,6 +71,16 @@ public class UserController {
 
     }
 
+    @ApiOperation(value = "查询用户信息和金币信息", notes = "成功返回成功")
+    @ResponseBody
+    @PostMapping("/selectUserById")
+    public User selectUserById(int userId) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iUserService.selectUserById(userId);
+    }
+
 
 
 }
