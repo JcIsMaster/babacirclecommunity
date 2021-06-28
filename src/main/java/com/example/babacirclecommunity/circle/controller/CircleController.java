@@ -174,7 +174,7 @@ public class CircleController {
          iCircleService.addTagHaplont(tagId,hName);
     }
 
-    @ApiOperation(value = "删除帖子", notes = "成功返回1 失败0")
+    @ApiOperation(value = "删除帖子", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/deletePosts")
     public void deletePosts(int id) {

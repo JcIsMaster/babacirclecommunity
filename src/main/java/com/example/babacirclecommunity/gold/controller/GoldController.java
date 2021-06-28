@@ -8,6 +8,7 @@ import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
 import com.example.babacirclecommunity.gold.entity.PostExceptional;
 import com.example.babacirclecommunity.gold.service.IGoldService;
+import com.example.babacirclecommunity.gold.vo.SingInVo;
 import com.example.babacirclecommunity.gold.vo.UserGoldCoinsVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -86,6 +87,20 @@ public class GoldController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0传1");
         }
         return iGoldService.queryGoldCoinChange(userId,paging);
+    }
+
+    /**
+     * 查询金币变化数据
+     * @return
+     */
+    @ApiOperation(value = "查询签到",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/querySign")
+    public List<SingInVo> querySign(Integer userId) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iGoldService.querySign(userId);
     }
 
 }

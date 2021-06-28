@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
 import com.example.babacirclecommunity.gold.entity.PostExceptional;
+import com.example.babacirclecommunity.gold.vo.SingInVo;
 import com.example.babacirclecommunity.gold.vo.UserGoldCoinsVo;
 
 import java.text.ParseException;
@@ -46,4 +47,11 @@ public interface IGoldService {
      * @return
      */
     List<GoldCoinChange> queryGoldCoinChange(Integer userId, Paging paging);
+
+    /**
+     *查询签到
+     * @param userId 用户id
+     * @return
+     */
+    List<SingInVo> querySign(Integer userId);
 }

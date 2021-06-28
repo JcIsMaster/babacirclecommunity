@@ -11,6 +11,8 @@ import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
 import com.example.babacirclecommunity.gold.entity.PostExceptional;
 import com.example.babacirclecommunity.gold.entity.UserGoldCoins;
 import com.example.babacirclecommunity.gold.service.IGoldService;
+import com.example.babacirclecommunity.gold.vo.GoldTimeVo;
+import com.example.babacirclecommunity.gold.vo.SingInVo;
 import com.example.babacirclecommunity.gold.vo.UserGoldCoinsVo;
 import com.example.babacirclecommunity.weChatPay.dao.OrderMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -170,5 +173,19 @@ public class IGoldServiceImpl implements IGoldService {
 
         List<GoldCoinChange> goldCoinChanges = goldMapper.queryGoldCoinChange(userId, sql);
         return goldCoinChanges;
+    }
+
+    @Override
+    public List<SingInVo> querySign(Integer userId) {
+        List<SingInVo> singInVoList=new ArrayList<>();
+
+        SingInVo singInVo=new SingInVo();
+        List<GoldTimeVo> goldTimeVos = goldMapper.querySign(userId);
+        for (int i=0;i<goldTimeVos.size();i++){
+
+
+        }
+
+        return null;
     }
 }

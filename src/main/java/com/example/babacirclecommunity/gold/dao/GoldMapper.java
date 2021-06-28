@@ -4,6 +4,8 @@ package com.example.babacirclecommunity.gold.dao;
 import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
 import com.example.babacirclecommunity.gold.entity.PostExceptional;
 import com.example.babacirclecommunity.gold.entity.UserGoldCoins;
+import com.example.babacirclecommunity.gold.vo.GoldTimeVo;
+import com.example.babacirclecommunity.gold.vo.SingInVo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -111,5 +113,14 @@ public interface GoldMapper {
      */
     @Update("update tb_user_gold_coins set consecutive_number=0 where user_id=${userId}")
     int updateConsecutiveNumberById(@Param("userId") int userId);
+
+
+    /**
+     * 查询签到
+     * @param userId
+     * @return
+     */
+    @Select("select source_gold_coin,positive_negative_gold_coins,create_at from tb_gold_coin_change where user_id=${userId}")
+    List<GoldTimeVo> querySign(@Param("userId") int userId);
 
 }
