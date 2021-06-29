@@ -12,12 +12,12 @@ public class GoldTimeVo {
     /**
      * 签到得到的金币数量
      */
-    private int positiveNegativeGoldCoins;
+    private String positiveNegativeGoldCoins;
 
     /**
      * 签到时间
      */
-    private String createAt;
+    private long createAt;
 
     /**
      * 金币获取与支出方式

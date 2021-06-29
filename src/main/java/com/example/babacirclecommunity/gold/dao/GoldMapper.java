@@ -120,7 +120,7 @@ public interface GoldMapper {
      * @param userId
      * @return
      */
-    @Select("select source_gold_coin,positive_negative_gold_coins,create_at from tb_gold_coin_change where user_id=${userId}")
+    @Select("select source_gold_coin,positive_negative_gold_coins,create_at from tb_gold_coin_change where user_id=${userId} and source_gold_coin='签到' ")
     List<GoldTimeVo> querySign(@Param("userId") int userId);
 
 }

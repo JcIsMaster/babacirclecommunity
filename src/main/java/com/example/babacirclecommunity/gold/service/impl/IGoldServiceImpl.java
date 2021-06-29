@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -179,13 +181,28 @@ public class IGoldServiceImpl implements IGoldService {
     public List<SingInVo> querySign(Integer userId) {
         List<SingInVo> singInVoList=new ArrayList<>();
 
-        SingInVo singInVo=new SingInVo();
         List<GoldTimeVo> goldTimeVos = goldMapper.querySign(userId);
         for (int i=0;i<goldTimeVos.size();i++){
 
+            //得到时间戳取出年，月，日
+            Date date=new Date(goldTimeVos.get(i).getCreateAt()*1000);
+            Calendar now = Calendar.getInstance();
+            now.setTime(date);
+            int year=now.get(Calendar.YEAR);
+            int month=now.get(Calendar.MONTH)+1;
+            int day=now.get(Calendar.DAY_OF_MONTH);
 
+            SingInVo singInVo=new SingInVo();
+            singInVo.setYear(year);
+            singInVo.setMonth(month);
+            singInVo.setDay(day);
+            singInVo.setType("holiday");
+            singInVo.setMark("已签到");
+            singInVo.setBgColor("#cce6ff");
+            singInVo.setColor("#2a97ff");
+            singInVoList.add(singInVo);
         }
 
-        return null;
+        return singInVoList;
     }
 }
