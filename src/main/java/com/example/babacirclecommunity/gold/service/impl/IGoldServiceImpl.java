@@ -21,10 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author MQ
@@ -78,7 +76,7 @@ public class IGoldServiceImpl implements IGoldService {
             goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
             goldCoinChange.setUserId(rewardedUserId);
             goldCoinChange.setSourceGoldCoin("打赏");
-            goldCoinChange.setPositiveNegativeGoldCoins("+" + postExceptional.getAmountGoldCoins());
+            goldCoinChange.setPositiveNegativeGoldCoins(postExceptional.getAmountGoldCoins());
             int i3 = orderMapper.addGoldCoinChange(goldCoinChange);
             if (i3 <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR, "打赏失败");
@@ -110,7 +108,7 @@ public class IGoldServiceImpl implements IGoldService {
         goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
         goldCoinChange.setUserId(rewardedUserId);
         goldCoinChange.setSourceGoldCoin("打赏");
-        goldCoinChange.setPositiveNegativeGoldCoins("+" + postExceptional.getAmountGoldCoins());
+        goldCoinChange.setPositiveNegativeGoldCoins(postExceptional.getAmountGoldCoins());
         int i3 = orderMapper.addGoldCoinChange(goldCoinChange);
         if (i3 <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR, "金币充值失败");
@@ -132,7 +130,9 @@ public class IGoldServiceImpl implements IGoldService {
         goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
         goldCoinChange.setUserId(userId);
         goldCoinChange.setSourceGoldCoin("签到");
-        goldCoinChange.setPositiveNegativeGoldCoins("+" + goldNumber);
+        goldCoinChange.setPositiveNegativeGoldCoins(goldNumber);
+        goldCoinChange.setSourceGoldCoinType(1);
+        goldCoinChange.setExpenditureOrIncome(1);
         int i1 = orderMapper.addGoldCoinChange(goldCoinChange);
         if (i1 <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR, "签到失败");
@@ -169,12 +169,26 @@ public class IGoldServiceImpl implements IGoldService {
     }
 
     @Override
-    public List<GoldCoinChange> queryGoldCoinChange(Integer userId, Paging paging) {
+    public Map<String,Object> queryGoldCoinChange(Integer userId,String createAt, Paging paging) {
         Integer page = (paging.getPage() - 1) * paging.getLimit();
         String sql = "limit " + page + "," + paging.getLimit() + "";
 
-        List<GoldCoinChange> goldCoinChanges = goldMapper.queryGoldCoinChange(userId, sql);
-        return goldCoinChanges;
+        Map<String,Object> map=new HashMap<>(3);
+
+        //查询所有消费记录
+        List<GoldCoinChange> goldCoinChanges = goldMapper.queryGoldCoinChange(userId,createAt, sql);
+
+        //支出
+        List<GoldCoinChange> collect = goldCoinChanges.stream().filter(u -> u.getExpenditureOrIncome() == 0).collect(Collectors.toList());
+
+        //收入
+        List<GoldCoinChange> collect1 = goldCoinChanges.stream().filter(u -> u.getExpenditureOrIncome() == 1).collect(Collectors.toList());
+
+        map.put("expend",collect.stream().collect(Collectors.summarizingInt(GoldCoinChange::getPositiveNegativeGoldCoins)).getSum());
+        map.put("income",collect1.stream().collect(Collectors.summarizingInt(GoldCoinChange::getPositiveNegativeGoldCoins)).getSum());
+        map.put("goldCoinChanges",goldCoinChanges);
+
+        return map;
     }
 
     @Override
