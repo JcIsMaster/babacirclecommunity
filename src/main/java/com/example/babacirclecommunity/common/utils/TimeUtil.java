@@ -17,9 +17,6 @@ import java.util.Date;
 */
 public class TimeUtil {
 
-
-
-
 	/**
 	 * 得到相隔的天数
 	 * @param time 过去时间

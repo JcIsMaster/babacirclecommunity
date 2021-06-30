@@ -5,10 +5,12 @@ import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
 import com.example.babacirclecommunity.gold.entity.PostExceptional;
+import com.example.babacirclecommunity.gold.vo.SingInVo;
 import com.example.babacirclecommunity.gold.vo.UserGoldCoinsVo;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -42,8 +44,17 @@ public interface IGoldService {
 
     /**
      * 查询金币变化数据
-     * @param userId 当前用户id
+     * @param userId 用户id
+     * @param createAt 选择查询的时间
+     * @param paging 分页
      * @return
      */
-    List<GoldCoinChange> queryGoldCoinChange(Integer userId, Paging paging);
+    Map<String,Object> queryGoldCoinChange(Integer userId, String createAt, Paging paging);
+
+    /**
+     *查询签到
+     * @param userId 用户id
+     * @return
+     */
+    List<SingInVo> querySign(Integer userId);
 }

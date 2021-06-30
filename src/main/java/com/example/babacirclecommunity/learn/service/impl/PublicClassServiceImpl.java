@@ -172,8 +172,10 @@ public class PublicClassServiceImpl implements IPublicClassService {
             GoldCoinChange coinChange = new GoldCoinChange();
             coinChange.setUserId(classOrder.getUId());
             coinChange.setSourceGoldCoin("公开课购买");
-            coinChange.setPositiveNegativeGoldCoins("-" + classOrder.getPrice());
+            coinChange.setPositiveNegativeGoldCoins(classOrder.getPrice());
             coinChange.setCreateAt(time);
+            coinChange.setSourceGoldCoinType(3);
+            coinChange.setExpenditureOrIncome(0);
             int j = orderMapper.addGoldCoinChange(coinChange);
             if (j <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR, "增加金币变化记录失败");
@@ -182,8 +184,10 @@ public class PublicClassServiceImpl implements IPublicClassService {
             GoldCoinChange coinChange2 = new GoldCoinChange();
             coinChange2.setUserId(userId);
             coinChange2.setSourceGoldCoin("公开课售出收入");
-            coinChange2.setPositiveNegativeGoldCoins("+" + classOrder.getPrice());
+            coinChange2.setPositiveNegativeGoldCoins(classOrder.getPrice());
             coinChange2.setCreateAt(time);
+            coinChange2.setSourceGoldCoinType(3);
+            coinChange2.setExpenditureOrIncome(1);
             int k = orderMapper.addGoldCoinChange(coinChange2);
             if (k <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR, "增加金币变化记录失败");
@@ -216,7 +220,7 @@ public class PublicClassServiceImpl implements IPublicClassService {
         GoldCoinChange coinChange = new GoldCoinChange();
         coinChange.setUserId(classOrder.getUId());
         coinChange.setSourceGoldCoin("公开课购买");
-        coinChange.setPositiveNegativeGoldCoins("-" + classOrder.getPrice());
+        coinChange.setPositiveNegativeGoldCoins(classOrder.getPrice());
         coinChange.setCreateAt(time);
         int j = orderMapper.addGoldCoinChange(coinChange);
         if (j <= 0) {
@@ -226,7 +230,7 @@ public class PublicClassServiceImpl implements IPublicClassService {
         GoldCoinChange coinChange2 = new GoldCoinChange();
         coinChange2.setUserId(userId);
         coinChange2.setSourceGoldCoin("公开课售出收入");
-        coinChange2.setPositiveNegativeGoldCoins("+" + classOrder.getPrice());
+        coinChange2.setPositiveNegativeGoldCoins(classOrder.getPrice());
         coinChange2.setCreateAt(time);
         int k = orderMapper.addGoldCoinChange(coinChange2);
         if (k <= 0) {

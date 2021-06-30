@@ -319,8 +319,10 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
             GoldCoinChange coinChange = new GoldCoinChange();
             coinChange.setUserId(learnPostExceptional.getRewarderId());
             coinChange.setSourceGoldCoin("干货帖打赏");
-            coinChange.setPositiveNegativeGoldCoins("-" + learnPostExceptional.getGoldNum());
+            coinChange.setPositiveNegativeGoldCoins(learnPostExceptional.getGoldNum());
             coinChange.setCreateAt(time);
+            coinChange.setSourceGoldCoinType(2);
+            coinChange.setExpenditureOrIncome(0);
             int j = orderMapper.addGoldCoinChange(coinChange);
             if (j <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR, "增加金币变化记录失败");
@@ -329,8 +331,10 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
             GoldCoinChange coinChange2 = new GoldCoinChange();
             coinChange2.setUserId(userId);
             coinChange2.setSourceGoldCoin("干货帖打赏收入");
-            coinChange2.setPositiveNegativeGoldCoins("+" + learnPostExceptional.getGoldNum());
+            coinChange2.setPositiveNegativeGoldCoins(learnPostExceptional.getGoldNum());
             coinChange2.setCreateAt(time);
+            coinChange2.setSourceGoldCoinType(2);
+            coinChange.setExpenditureOrIncome(1);
             int k = orderMapper.addGoldCoinChange(coinChange2);
             if (k <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR, "增加金币变化记录失败");
@@ -358,7 +362,7 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
         GoldCoinChange coinChange = new GoldCoinChange();
         coinChange.setUserId(learnPostExceptional.getRewarderId());
         coinChange.setSourceGoldCoin("干货帖打赏");
-        coinChange.setPositiveNegativeGoldCoins("-" + learnPostExceptional.getGoldNum());
+        coinChange.setPositiveNegativeGoldCoins(learnPostExceptional.getGoldNum());
         coinChange.setCreateAt(time);
         int j = orderMapper.addGoldCoinChange(coinChange);
         if (j <= 0) {
@@ -368,7 +372,7 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
         GoldCoinChange coinChange2 = new GoldCoinChange();
         coinChange2.setUserId(userId);
         coinChange2.setSourceGoldCoin("干货帖打赏收入");
-        coinChange2.setPositiveNegativeGoldCoins("+" + learnPostExceptional.getGoldNum());
+        coinChange2.setPositiveNegativeGoldCoins(learnPostExceptional.getGoldNum());
         coinChange2.setCreateAt(time);
         int k = orderMapper.addGoldCoinChange(coinChange2);
         if (k <= 0) {

@@ -37,7 +37,7 @@ public interface OrderMapper {
      * @param goldCoinChange
      * @return
      */
-    @Insert("insert into tb_gold_coin_change(user_id,source_gold_coin,positive_negative_gold_coins,create_at)" +
-            "values(${goldCoinChange.userId},#{goldCoinChange.sourceGoldCoin},#{goldCoinChange.positiveNegativeGoldCoins},#{goldCoinChange.createAt})")
+    @Insert("insert into tb_gold_coin_change(user_id,source_gold_coin,positive_negative_gold_coins,create_at,source_gold_coin_type,expenditure_or_income)" +
+            "values(${goldCoinChange.userId},#{goldCoinChange.sourceGoldCoin},#{goldCoinChange.positiveNegativeGoldCoins},#{goldCoinChange.createAt},${goldCoinChange.sourceGoldCoinType},${goldCoinChange.expenditureOrIncome})")
     int addGoldCoinChange(@Param("goldCoinChange") GoldCoinChange goldCoinChange);
 }

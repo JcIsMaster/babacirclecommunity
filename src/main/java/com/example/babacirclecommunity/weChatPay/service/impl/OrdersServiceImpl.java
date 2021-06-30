@@ -257,7 +257,9 @@ public class OrdersServiceImpl implements IOrdersService {
                 goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
                 goldCoinChange.setUserId(userId);
                 goldCoinChange.setSourceGoldCoin("充值");
-                goldCoinChange.setPositiveNegativeGoldCoins("+" + gold);
+                goldCoinChange.setPositiveNegativeGoldCoins(gold);
+                goldCoinChange.setSourceGoldCoinType(0);
+                goldCoinChange.setExpenditureOrIncome(1);
                 int i1 = orderMapper.addGoldCoinChange(goldCoinChange);
                 if (i1 <= 0) {
                     throw new ApplicationException(CodeType.SERVICE_ERROR, "金币充值失败");

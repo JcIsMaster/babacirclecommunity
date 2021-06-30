@@ -4,6 +4,8 @@ package com.example.babacirclecommunity.gold.dao;
 import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
 import com.example.babacirclecommunity.gold.entity.PostExceptional;
 import com.example.babacirclecommunity.gold.entity.UserGoldCoins;
+import com.example.babacirclecommunity.gold.vo.GoldTimeVo;
+import com.example.babacirclecommunity.gold.vo.SingInVo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -89,12 +91,14 @@ public interface GoldMapper {
 
     /**
      * 查询金币变化数据
-     * @param userId 当前用户id
+     * @param userId 用户id
+     * @param createAt 选择查询的时间
      * @param sql 分页
+     * @param expenditureOrIncome 0支出 1收入
      * @return
      */
-    @Select("select source_gold_coin,positive_negative_gold_coins,create_at from tb_gold_coin_change where user_id=${userId} ${sql}")
-    List<GoldCoinChange> queryGoldCoinChange(@Param("userId") Integer userId, @Param("sql") String sql);
+    @Select("select source_gold_coin,positive_negative_gold_coins,create_at,source_gold_coin_type,expenditure_or_income from tb_gold_coin_change where user_id=${userId} and FROM_UNIXTIME(create_at,'%Y-%m')=#{createAt} ${sql}")
+    List<GoldCoinChange> queryGoldCoinChange(@Param("userId") Integer userId,@Param("createAt") String createAt, @Param("sql") String sql);
 
     /**
      * 查询当前签到天数
@@ -111,5 +115,14 @@ public interface GoldMapper {
      */
     @Update("update tb_user_gold_coins set consecutive_number=0 where user_id=${userId}")
     int updateConsecutiveNumberById(@Param("userId") int userId);
+
+
+    /**
+     * 查询签到
+     * @param userId
+     * @return
+     */
+    @Select("select source_gold_coin,positive_negative_gold_coins,create_at from tb_gold_coin_change where user_id=${userId} and source_gold_coin='签到' ")
+    List<GoldTimeVo> querySign(@Param("userId") int userId);
 
 }

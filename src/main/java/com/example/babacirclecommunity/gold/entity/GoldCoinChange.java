@@ -24,7 +24,17 @@ public class GoldCoinChange {
     /**
      * 金币正负
      */
-    private String positiveNegativeGoldCoins;
+    private int positiveNegativeGoldCoins;
+
+    /**
+     * 0 充值，1签到，2干货 3公开课
+     */
+    private int sourceGoldCoinType;
+
+    /***
+     * 0支出 1收入
+     */
+    private int expenditureOrIncome;
 
     /**
      * 创建时间

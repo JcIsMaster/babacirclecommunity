@@ -11,6 +11,8 @@ import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
 import com.example.babacirclecommunity.gold.entity.PostExceptional;
 import com.example.babacirclecommunity.gold.entity.UserGoldCoins;
 import com.example.babacirclecommunity.gold.service.IGoldService;
+import com.example.babacirclecommunity.gold.vo.GoldTimeVo;
+import com.example.babacirclecommunity.gold.vo.SingInVo;
 import com.example.babacirclecommunity.gold.vo.UserGoldCoinsVo;
 import com.example.babacirclecommunity.weChatPay.dao.OrderMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author MQ
@@ -73,7 +76,7 @@ public class IGoldServiceImpl implements IGoldService {
             goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
             goldCoinChange.setUserId(rewardedUserId);
             goldCoinChange.setSourceGoldCoin("打赏");
-            goldCoinChange.setPositiveNegativeGoldCoins("+" + postExceptional.getAmountGoldCoins());
+            goldCoinChange.setPositiveNegativeGoldCoins(postExceptional.getAmountGoldCoins());
             int i3 = orderMapper.addGoldCoinChange(goldCoinChange);
             if (i3 <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR, "打赏失败");
@@ -105,7 +108,7 @@ public class IGoldServiceImpl implements IGoldService {
         goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
         goldCoinChange.setUserId(rewardedUserId);
         goldCoinChange.setSourceGoldCoin("打赏");
-        goldCoinChange.setPositiveNegativeGoldCoins("+" + postExceptional.getAmountGoldCoins());
+        goldCoinChange.setPositiveNegativeGoldCoins(postExceptional.getAmountGoldCoins());
         int i3 = orderMapper.addGoldCoinChange(goldCoinChange);
         if (i3 <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR, "金币充值失败");
@@ -127,7 +130,9 @@ public class IGoldServiceImpl implements IGoldService {
         goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
         goldCoinChange.setUserId(userId);
         goldCoinChange.setSourceGoldCoin("签到");
-        goldCoinChange.setPositiveNegativeGoldCoins("+" + goldNumber);
+        goldCoinChange.setPositiveNegativeGoldCoins(goldNumber);
+        goldCoinChange.setSourceGoldCoinType(1);
+        goldCoinChange.setExpenditureOrIncome(1);
         int i1 = orderMapper.addGoldCoinChange(goldCoinChange);
         if (i1 <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR, "签到失败");
@@ -164,11 +169,54 @@ public class IGoldServiceImpl implements IGoldService {
     }
 
     @Override
-    public List<GoldCoinChange> queryGoldCoinChange(Integer userId, Paging paging) {
+    public Map<String,Object> queryGoldCoinChange(Integer userId,String createAt, Paging paging) {
         Integer page = (paging.getPage() - 1) * paging.getLimit();
         String sql = "limit " + page + "," + paging.getLimit() + "";
 
-        List<GoldCoinChange> goldCoinChanges = goldMapper.queryGoldCoinChange(userId, sql);
-        return goldCoinChanges;
+        Map<String,Object> map=new HashMap<>(3);
+
+        //查询所有消费记录
+        List<GoldCoinChange> goldCoinChanges = goldMapper.queryGoldCoinChange(userId,createAt, sql);
+
+        //支出
+        List<GoldCoinChange> collect = goldCoinChanges.stream().filter(u -> u.getExpenditureOrIncome() == 0).collect(Collectors.toList());
+
+        //收入
+        List<GoldCoinChange> collect1 = goldCoinChanges.stream().filter(u -> u.getExpenditureOrIncome() == 1).collect(Collectors.toList());
+
+        map.put("expend",collect.stream().collect(Collectors.summarizingInt(GoldCoinChange::getPositiveNegativeGoldCoins)).getSum());
+        map.put("income",collect1.stream().collect(Collectors.summarizingInt(GoldCoinChange::getPositiveNegativeGoldCoins)).getSum());
+        map.put("goldCoinChanges",goldCoinChanges);
+
+        return map;
+    }
+
+    @Override
+    public List<SingInVo> querySign(Integer userId) {
+        List<SingInVo> singInVoList=new ArrayList<>();
+
+        List<GoldTimeVo> goldTimeVos = goldMapper.querySign(userId);
+        for (int i=0;i<goldTimeVos.size();i++){
+
+            //得到时间戳取出年，月，日
+            Date date=new Date(goldTimeVos.get(i).getCreateAt()*1000);
+            Calendar now = Calendar.getInstance();
+            now.setTime(date);
+            int year=now.get(Calendar.YEAR);
+            int month=now.get(Calendar.MONTH)+1;
+            int day=now.get(Calendar.DAY_OF_MONTH);
+
+            SingInVo singInVo=new SingInVo();
+            singInVo.setYear(year);
+            singInVo.setMonth(month);
+            singInVo.setDay(day);
+            singInVo.setType("holiday");
+            singInVo.setMark("已签到");
+            singInVo.setBgColor("#cce6ff");
+            singInVo.setColor("#2a97ff");
+            singInVoList.add(singInVo);
+        }
+
+        return singInVoList;
     }
 }
