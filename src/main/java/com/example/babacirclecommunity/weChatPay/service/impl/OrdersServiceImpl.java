@@ -13,6 +13,7 @@ import com.example.babacirclecommunity.weChatPay.entity.GoldCoinOrders;
 import com.example.babacirclecommunity.weChatPay.service.IOrdersService;
 import com.example.babacirclecommunity.weChatPay.util.PayUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,9 @@ public class OrdersServiceImpl implements IOrdersService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     @Override
     public Map<String, Object> orders(String openid, HttpServletRequest request, BigDecimal price, String body, int userId) throws Exception {
@@ -179,7 +183,9 @@ public class OrdersServiceImpl implements IOrdersService {
                 throw new ApplicationException(CodeType.SERVICE_ERROR, "订单生成失败");
             }
 
-            //业务逻辑代码
+
+            //amqpTemplate.convertAndSend("ex.order","order",paraMap.get("out_trade_no"));
+        //业务逻辑代码
         }
 
         return response;
