@@ -8,10 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * ffmpeg工具类
+ * @author MQ
+ */
 public class FfmpegUtil {
 	
 	/**
-	 * 
+	 * 得到视频封面
 	 * @param videoUrl 视屏地址
 	 * @return
 	 * @throws IOException
