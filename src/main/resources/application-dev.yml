@@ -12,6 +12,15 @@ spring:
       connection-timeout: 50000
       maximum-pool-size: 60
       minimum-idle: 10
+  rabbitmq:
+    host: 119.29.130.179
+    port: 5672
+    username: admin
+    password: admin
+    connection-timeout: 60s
+    listener:
+      direct:
+        acknowledge-mode: none
   redis:
     host: 119.29.130.179
     timeout: 5000

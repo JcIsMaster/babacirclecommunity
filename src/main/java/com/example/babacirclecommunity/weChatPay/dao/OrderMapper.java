@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.weChatPay.dao;
 import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
 import com.example.babacirclecommunity.weChatPay.entity.GoldCoinOrders;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,7 @@ public interface OrderMapper {
      * @param orderStatus 订单状态 0待支付，1已支付,2已取消
      * @return
      */
-    @Update("update tb_gold_coin_orders set order_status=1 where order_number=#{orderNumber}")
+    @Update("update tb_gold_coin_orders set order_status=${orderStatus} where order_number=#{orderNumber}")
     int updateOrderStatus(@Param("orderStatus") int orderStatus, @Param("orderNumber") String orderNumber);
 
     /**
