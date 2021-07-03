@@ -255,7 +255,7 @@ public class PublicClassServiceImpl implements IPublicClassService {
         //查询用户基本信息
         PersonalCenterUserVo personalCenterUserVo = userMapper.queryUserById(otherId);
         classPersonalVo.setPersonalCenterUserVo(personalCenterUserVo);
-        //查询用户发的干货帖子
+        //查询用户发的帖子
         List<PublicClassTagVo> publicClassTagVos = publicClassMapper.queryPublicClassListByUser(otherId, pag);
         classPersonalVo.setPublicClassTagVos(publicClassTagVos);
 
@@ -354,5 +354,15 @@ public class PublicClassServiceImpl implements IPublicClassService {
         }
 
         return posterList;
+    }
+
+    @Override
+    public List<PublicClassTagVo> queryClassByUserId(int userId, Paging paging) {
+        if (userId == 0) {
+            return null;
+        }
+        Integer page = (paging.getPage() - 1) * paging.getLimit();
+        String pag = "limit " + page + "," + paging.getLimit() + "";
+        return publicClassMapper.queryClassByUserId(userId,pag);
     }
 }

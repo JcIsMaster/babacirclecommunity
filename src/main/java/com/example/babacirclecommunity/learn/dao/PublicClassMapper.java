@@ -99,4 +99,15 @@ public interface PublicClassMapper {
      */
     @Select("select count(*) from tb_class_order where t_id = ${tId} and u_id = ${uId} and is_delete = 1")
     Integer queryBuyerStatus(@Param("tId") int tId,@Param("uId") int uId);
+
+    /**
+     * 查询用户购买的公开课课程
+     * @param userId
+     * @param paging
+     * @return
+     */
+    @Select("select a.id,a.title,a.tags_two,a.cover_img,a.price,a.buyer_num,b.tag_name from " +
+            "tb_public_class a LEFT JOIN tb_tags b on a.tags_two = b.id INNER JOIN tb_class_order c on a.id = c.t_id where " +
+            "c.u_id = ${userId} and a.is_delete = 1 and c.is_delete = 1 order by c.create_at desc ${paging}")
+    List<PublicClassTagVo> queryClassByUserId(@Param("userId") int userId,@Param("paging") String paging);
 }

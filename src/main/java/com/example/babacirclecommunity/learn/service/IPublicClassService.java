@@ -3,8 +3,10 @@ package com.example.babacirclecommunity.learn.service;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.ClassOrder;
+import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
 import com.example.babacirclecommunity.personalCenter.vo.ClassPersonalVo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -53,4 +55,12 @@ public interface IPublicClassService {
      * @return
      */
     List<String> getPublicClass(String id, String pageUrl);
+
+    /**
+     * 查询用户购买的公开课课程
+     * @param userId
+     * @param paging
+     * @return
+     */
+    List<PublicClassTagVo> queryClassByUserId(int userId,Paging paging);
 }

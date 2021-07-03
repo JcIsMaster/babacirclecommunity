@@ -6,6 +6,7 @@ import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.ClassOrder;
 import com.example.babacirclecommunity.learn.service.IPublicClassService;
+import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
 import com.example.babacirclecommunity.personalCenter.vo.ClassPersonalVo;
 import io.swagger.annotations.Api;
@@ -100,5 +101,18 @@ public class PublicClassController {
     @PostMapping("/getPublicClass")
     public List<String> getPublicClass(String id, String pageUrl){
         return iPublicClassService.getPublicClass(id,pageUrl);
+    }
+
+    /**
+     * 查询用户购买的公开课课程
+     * @param userId
+     * @param paging
+     * @return
+     */
+    @ApiOperation(value = "查询用户购买的公开课课程",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryClassByUserId")
+    public List<PublicClassTagVo> queryClassByUserId(int userId,Paging paging){
+        return iPublicClassService.queryClassByUserId(userId,paging);
     }
 }
