@@ -15,10 +15,10 @@ import java.io.IOException;
  * @author MQ
  * @date 2021/6/30 17:03
  */
-@Component
-@RabbitListener(queues = "q.order.dlx")
+//@Component
+//@RabbitListener(queues = "q.order.dlx")
 public class TimeoutOrderListener {
-
+/**
     @Autowired
     private OrderMapper orderMapper;
 
@@ -33,4 +33,5 @@ public class TimeoutOrderListener {
         channel.basicAck(deliveryTag,true);
 
     }
+    */
 }

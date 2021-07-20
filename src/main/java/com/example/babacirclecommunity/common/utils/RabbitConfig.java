@@ -11,9 +11,9 @@ import java.util.Map;
  * @author MQ
  * @date 2021/6/29 16:33
  */
-@Configuration
+//@Configuration
 public class RabbitConfig {
-
+/**
     @Bean
     public Queue queue(){
         Map<String,Object> props =new HashMap<>(5);
@@ -40,11 +40,13 @@ public class RabbitConfig {
         DirectExchange exchange = new DirectExchange("ex.order", true,false, null);
         return exchange;
     }
+    */
 
     /**
      * 死信交换器（Direct直连交换机）
      * @return
      */
+    /**
     @Bean
     public Exchange exchangeDlx() {
         DirectExchange exchange = new DirectExchange("ex.order.dlx", true,false, null);
@@ -55,16 +57,18 @@ public class RabbitConfig {
     public Binding binding() {
         return BindingBuilder.bind(queue()).to(exchange()).with("order").noargs();
     }
+    */
 
     /**
      * 绑定死信交换机和队列
      * @return
      */
+    /**
     @Bean
     public Binding bindingDlx() {
         return BindingBuilder.bind(queueDlx()).to(exchangeDlx()).with("order.dlx").noargs();
     }
-
+    */
 
 
 
