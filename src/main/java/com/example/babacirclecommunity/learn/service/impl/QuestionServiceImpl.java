@@ -2,19 +2,19 @@ package com.example.babacirclecommunity.learn.service.impl;
 
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
-import com.example.babacirclecommunity.common.utils.ConstantUtil;
-import com.example.babacirclecommunity.common.utils.GoEasyConfig;
-import com.example.babacirclecommunity.common.utils.Paging;
-import com.example.babacirclecommunity.common.utils.WxPoster;
+import com.example.babacirclecommunity.common.utils.*;
 import com.example.babacirclecommunity.inform.dao.InformMapper;
 import com.example.babacirclecommunity.inform.entity.Inform;
 import com.example.babacirclecommunity.learn.dao.DryGoodsCollectMapper;
 import com.example.babacirclecommunity.learn.dao.DryGoodsGiveMapper;
+import com.example.babacirclecommunity.learn.dao.LearnCommentMapper;
 import com.example.babacirclecommunity.learn.dao.QuestionMapper;
 import com.example.babacirclecommunity.learn.entity.Collect;
 import com.example.babacirclecommunity.learn.entity.Give;
+import com.example.babacirclecommunity.learn.entity.LearnCommentGive;
 import com.example.babacirclecommunity.learn.entity.Question;
 import com.example.babacirclecommunity.learn.service.IQuestionService;
+import com.example.babacirclecommunity.learn.vo.LearnCommentVo;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
 import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
 import com.example.babacirclecommunity.learn.vo.QuestionVo;
@@ -62,44 +62,50 @@ public class QuestionServiceImpl implements IQuestionService {
     @Autowired
     private InformMapper informMapper;
 
+    @Autowired
+    private LearnCommentMapper learnCommentMapper;
+
     @Override
-    public int addQuestion(Question question) {
-        question.setCreateAt(System.currentTimeMillis() / 1000 + "");
-        return questionMapper.addQuestion(question);
+    public List<QuestionTagVo> queryQuestionList(int orderRule, Integer tagId,Integer planClassId, String content, Paging paging) {
+        int page = (paging.getPage() - 1) * paging.getLimit();
+        String sql = "";
+        //最新
+        if (orderRule == 0){
+            sql = "order by a.create_at DESC limit " + page + "," + paging.getLimit();
+        }
+        //最热
+        else {
+            sql = "order by a.favour_num DESC limit " + page + "," + paging.getLimit();
+        }
+        return questionMapper.queryQuestionList(content,tagId,planClassId,sql);
     }
 
     @Override
-    public QuestionTagVo queryQuestionById(int id, int userId) {
-        QuestionTagVo questionTagVo = questionMapper.queryQuestionById(id);
-        //获取发帖人名称,头像
-        String uName = userMapper.selectUserById(questionTagVo.getUId()).getUserName();
-        String avatar = userMapper.selectUserById(questionTagVo.getUId()).getAvatar();
-        if (uName == null || avatar == null) {
+    public ResultUtil addQuestion(Question question) {
+        question.setCreateAt(System.currentTimeMillis() / 1000 + "");
+        int i = questionMapper.addQuestion(question);
+        if (i <= 0){
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
-        questionTagVo.setUName(uName);
-        questionTagVo.setAvatar(avatar);
+        return ResultUtil.success("发布成功");
+    }
+
+    @Override
+    public QuestionVo queryQuestionById(int id, int userId) {
+        QuestionVo questionVo = questionMapper.queryQuestionById(id);
         //如果userId为0，用户处于未登录状态，状态设为未点赞
         if (userId == 0) {
-            questionTagVo.setWhetherGive(0);
-            questionTagVo.setWhetherCollect(0);
-            return questionTagVo;
+            questionVo.setWhetherGive(0);
+            return questionVo;
         }
         //我是否对该帖子点过赞
-        Integer giveStatus = dryGoodsGiveMapper.whetherGive(0, userId, questionTagVo.getId());
+        Integer giveStatus = dryGoodsGiveMapper.whetherGive(0, userId, questionVo.getId());
         if (giveStatus == 0) {
-            questionTagVo.setWhetherGive(0);
+            questionVo.setWhetherGive(0);
         } else {
-            questionTagVo.setWhetherGive(1);
+            questionVo.setWhetherGive(1);
         }
-        //我是否对该帖子收过藏
-        Integer collectStatus = dryGoodsCollectMapper.whetherCollect(0, userId, questionTagVo.getId());
-        if (collectStatus == 0) {
-            questionTagVo.setWhetherCollect(0);
-        } else {
-            questionTagVo.setWhetherCollect(1);
-        }
-        return questionTagVo;
+        return questionVo;
     }
 
     @Override
@@ -227,13 +233,13 @@ public class QuestionServiceImpl implements IQuestionService {
 
 
         QuestionTagVo questionTagVo = questionMapper.queryQuestionPosters(id);
-        if (questionTagVo.getAnonymous() == 1) {
-            questionTagVo.setUName("匿名用户");
-            questionTagVo.setAvatar("https://www.gofatoo.com/img/_20210603155752.png");
-            if (questionTagVo.getCoverImg() == null || questionTagVo.getCoverImg().equals("")) {
-                questionTagVo.setCoverImg("https://www.gofatoo.com/img/_20210603155758.png");
-            }
-        }
+//        if (questionTagVo.getAnonymous() == 1) {
+//            questionTagVo.setUName("匿名用户");
+//            questionTagVo.setAvatar("https://www.gofatoo.com/img/_20210603155752.png");
+//            if (questionTagVo.getCoverImg() == null || questionTagVo.getCoverImg().equals("")) {
+//                questionTagVo.setCoverImg("https://www.gofatoo.com/img/_20210603155758.png");
+//            }
+//        }
 
         String time = "";
 
@@ -294,7 +300,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
             WxPoster wxPoster = new WxPoster();
             //生成海报5
-            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMasterQuestion("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", questionTagVo.getAvatar(), questionTagVo.getCoverImg(), questionTagVo.getUName(), questionTagVo.getTitle());
+            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMasterQuestion("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", questionTagVo.getAvatar(), "https://www.gofatoo.com/img/_20210603155758.png", questionTagVo.getUserName(), questionTagVo.getTitle());
             String newGreat = posterUrlGreatMaster.replace("e:/file/img/", "https://www.gofatoo.com/img/");
             /*if(newGreat!=null){
                 if(circleFriendsVo.getType()==0){

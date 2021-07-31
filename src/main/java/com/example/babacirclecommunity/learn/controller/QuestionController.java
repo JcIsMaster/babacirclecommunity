@@ -3,9 +3,11 @@ package com.example.babacirclecommunity.learn.controller;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.Question;
 import com.example.babacirclecommunity.learn.service.IQuestionService;
 import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
+import com.example.babacirclecommunity.learn.vo.QuestionVo;
 import com.example.babacirclecommunity.personalCenter.vo.QuestionPersonalVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +33,20 @@ public class QuestionController {
     private IQuestionService iQuestionService;
 
     /**
+     * 查询提问信息
+     * @return
+     */
+    @ApiOperation(value = "查询提问信息",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryQuestionList")
+    public List<QuestionTagVo> queryQuestionList(int orderRule,Integer tagId,Integer planClassId,String content,Paging paging){
+        if(paging.getPage()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
+        }
+        return iQuestionService.queryQuestionList(orderRule,tagId,planClassId,content,paging);
+    }
+
+    /**
      * 发布提问帖
      * @param question
      * @return
@@ -39,7 +55,7 @@ public class QuestionController {
     @ApiOperation(value = "发布提问帖",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addQuestion")
-    public int addQuestion(Question question) throws Exception{
+    public ResultUtil addQuestion(Question question) throws Exception{
         return iQuestionService.addQuestion(question);
     }
 
@@ -53,7 +69,7 @@ public class QuestionController {
     @ApiOperation(value = "根据id查询提问详情",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryQuestionById")
-    public QuestionTagVo queryQuestionById(int id,int userId) throws Exception{
+    public QuestionVo queryQuestionById(int id, int userId) throws Exception{
         if(id==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }

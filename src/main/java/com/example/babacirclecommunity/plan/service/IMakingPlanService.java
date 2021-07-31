@@ -1,11 +1,10 @@
 package com.example.babacirclecommunity.plan.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
-import com.example.babacirclecommunity.plan.entity.Plan;
-import com.example.babacirclecommunity.plan.entity.PlanClass;
-import com.example.babacirclecommunity.plan.entity.PlanClassFeedback;
-import com.example.babacirclecommunity.plan.entity.UserPlan;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
+import com.example.babacirclecommunity.plan.entity.*;
 import com.example.babacirclecommunity.plan.vo.PlanClassVo;
+import com.example.babacirclecommunity.plan.vo.RecentlyPlanClassListVo;
 import com.example.babacirclecommunity.plan.vo.TopicOptionsVo;
 import com.example.babacirclecommunity.plan.vo.UserPlanVo;
 
@@ -59,4 +58,34 @@ public interface IMakingPlanService {
      * @return
      */
     List<PlanClass> queryEnhancePlanListByTag(int tagId, Paging paging);
+
+    /**
+     * 添加课程学习记录
+     * @param planClassRecord
+     * @return
+     */
+    ResultUtil addLearningRecord(PlanClassRecord planClassRecord);
+
+    /**
+     * 查询我的学习
+     * @param userId
+     * @return
+     */
+    Object queryMyStudies(int userId);
+
+    /**
+     * 根据用户id查询该用户最近学习的课程列表
+     * @param userId
+     * @param paging
+     * @return
+     */
+    List<PlanClass> queryRecentlyLearnedClassList(int userId, Paging paging);
+
+    /**
+     * 课程打卡签到
+     * @param userId
+     * @param planId
+     * @return
+     */
+    ResultUtil planClassSingIn(int userId, int planId);
 }

@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.learn.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.Question;
 import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
 import com.example.babacirclecommunity.learn.vo.QuestionVo;
@@ -15,11 +16,21 @@ import java.util.List;
 public interface IQuestionService {
 
     /**
+     * 查询提问信息
+     * @param orderRule 排序
+     * @param tagId 标签id
+     * @param content 搜索内容
+     * @param paging 分页
+     * @return
+     */
+    List<QuestionTagVo> queryQuestionList(int orderRule,Integer tagId,Integer planClassId,String content,Paging paging);
+
+    /**
      * 发布提问帖
      * @param question
      * @return
      */
-    int addQuestion(Question question);
+    ResultUtil addQuestion(Question question);
 
     /**
      * 根据id查询提问帖详情
@@ -27,7 +38,7 @@ public interface IQuestionService {
      * @param userId
      * @return
      */
-    QuestionTagVo queryQuestionById(int id,int userId);
+    QuestionVo queryQuestionById(int id,int userId);
 
     /**
      * 提问帖点赞

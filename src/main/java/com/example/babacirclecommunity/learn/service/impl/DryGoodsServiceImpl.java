@@ -94,8 +94,8 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
                 sql2 = "order by a.favour DESC ";
             }
             sql2 = sql2 + "limit " + page + "," + paging.getLimit() + "";
-            List<QuestionVo> questionVos = questionMapper.queryQuestionList(content, tagId, sql2);
-            return questionVos;
+//            List<QuestionVo> questionVos = questionMapper.queryQuestionList(content, tagId, sql2);
+            return null;
         }
         //干货
         if (type == 1) {

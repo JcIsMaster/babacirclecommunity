@@ -35,4 +35,9 @@ public class UserPlan {
      * 创建时间
      */
     private String createAt;
+
+    /**
+     * 修改时间
+     */
+    private String updateTime;
 }

@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.learn.entity.LearnComment;
 import com.example.babacirclecommunity.learn.entity.LearnCommentGive;
 import com.example.babacirclecommunity.learn.vo.LearnCommentReplyVo;
 import com.example.babacirclecommunity.learn.vo.LearnCommentUserVo;
+import com.example.babacirclecommunity.learn.vo.LearnCommentVo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -54,6 +55,16 @@ public interface LearnCommentMapper {
      */
     @Select("select a.*,b.id as userId,b.user_name,b.avatar from tb_learn_comment a INNER JOIN tb_user b on a.p_id=b.id where a.t_id=${tId} and a.t_type=${tType} and a.is_delete=1 order by a.create_at desc")
     List<LearnCommentReplyVo> queryComment(@Param("tId") int tId, @Param("tType") int tType);
+
+    /**
+     * 根据帖子id查询提问回答列表
+     * @param tId 帖子id
+     * @param tType 帖子类型
+     * @param sql 分页
+     * @return
+     */
+    @Select("select a.*,b.id as userId,b.user_name,b.avatar from tb_learn_comment a INNER JOIN tb_user b on a.p_id=b.id where a.t_id=${tId} and a.t_type=${tType} and a.is_delete=1 order by a.create_at desc ${sql}")
+    List<LearnCommentVo> queryQuestionAskList(@Param("tId") int tId, @Param("tType") int tType, @Param("sql") String sql);
 
     /**
      * 增加评论点赞信息

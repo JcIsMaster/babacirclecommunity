@@ -1,16 +1,13 @@
 package com.example.babacirclecommunity.plan.controller;
 
 import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.data.Result;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
-import com.example.babacirclecommunity.plan.entity.Plan;
-import com.example.babacirclecommunity.plan.entity.PlanClass;
-import com.example.babacirclecommunity.plan.entity.PlanClassFeedback;
-import com.example.babacirclecommunity.plan.entity.UserPlan;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
+import com.example.babacirclecommunity.plan.entity.*;
 import com.example.babacirclecommunity.plan.service.IMakingPlanService;
-import com.example.babacirclecommunity.plan.vo.PlanClassVo;
-import com.example.babacirclecommunity.plan.vo.TopicOptionsVo;
-import com.example.babacirclecommunity.plan.vo.UserPlanVo;
+import com.example.babacirclecommunity.plan.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -79,5 +76,33 @@ public class MakingPlanController {
     @PostMapping("/queryEnhancePlanListByTag")
     public List<PlanClass> queryEnhancePlanListByTag(int tagId, Paging paging){
         return iMakingPlanService.queryEnhancePlanListByTag(tagId,paging);
+    }
+
+    @ApiOperation(value = "添加课程学习记录",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/addLearningRecord")
+    public ResultUtil addLearningRecord(PlanClassRecord planClassRecord){
+        return iMakingPlanService.addLearningRecord(planClassRecord);
+    }
+
+    @ApiOperation(value = "查询我的学习",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryMyStudies")
+    public Object queryMyStudies(int userId){
+        return iMakingPlanService.queryMyStudies(userId);
+    }
+
+    @ApiOperation(value = "查询最近学习课程列表",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryRecentlyLearnClass")
+    public List<PlanClass> queryRecentlyLearnClass(int userId, Paging paging){
+        return iMakingPlanService.queryRecentlyLearnedClassList(userId,paging);
+    }
+
+    @ApiOperation(value = "课程打卡签到",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/planClassSingIn")
+    public ResultUtil planClassSingIn(int userId,int planId){
+        return iMakingPlanService.planClassSingIn(userId,planId);
     }
 }

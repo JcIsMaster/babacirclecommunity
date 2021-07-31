@@ -4,6 +4,7 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
 import com.example.babacirclecommunity.common.utils.GoEasyConfig;
+import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.inform.dao.InformMapper;
 import com.example.babacirclecommunity.inform.entity.Inform;
 import com.example.babacirclecommunity.learn.dao.LearnCommentMapper;
@@ -14,6 +15,7 @@ import com.example.babacirclecommunity.learn.entity.LearnCommentGive;
 import com.example.babacirclecommunity.learn.entity.LearnPostReply;
 import com.example.babacirclecommunity.learn.service.ICommentLearnService;
 import com.example.babacirclecommunity.learn.vo.LearnCommentReplyVo;
+import com.example.babacirclecommunity.learn.vo.LearnCommentVo;
 import com.example.babacirclecommunity.learn.vo.LearnPostReplyVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -158,6 +160,27 @@ public class CommentLearnServiceImpl implements ICommentLearnService {
             s.setPostReplyList(postReplies);
         }
         return commentReplyVos;
+    }
+
+    @Override
+    public List<LearnCommentVo> queryQuestionAskList(int tId, int userId, int tType, Paging paging) {
+        Integer page = (paging.getPage() - 1) * paging.getLimit();
+        String sql = "limit " + page + "," + paging.getLimit();
+        //查询一级评论
+        List<LearnCommentVo> commentVos = learnCommentMapper.queryQuestionAskList(tId, tType, sql);
+        for (LearnCommentVo s : commentVos) {
+            //得到评论点赞数量
+            s.setCommentGiveNum(learnCommentMapper.queryCommentGiveNum(s.getId(), 0));
+            //查看一级评论是否点赞
+            if (userId != 0) {
+                //是否点赞
+                LearnCommentGive commentGive = learnCommentMapper.queryWhetherGives(userId, 0, s.getId());
+                if (commentGive != null) {
+                    s.setCommentGiveStatus(1);
+                }
+            }
+        }
+        return commentVos;
     }
 
     @Override

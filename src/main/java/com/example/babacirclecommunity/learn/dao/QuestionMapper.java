@@ -19,17 +19,19 @@ public interface QuestionMapper {
      * 查询提问列表
      * @param content
      * @param tagId
+     * @param planClassId
      * @param sql
      * @return
      */
     @Select("<script>"+
-            "select a.id,a.title,a.description,a.content_type,a.cover_img,a.favour,a.collect,a.comment,a.tags_two,b.tag_name from " +
-            "tb_question a LEFT JOIN tb_tags b on a.tags_two = b.id where " +
+            "select a.id,a.user_id,c.user_name,c.avatar,a.title,a.description,a.plan_class_id,a.favour_num,a.comment_num,a.haplont_id,a.tags_two,b.tag_name,a.create_at from " +
+            "tb_question a LEFT JOIN tb_tags b on a.tags_two = b.id left join tb_user c on a.user_id = c.id where " +
             "<if test='tagId != null and tagId != 125'> a.tags_two = ${tagId} and </if>"+
+            "<if test='planClassId != null'> a.plan_class_id = ${planClassId} and </if>"+
             "<if test='content != null'>a.title LIKE CONCAT('%',#{content},'%') or a.description LIKE CONCAT('%',#{content},'%') and </if>"+
-            "a.is_delete = 1 ${sql}"+
+            "a.is_delete = 0 ${sql}"+
             "</script>")
-    List<QuestionVo> queryQuestionList(@Param("content") String content,@Param("tagId") Integer tagId, @Param("sql") String sql);
+    List<QuestionTagVo> queryQuestionList(@Param("content") String content,@Param("tagId") Integer tagId,@Param("planClassId") Integer planClassId,@Param("sql") String sql);
 
     /**
      * 根据userId查询提问列表
@@ -56,7 +58,7 @@ public interface QuestionMapper {
      * @param question
      * @return
      */
-    @Insert("insert into tb_question(u_id,title,tags_one,tags_two,description,anonymous,content_type,cover_img,video,create_at) value(${question.uId},#{question.title},${question.tagsOne},${question.tagsTwo},#{question.description},${question.anonymous},${question.contentType},#{question.coverImg},#{question.video},#{question.createAt})")
+    @Insert("insert into tb_question(user_id,title,description,tags_two,haplont_id,plan_class_id,create_at) value(${question.userId},#{question.title},#{question.description},${question.tagsTwo},${question.haplontId},${question.planClassId},#{question.createAt})")
     @Options(useGeneratedKeys=true, keyProperty="question.id",keyColumn="id")
     int addQuestion(@Param("question")Question question);
 
@@ -65,10 +67,9 @@ public interface QuestionMapper {
      * @param id
      * @return
      */
-    @Select("select a.*,b.tag_name,COALESCE(SUM(c.gold_num),0) as goldNum from tb_question a INNER JOIN tb_tags b " +
-            "on a.tags_two = b.id LEFT JOIN tb_learn_post_exceptional c on a.id = c.t_id and c.type = 0 " +
-            "where a.id = ${id} and a.is_delete = 1")
-    QuestionTagVo queryQuestionById(@Param("id") int id);
+    @Select("select a.id,a.user_id,b.user_name,b.avatar,a.title,a.description,a.favour_num,a.comment_num,a.create_at from tb_question a " +
+            "left join tb_user b on a.user_id = b.id where a.id = ${id} and a.is_delete = 0")
+    QuestionVo queryQuestionById(@Param("id") int id);
 
     /**
      * 海报

@@ -2,6 +2,8 @@ package com.example.babacirclecommunity.learn.vo;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author JC
  * @date 2021/4/28 13:59
@@ -11,6 +13,18 @@ public class QuestionVo {
 
     private int id;
     /**
+     * 提问人id
+     */
+    private int userId;
+    /**
+     * 提问人名称
+     */
+    private String userName;
+    /**
+     * 发问人头像
+     */
+    private String avatar;
+    /**
      * 标题
      */
     private String title;
@@ -19,35 +33,19 @@ public class QuestionVo {
      */
     private String description;
     /**
-     * 0:图片  1:视频
-     */
-    private int contentType;
-    /**
-     * 封面图
-     */
-    private String coverImg;
-    /**
-     * 视频
-     */
-    private String video;
-    /**
      * 点赞数量
      */
-    private int favour;
-    /**
-     * 收藏数量
-     */
-    private int collect;
+    private int favourNum;
     /**
      * 评论数量
      */
-    private int comment;
+    private int commentNum;
     /**
-     * 二级标签id
+     * 发布时间
      */
-    private int tagsTwo;
+    private String createAt;
     /**
-     * 提问tagsTwo对应的tagName
+     * 看贴人对该帖子的点赞状态 0:未点赞； 1:已点赞
      */
-    private String tagName;
+    private int whetherGive;
 }

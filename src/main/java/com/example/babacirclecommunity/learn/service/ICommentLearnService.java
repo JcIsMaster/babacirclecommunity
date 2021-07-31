@@ -1,9 +1,11 @@
 package com.example.babacirclecommunity.learn.service;
 
+import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.learn.entity.LearnComment;
 import com.example.babacirclecommunity.learn.entity.LearnCommentGive;
 import com.example.babacirclecommunity.learn.entity.LearnPostReply;
 import com.example.babacirclecommunity.learn.vo.LearnCommentReplyVo;
+import com.example.babacirclecommunity.learn.vo.LearnCommentVo;
 
 import java.text.ParseException;
 import java.util.List;
@@ -38,6 +40,16 @@ public interface ICommentLearnService {
      * @return
      */
     List<LearnCommentReplyVo> queryComments(int tId, int userId, int tType);
+
+    /**
+     * 根据提问帖子id查询回答列表
+     * @param tId 帖子id
+     * @param userId 用户id
+     * @param tType 帖子类型
+     * @param paging 分页
+     * @return
+     */
+    List<LearnCommentVo> queryQuestionAskList(int tId, int userId, int tType, Paging paging);
 
     /**
      * 评论点赞

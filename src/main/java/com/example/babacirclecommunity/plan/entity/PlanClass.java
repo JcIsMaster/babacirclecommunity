@@ -47,6 +47,11 @@ public class PlanClass {
     private int isEnhance;
 
     /**
+     * 已学习人数
+     */
+    private int studentsNumber;
+
+    /**
      * 创建时间
      */
     private String createAt;

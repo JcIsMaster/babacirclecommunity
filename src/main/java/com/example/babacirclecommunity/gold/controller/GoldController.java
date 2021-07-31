@@ -91,7 +91,7 @@ public class GoldController {
     }
 
     /**
-     * 查询金币变化数据
+     * 查询签到
      * @return
      */
     @ApiOperation(value = "查询签到",notes = "成功返回数据 反则为空")

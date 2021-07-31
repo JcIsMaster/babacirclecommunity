@@ -1,20 +1,25 @@
 package com.example.babacirclecommunity.plan.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
+import com.example.babacirclecommunity.common.utils.TimeUtil;
+import com.example.babacirclecommunity.gold.vo.SingInVo;
 import com.example.babacirclecommunity.plan.dao.MakingPlanMapper;
 import com.example.babacirclecommunity.plan.entity.*;
 import com.example.babacirclecommunity.plan.service.IMakingPlanService;
-import com.example.babacirclecommunity.plan.vo.PlanClassVo;
-import com.example.babacirclecommunity.plan.vo.TopicOptionsVo;
-import com.example.babacirclecommunity.plan.vo.UserPlanVo;
+import com.example.babacirclecommunity.plan.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +51,28 @@ public class MakingPlanServiceImpl implements IMakingPlanService {
         if(userPlanVo == null){
             return null;
         }
-        userPlanVo.setTodayCourse(makingPlanMapper.queryClassLearnList(userPlanVo.getPlanId(),userPlanVo.getCompleteSchedule()));
+        //今日课程及继续播放进度
+        PlanClassTodayVo planClassTodayVo = null;
+        if (userPlanVo.getCompleteSchedule() != 1){
+            planClassTodayVo = makingPlanMapper.queryTodayClass(userId);
+        }
+        else {
+            planClassTodayVo = makingPlanMapper.queryTodayClassOne(userId);
+        }
+        PlanClassRecord classRecord = makingPlanMapper.queryTodayClassRecord(userId, planClassTodayVo.getId());
+        if (classRecord != null){
+            planClassTodayVo.setRecentlyPlayedVideoId(classRecord.getVideoId());
+            planClassTodayVo.setRecentlyPlayedVideoTime(classRecord.getWatchTime());
+            planClassTodayVo.setRecentlyPlayedVideoProgress(classRecord.getVideoViewingProgress());
+        }
+        else {
+            planClassTodayVo.setRecentlyPlayedVideoId(0);
+            planClassTodayVo.setRecentlyPlayedVideoTime(0.00);
+            planClassTodayVo.setRecentlyPlayedVideoProgress(0);
+        }
+        userPlanVo.setTodayCourse(planClassTodayVo);
+        //课程预告
+        userPlanVo.setNoticeCourse(makingPlanMapper.queryClassLearnList(userPlanVo.getPlanId(),userPlanVo.getCompleteSchedule()));
         return userPlanVo;
     }
 
@@ -70,7 +96,14 @@ public class MakingPlanServiceImpl implements IMakingPlanService {
         UserPlanVo userPlanVo = new UserPlanVo();
         userPlanVo.setPlanId(userPlan.getPlanId());
         userPlanVo.setUserId(userId);
-        userPlanVo.setTodayCourse(makingPlanMapper.queryClassLearnList(userPlan.getPlanId(),0));
+        //今日课程及继续播放进度
+        PlanClassTodayVo planClassTodayVo = makingPlanMapper.queryTodayClassOne(userId);
+        planClassTodayVo.setRecentlyPlayedVideoId(0);
+        planClassTodayVo.setRecentlyPlayedVideoTime(0.00);
+        planClassTodayVo.setRecentlyPlayedVideoProgress(0);
+        userPlanVo.setTodayCourse(planClassTodayVo);
+        //课程预告
+        userPlanVo.setNoticeCourse(makingPlanMapper.queryClassLearnList(userPlan.getPlanId(),1));
 
         return userPlanVo;
     }
@@ -97,5 +130,129 @@ public class MakingPlanServiceImpl implements IMakingPlanService {
         String sql = "limit " + page + "," + paging.getLimit() + "";
 
         return makingPlanMapper.queryEnhancePlanListByTag(tagId,sql);
+    }
+
+    @Override
+    public ResultUtil addLearningRecord(PlanClassRecord planClassRecord) {
+        PlanClassRecord classRecord = makingPlanMapper.queryLearningRecord(planClassRecord.getUserId(),planClassRecord.getPlanClassId(),planClassRecord.getVideoId());
+        int i = 0;
+        if (classRecord == null){
+            //添加课程学习记录
+            planClassRecord.setCreateAt(System.currentTimeMillis() / 1000 + "");
+            planClassRecord.setUpdateTime(System.currentTimeMillis() / 1000 + "");
+            i = makingPlanMapper.addLearningRecord(planClassRecord);
+            if (i <= 0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+        }
+        else {
+            //修改课程学习记录
+            if(planClassRecord.getWatchTime() > classRecord.getWatchTime()){
+                planClassRecord.setId(classRecord.getId());
+                planClassRecord.setDifferenceFromLastTime(planClassRecord.getWatchTime()-classRecord.getWatchTime());
+                planClassRecord.setUpdateTime(System.currentTimeMillis() / 1000 + "");
+                i = makingPlanMapper.updateLearningRecord(planClassRecord);
+                if (i <= 0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR);
+                }
+            }
+        }
+        return ResultUtil.success(i,"成功",200);
+    }
+
+    @Override
+    public Object queryMyStudies(int userId) {
+        //今日学习时长
+        Integer todayTime = makingPlanMapper.queryTodayLearningTime(userId);
+        if (todayTime == null){
+            todayTime = 0;
+        }
+        //总学习时长
+        int allTime = makingPlanMapper.queryAllLearningTime(userId);
+        //今日课程及继续播放进度
+        PlanClassTodayVo planClassTodayVo = makingPlanMapper.queryTodayClass(userId);
+        PlanClassRecord classRecord = makingPlanMapper.queryTodayClassRecord(userId, planClassTodayVo.getId());
+        if (classRecord != null){
+            planClassTodayVo.setRecentlyPlayedVideoId(classRecord.getVideoId());
+            planClassTodayVo.setRecentlyPlayedVideoTime(classRecord.getWatchTime());
+            planClassTodayVo.setRecentlyPlayedVideoProgress(classRecord.getVideoViewingProgress());
+        }
+        else {
+            planClassTodayVo.setRecentlyPlayedVideoId(0);
+            planClassTodayVo.setRecentlyPlayedVideoTime(0.00);
+            planClassTodayVo.setRecentlyPlayedVideoProgress(0);
+        }
+        //最近学习课程（3条）
+        List<RecentlyPlanClassVo> recentlyPlanClassVos = makingPlanMapper.queryRecentlyLearnedClass(userId);
+        for (RecentlyPlanClassVo vo : recentlyPlanClassVos) {
+            if (vo.getVideoViewingProgress() != 0){
+                vo.setVideoViewingProgress(vo.getVideoViewingProgress() / (100 * makingPlanMapper.queryClassVideoNum(vo.getId())));
+            }
+        }
+        Map map = new HashMap();
+        map.put("todayTime",todayTime);
+        map.put("allTime",allTime);
+        map.put("planClassToday",planClassTodayVo);
+        map.put("recentlyPlanClassList",recentlyPlanClassVos);
+        return map;
+    }
+
+    @Override
+    public List<PlanClass> queryRecentlyLearnedClassList(int userId, Paging paging) {
+        Integer page = (paging.getPage() - 1) * paging.getLimit();
+        String sql = "limit " + page + "," + paging.getLimit();
+        return makingPlanMapper.queryRecentlyLearnedClassList(userId,sql);
+    }
+
+    @Override
+    public ResultUtil planClassSingIn(int userId, int planId) {
+        //判断今天是否已签到
+        UserPlan userPlan = makingPlanMapper.queryUserPlanSingRecord(userId, planId);
+        if (TimeUtil.getThisTime(Long.parseLong(userPlan.getUpdateTime()))){
+            return ResultUtil.errorMsg(250,"今天已完成签到，请明天再来");
+        }
+        //查询今日课程是否完成
+        PlanClassTodayVo planClassTodayVo = makingPlanMapper.queryTodayClass(userId);
+        Integer progress = makingPlanMapper.queryClassViewProgress(userId,planClassTodayVo.getId());
+        if(progress == null){
+            return ResultUtil.error("尚未完成今日课程");
+        }
+        Integer videoNum = makingPlanMapper.queryClassVideoNum(planClassTodayVo.getId());
+        if (videoNum == null){
+            throw new ApplicationException(CodeType.RESOURCES_NOT_FIND);
+        }
+        if((double)progress / (videoNum * 100) >= 0.99){
+            //添加签到记录并修改课程学习进度
+            SingInVo singInVo = new SingInVo();
+            Calendar now = Calendar.getInstance();
+            singInVo.setYear(now.get(Calendar.YEAR));
+            singInVo.setMonth(now.get(Calendar.MONTH)+1);
+            singInVo.setDay(now.get(Calendar.DAY_OF_MONTH));
+            singInVo.setType("holiday");
+            singInVo.setMark("已签到");
+            singInVo.setBgColor("#cce6ff");
+            singInVo.setColor("#2a97ff");
+//            UserPlan userPlan = makingPlanMapper.queryUserPlanSingRecord(userId, planId);
+            List<SingInVo> singInVos = new ArrayList<>();
+            if (userPlan.getSingInRecord() != null && !userPlan.getSingInRecord().equals("")){
+                singInVos = JSONArray.parseArray(userPlan.getSingInRecord(), SingInVo.class);
+                singInVos.add(singInVo);
+                //修改课程学习进度和签到记录
+                int i = makingPlanMapper.updateUserPlanSingInRecord(JSONArray.toJSON(singInVos).toString(),System.currentTimeMillis() / 1000 + "",userPlan.getId());
+                if (i <= 0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR);
+                }
+            }
+            else {
+                singInVos.add(singInVo);
+                int i = makingPlanMapper.updateUserPlanSingInRecord(JSONArray.toJSON(singInVos).toString(),System.currentTimeMillis() / 1000 + "",userPlan.getId());
+                if (i <= 0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR);
+                }
+            }
+            return ResultUtil.success("签到打卡成功!");
+        }
+
+        return ResultUtil.error("尚未完成今日课程");
     }
 }

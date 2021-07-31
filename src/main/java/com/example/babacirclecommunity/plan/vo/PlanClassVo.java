@@ -13,5 +13,8 @@ import java.util.List;
 @Data
 public class PlanClassVo extends PlanClass {
 
+    /**
+     * 课程下的视频列表
+     */
     private List<ClassVideo> classVideos;
 }
