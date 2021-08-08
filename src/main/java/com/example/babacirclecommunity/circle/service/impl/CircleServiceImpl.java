@@ -11,6 +11,7 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.*;
 import com.example.babacirclecommunity.home.entity.Community;
+import com.example.babacirclecommunity.my.dao.MyMapper;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.tags.dao.TagMapper;
 import com.example.babacirclecommunity.tags.entity.Tag;
@@ -338,7 +339,7 @@ public class CircleServiceImpl implements ICircleService {
         }
 
         Tag tag = new Tag();
-        tag.setImgUrl(community.getPosters());
+        tag.setTId(0);
         tag.setTagName(community.getCommunityName());
         tag.setCreateAt(System.currentTimeMillis() / 1000 + "");
         tag.setType(1);
@@ -569,6 +570,130 @@ public class CircleServiceImpl implements ICircleService {
         map.put("circleVos", circleVos);
         map.put("circleImgIdVos", collect);
 
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> fundCircles(int userId, Paging paging) {
+        Map<String, Object> map = new HashMap<>();
+        //查询热门的圈子
+        List<CircleVo> circleVos = circleMapper.queryPopularCircles("limit 0,3");
+        for (CircleVo circleVo : circleVos) {
+            //根据圈子对应的标签id查询封面和id
+            List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVo.getTagId());
+            circleVo.setCircleVoList(circleVos1);
+            circleVo.setMemberCount(circleMapper.countCircleJoined(circleVo.getId()));
+        }
+        //查询精选帖子
+        List<CircleClassificationVo> circles = circleMapper.queryFeatured(getPaging(paging));
+        if (circles != null){
+            for (int i = 0; i < circles.size(); i++) {
+                //得到图片组
+                String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
+                circles.get(i).setImg(strings);
+
+                //得到点过赞人的头像
+                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+                circles.get(i).setGiveAvatar(strings1);
+
+                //得到点赞数量
+                Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+                circles.get(i).setGiveNumber(integer1);
+
+                //等于0在用户没有到登录的情况下 直接设置没有点赞
+                if (userId == 0) {
+                    circles.get(i).setWhetherGive(0);
+                    circles.get(i).setWhetherAttention(0);
+                } else {
+                    //查看我是否关注了此人
+                    int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                    if (i1 > 0) {
+                        circles.get(i).setWhetherAttention(1);
+                    }
+
+                    //查询是否对帖子点了赞   0没有 1有
+                    Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                    if (integer > 0) {
+                        circles.get(i).setWhetherGive(1);
+                    }
+                }
+
+                //得到帖子评论数量
+                circles.get(i).setNumberPosts(commentMapper.selectCommentNumber(circles.get(i).getId()));
+            }
+        }
+        map.put("hotCircleVos",circleVos);
+        map.put("featuredCircle",circles);
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> myCircles(int userId, Paging paging) {
+        //创建的圈子
+        Map<String, Object> map = new HashMap<>();
+        //查看缓存是否存在 如果存在就查询缓存中的数据，否则查询数据库加入缓存
+        if (redisTemplate.hasKey("MyCirclesSquare::" + userId)) {
+            int pages = (paging.getPage() - 1) * paging.getLimit();
+            //查询缓存数据
+            List range = redisConfig.getList("MyCirclesSquare::" + userId, pages, paging.getPage() * paging.getLimit() - 1);
+            int createSize = (int) redisConfig.getString("myCreateCircleCount::" + userId);
+            int joinSize = (int) redisConfig.getString("joinedCircleCount::" + userId);
+            map.put("circle",range);
+            map.put("createSize",createSize);
+            map.put("joinSize",joinSize);
+        } else {
+            //查询我创建的圈子
+            List<CircleVo> createCircleVos = circleMapper.myCircleAndCircleJoined(userId, getPaging(paging));
+            for (CircleVo createCircleVo : createCircleVos) {
+                //根据圈子对应的标签id查询封面和id
+                List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(createCircleVo.getTagId());
+                createCircleVo.setCircleVoList(circleVos1);
+                createCircleVo.setMemberCount(circleMapper.countCircleJoined(createCircleVo.getId()));
+            }
+            //查询我创建的圈子数量
+            int myCircleCount = circleMapper.myCircleCount(userId);
+            //查询加入的圈子数量
+            int joinedCircleCount = circleMapper.circleJoinedCount(userId);
+            //存入redis缓存
+            if (createCircleVos.size() != 0) {
+                redisTemplate.opsForList().rightPushAll("MyCirclesSquare::" + userId, createCircleVos);
+                redisConfig.setString("myCreateCircleCount::" + userId, myCircleCount);
+                redisConfig.setString("joinedCircleCount::" + userId, joinedCircleCount);
+            }
+
+            map.put("circle",createCircleVos);
+            map.put("createSize",myCircleCount);
+            map.put("joinSize",joinedCircleCount);
+        }
+
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> joinedCircles(int userId, Paging paging) {
+        Map<String, Object> map = new HashMap<>();
+        //查看缓存是否存在 如果存在就查询缓存中的数据，否则查询数据库加入缓存
+        if (redisTemplate.hasKey("JoinedCircles::" + userId)) {
+            int pages = (paging.getPage() - 1) * paging.getLimit();
+            //查询缓存数据
+            List range = redisConfig.getList("JoinedCircles::" + userId, pages, paging.getPage() * paging.getLimit() - 1);
+            map.put("joinedCircle",range);
+        } else {
+            //查询我创建的圈子
+            List<CircleVo> joinedCircleVos = circleMapper.circleJoined(userId, getPaging(paging));
+            for (CircleVo createCircleVo : joinedCircleVos) {
+                //根据圈子对应的标签id查询封面和id
+                List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(createCircleVo.getTagId());
+                createCircleVo.setCircleVoList(circleVos1);
+                createCircleVo.setMemberCount(circleMapper.countCircleJoined(createCircleVo.getId()));
+            }
+            //存入redis缓存
+            if (joinedCircleVos.size() != 0) {
+                redisTemplate.opsForList().rightPushAll("JoinedCircles::" + userId, joinedCircleVos);
+            }
+
+            map.put("joinedCircle",joinedCircleVos);
+        }
         return map;
     }
 

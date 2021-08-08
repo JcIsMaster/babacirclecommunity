@@ -90,6 +90,27 @@ public class CircleController {
         return  iCircleService.fundCircle(userId,communityName,paging);
     }
 
+    @ApiOperation(value = "发现圈子(新)",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/fundCircles")
+    public Map<String,Object> fundCircles(int userId, Paging paging)  {
+        return  iCircleService.fundCircles(userId,paging);
+    }
+
+    @ApiOperation(value = "我的圈子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/myCircles")
+    public Map<String,Object> myCircles(int userId, Paging paging)  {
+        return iCircleService.myCircles(userId,paging);
+    }
+
+    @ApiOperation(value = "我的圈子-加入的圈子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/joinedCircles")
+    public Map<String,Object> joinedCircles(int userId, Paging paging)  {
+        return iCircleService.joinedCircles(userId,paging);
+    }
+
 
     @ApiOperation(value = "发布圈子",notes = "成功返回数据 反则为空")
     @ResponseBody

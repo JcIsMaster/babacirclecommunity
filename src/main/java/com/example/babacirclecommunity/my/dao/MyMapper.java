@@ -34,13 +34,29 @@ public interface MyMapper {
     List<PeopleCareAboutVo> queryPeopleCareAbout(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
+     * 根据用户id查询关注的人数量
+     * @param userId
+     * @return
+     */
+    @Select("select count(b.id) from tb_user_attention a INNER JOIN tb_user b on a.bg_id=b.id where a.gu_id=${userId} and a.is_delete=1")
+    Integer queryCareAboutCountByUserId(@Param("userId") int userId);
+
+    /**
      * 根据用户id查询我的粉丝
      * @param userId 用户id
      * @param paging 分页
      * @return
      */
-    @Select("select b.id,b.user_name,b.avatar,b.introduce from tb_user_attention a INNER JOIN tb_user b on a.gu_id=b.id where a.bg_id=${userId} and a.is_delete=1 ")
+    @Select("select b.id,b.user_name,b.avatar,b.introduce from tb_user_attention a INNER JOIN tb_user b on a.gu_id=b.id where a.bg_id=${userId} and a.is_delete=1 ${paging}")
     List<PeopleCareAboutVo> queryFan(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 根据用户id查询我的粉丝数量
+     * @param userId
+     * @return
+     */
+    @Select("select count(b.id) from tb_user_attention a INNER JOIN tb_user b on a.gu_id=b.id where a.bg_id=${userId} and a.is_delete=1")
+    Integer queryFanCountByUserId(@Param("userId") int userId);
 
     /**
      * 添加投诉与建议新

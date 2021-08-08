@@ -27,7 +27,7 @@ public interface LearnCommentMapper {
      * @param tType
      * @return
      */
-    @Select("select COALESCE(count(*)) from tb_learn_comment where t_id=${tid} and t_type=${tType}")
+    @Select("select COALESCE(count(*)) from tb_learn_comment where t_id=${tid} and t_type=${tType} and is_delete = 1")
     Integer selectCommentNumber(@Param("tid") int tid,@Param("tType") int tType);
 
     /**

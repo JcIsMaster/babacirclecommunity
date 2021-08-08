@@ -110,7 +110,15 @@ public class CircleClassificationVo {
      */
     private int forwardingNumber;
 
+    /**
+     * 发帖地址
+     */
+    private String address;
 
+    /**
+     * 是否精选
+     */
+    private int isFeatured;
 
 
 }

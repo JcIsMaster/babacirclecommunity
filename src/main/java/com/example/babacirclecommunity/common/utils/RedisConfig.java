@@ -95,6 +95,15 @@ public class RedisConfig {
    }
 
    /**
+    * 获取缓存的键的值的长度
+    * @param k 键值
+    * @return
+    */
+   public Long getListSize(Object k){
+      return redisTemplate.opsForList().size(k);
+   }
+
+   /**
     * 获得分布式锁
     * 过期时间  默认5S
     * @param lock

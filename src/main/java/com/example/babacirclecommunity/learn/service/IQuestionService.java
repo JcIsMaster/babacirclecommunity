@@ -23,7 +23,7 @@ public interface IQuestionService {
      * @param paging 分页
      * @return
      */
-    List<QuestionTagVo> queryQuestionList(int orderRule,Integer tagId,Integer planClassId,String content,Paging paging);
+    List<QuestionTagVo> queryQuestionList(int userId,int orderRule,Integer tagId,Integer planClassId,String content,Paging paging);
 
     /**
      * 发布提问帖

@@ -85,7 +85,7 @@ public interface QuestionMapper {
      * @param math
      * @return
      */
-    @Update("update tb_question set favour = favour ${math} 1 where id = ${id}")
+    @Update("update tb_question set favour_num = favour_num ${math} 1 where id = ${id}")
     int updateQuestionGive(@Param("id") int id,@Param("math") String math);
 
     /**
@@ -103,6 +103,6 @@ public interface QuestionMapper {
      * @param math
      * @return
      */
-    @Update("update tb_question set comment = comment ${math} 1 where id = ${id}")
+    @Update("update tb_question set comment_num = comment_num ${math} 1 where id = ${id}")
     int updateQuestionComment(@Param("id") int id,@Param("math") String math);
 }

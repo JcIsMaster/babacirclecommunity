@@ -66,7 +66,7 @@ public class QuestionServiceImpl implements IQuestionService {
     private LearnCommentMapper learnCommentMapper;
 
     @Override
-    public List<QuestionTagVo> queryQuestionList(int orderRule, Integer tagId,Integer planClassId, String content, Paging paging) {
+    public List<QuestionTagVo> queryQuestionList(int userId,int orderRule, Integer tagId,Integer planClassId, String content, Paging paging) {
         int page = (paging.getPage() - 1) * paging.getLimit();
         String sql = "";
         //最新
@@ -77,7 +77,24 @@ public class QuestionServiceImpl implements IQuestionService {
         else {
             sql = "order by a.favour_num DESC limit " + page + "," + paging.getLimit();
         }
-        return questionMapper.queryQuestionList(content,tagId,planClassId,sql);
+
+        List<QuestionTagVo> questionTagVos = questionMapper.queryQuestionList(content, tagId, planClassId, sql);
+        for (QuestionTagVo vo : questionTagVos) {
+            //我是否对该帖子点过赞
+            if (userId == 0){
+                vo.setWhetherGive(0);
+            }
+            else {
+                Integer giveStatus = dryGoodsGiveMapper.whetherGive(0, userId, vo.getId());
+                if (giveStatus == 0) {
+                    vo.setWhetherGive(0);
+                } else {
+                    vo.setWhetherGive(1);
+                }
+            }
+        }
+
+        return questionTagVos;
     }
 
     @Override

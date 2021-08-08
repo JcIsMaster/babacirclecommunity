@@ -30,14 +30,34 @@ public class ResultUtil implements Serializable {
      */
     private Object data;
 
+    /**
+     * 返回数据的数量
+     */
+    private int count;
 
-	public ResultUtil(Integer code, String msg, Object data) {
+    public ResultUtil(Integer code, String msg, Object data) {
         this.code = code;
         this.msg = msg;
         this.data = data;
     }
 
 
+	public ResultUtil(Integer code, String msg, Object data, int count) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+        this.count = count;
+    }
+
+
+    /**
+     * 响应成功(带返回数据)
+     * @param data 返回数据
+     * @return Result
+     */
+    public static ResultUtil success(Object data,int count){
+        return new ResultUtil(200,"成功",data,count);
+    }
     
     /**
      * 响应成功(带返回数据)

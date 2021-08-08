@@ -89,7 +89,7 @@ public interface TagMapper {
      * @param tag
      * @return
      */
-    @Insert("insert into tb_tags (tag_name,t_id,type,create_at,img_url)values(#{tag.tagName},${tag.tId},${tag.type},#{tag.createAt},#{tag.imgUrl})")
+    @Insert("insert into tb_tags (tag_name,t_id,type,create_at)values(#{tag.tagName},${tag.tId},${tag.type},#{tag.createAt})")
     @Options(useGeneratedKeys=true, keyProperty="tag.id", keyColumn="id")
     int addTag(@Param("tag") Tag tag);
 

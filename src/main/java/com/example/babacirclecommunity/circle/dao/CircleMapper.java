@@ -29,9 +29,17 @@ public interface CircleMapper {
      * @return
      */
     @Select("select r.whether_public,r.user_id,r.whether_official,r.id,r.tag_id, r.community_name,r.posters,r.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN" +
-            " (SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p  GROUP BY community_id) t1" +
+            " (SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p GROUP BY community_id) t1" +
             " on r.id=t1.community_id where r.user_id=${userId} ORDER BY cnt desc ${paging}")
     List<CircleVo> myCircleAndCircleJoined(@Param("userId") int userId, @Param("paging") String paging);
+
+    /**
+     * 查询创建的圈子的数量
+     * @param userId
+     * @return
+     */
+    @Select("select count(id) from tb_community where user_id = ${userId} and is_delete = 1")
+    Integer myCircleCount(@Param("userId") int userId);
 
     /**
      * 查询我加入的圈子 （根据圈子人数排序）
@@ -43,6 +51,15 @@ public interface CircleMapper {
             "INNER JOIN tb_community b on a.community_id=b.id LEFT JOIN (SELECT community_id,COUNT(*) AS count1 FROM " +
             "tb_community_user GROUP BY community_id) t1 on a.community_id=t1.community_id where a.user_id=${userId} ORDER BY cnt desc ${paging}")
     List<CircleVo> circleJoined(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 查询我加入的圈子数量
+     * @param userId
+     * @return
+     */
+    @Select("select count(b.id)from tb_community_user a " +
+            "INNER JOIN tb_community b on a.community_id = b.id where a.user_id = ${userId}")
+    Integer circleJoinedCount(@Param("userId") int userId);
 
     /**
      * 搜索自己创建的圈子
@@ -85,8 +102,17 @@ public interface CircleMapper {
      * @param id 用户id
      * @return
      */
-    @Select("select count(*) from tb_community_user where community_id=${id}")
+    @Select("select IFNULL(count(*),0) from tb_community_user where community_id=${id}")
     int countCircleJoined(@Param("id") int id);
+
+    /**
+     * 查询精选话题帖子
+     * @param paging
+     * @return
+     */
+    @Select("select a.type,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 and a.is_featured=1 ${paging}")
+    List<CircleClassificationVo> queryFeatured(@Param("paging") String paging);
 
     /**
      * 根据圈子内容模糊查询
@@ -143,12 +169,12 @@ public interface CircleMapper {
      * @param paging 分页
      * @return List<CircleClassificationVo>
      */
-    @Select("select  a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar" +
+    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar" +
             ",c.id as uId,c.user_name,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts from tb_circles a " +
             "LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id " +
             "INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
-            " where a.type=${type} and a.is_delete=1  order by a.create_at desc ${paging}")
+            "where a.type=${type} and a.is_delete=1  order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryImagesOrVideos(@Param("type") int type, @Param("paging") String paging);
 
     /**
@@ -156,12 +182,12 @@ public interface CircleMapper {
      * @param id 帖子id
      * @return
      */
-    @Select("select  a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId," +
-            "c.avatar,c.id as uId,c.user_name,  ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
-            " from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
+    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId," +
+            "c.avatar,c.id as uId,c.user_name,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
+            "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id " +
             "INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
-            " where a.id=#{id} and a.is_delete=1")
+            "where a.id=#{id} and a.is_delete=1")
     CircleClassificationVo querySingleCircle(@Param("id") String id);
 
     /**
@@ -169,12 +195,12 @@ public interface CircleMapper {
      * @param id 帖子id
      * @return
      */
-    @Select("select  a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId," +
-            "c.avatar,c.id as uId,c.user_name,  ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
-            " from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
+    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId," +
+            "c.avatar,c.id as uId,c.user_name,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
+            "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id " +
             "INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
-            " where a.id=${id} and a.is_delete=1")
+            "where a.id=${id} and a.is_delete=1")
     CircleClassificationVo selectSingleCircle(@Param("id") int id);
 
     /**
@@ -271,7 +297,7 @@ public interface CircleMapper {
      * @param paging
      * @return
      */
-    @Select("select  a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId" +
+    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId" +
             ",c.avatar,c.id as uId,c.user_name ,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts" +
             " from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +

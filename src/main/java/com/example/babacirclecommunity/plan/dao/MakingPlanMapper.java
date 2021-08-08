@@ -79,7 +79,7 @@ public interface MakingPlanMapper {
      * @return
      */
     @Select("select a.video_id as id,b.video_name,b.video_desc,b.video_cover,b.video_address from tb_class_video a inner join tb_video b " +
-            "on a.video_id = b.id where a.plan_class_id = ${planClassId} and b.is_delete = 0")
+            "on a.video_id = b.id where a.plan_class_id = ${planClassId} and b.is_delete = 0 order by a.create_at")
     List<ClassVideo> queryPlanClassVideoList(@Param("planClassId") int planClassId);
 
     /**

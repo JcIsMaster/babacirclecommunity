@@ -111,6 +111,30 @@ public interface ICircleService {
     Map<String,Object> fundCircle(int userId, String communityName, Paging paging);
 
     /**
+     * 发现圈子(新)
+     * @param userId
+     * @param paging
+     * @return
+     */
+    Map<String,Object> fundCircles(int userId, Paging paging);
+
+    /**
+     * 我的圈子
+     * @param userId
+     * @param paging
+     * @return
+     */
+    Map<String,Object> myCircles(int userId, Paging paging);
+
+    /**
+     * 我的圈子-加入的圈子
+     * @param userId
+     * @param paging
+     * @return
+     */
+    Map<String,Object> joinedCircles(int userId, Paging paging);
+
+    /**
      * 修改圈子
      * @param community
      */
@@ -126,6 +150,7 @@ public interface ICircleService {
     /**
      * 查询圈子成员
      * @param communityId 圈子id
+     * @param userId
      * @return
      */
     List<UserVo> queryCircleMembers(int communityId,int userId);

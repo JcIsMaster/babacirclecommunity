@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
 import com.example.babacirclecommunity.common.utils.GoEasyConfig;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.inform.dao.InformMapper;
 import com.example.babacirclecommunity.inform.entity.Inform;
 import com.example.babacirclecommunity.learn.dao.LearnCommentMapper;
@@ -163,11 +164,15 @@ public class CommentLearnServiceImpl implements ICommentLearnService {
     }
 
     @Override
-    public List<LearnCommentVo> queryQuestionAskList(int tId, int userId, int tType, Paging paging) {
+    public ResultUtil queryQuestionAskList(int tId, int userId, int tType, Paging paging) {
         Integer page = (paging.getPage() - 1) * paging.getLimit();
         String sql = "limit " + page + "," + paging.getLimit();
         //查询一级评论
         List<LearnCommentVo> commentVos = learnCommentMapper.queryQuestionAskList(tId, tType, sql);
+        Integer commentNum = learnCommentMapper.selectCommentNumber(tId,tType);
+        if (commentNum == null){
+            commentNum = 0;
+        }
         for (LearnCommentVo s : commentVos) {
             //得到评论点赞数量
             s.setCommentGiveNum(learnCommentMapper.queryCommentGiveNum(s.getId(), 0));
@@ -180,7 +185,7 @@ public class CommentLearnServiceImpl implements ICommentLearnService {
                 }
             }
         }
-        return commentVos;
+        return ResultUtil.success(commentVos,commentNum);
     }
 
     @Override

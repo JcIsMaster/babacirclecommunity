@@ -39,11 +39,11 @@ public class QuestionController {
     @ApiOperation(value = "查询提问信息",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryQuestionList")
-    public List<QuestionTagVo> queryQuestionList(int orderRule,Integer tagId,Integer planClassId,String content,Paging paging){
+    public List<QuestionTagVo> queryQuestionList(int userId,int orderRule,Integer tagId,Integer planClassId,String content,Paging paging){
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
         }
-        return iQuestionService.queryQuestionList(orderRule,tagId,planClassId,content,paging);
+        return iQuestionService.queryQuestionList(userId,orderRule,tagId,planClassId,content,paging);
     }
 
     /**

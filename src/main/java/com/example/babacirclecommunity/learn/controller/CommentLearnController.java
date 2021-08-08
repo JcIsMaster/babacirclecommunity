@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.learn.controller;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.LearnComment;
 import com.example.babacirclecommunity.learn.entity.LearnCommentGive;
 import com.example.babacirclecommunity.learn.entity.LearnPostReply;
@@ -33,8 +34,8 @@ public class CommentLearnController {
     private ICommentLearnService iCommentLearnService;
 
     /**
-     *
      * 添加评论
+     * @param learnComment
      * @return
      */
     @ApiOperation(value = "添加评论",notes = "成功返回数据 反则为空")
@@ -85,7 +86,7 @@ public class CommentLearnController {
     @ApiOperation(value = "根据提问帖子id查询回答列表",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryQuestionAskList")
-    public List<LearnCommentVo> queryQuestionAskList(int tId, int userId, int tType, Paging paging){
+    public ResultUtil queryQuestionAskList(int tId, int userId, int tType, Paging paging){
         if(tId == 0 || paging.getPage() == 0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
@@ -107,4 +108,10 @@ public class CommentLearnController {
         }
         return  iCommentLearnService.addCommentGive(commentGive);
     }
+
+    /**
+     * 我的回答列表
+     * @return
+     */
+
 }

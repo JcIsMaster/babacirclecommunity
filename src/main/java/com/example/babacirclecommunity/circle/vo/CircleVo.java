@@ -43,9 +43,14 @@ public class CircleVo {
     private String introduce;
 
     /**
-     * 每个社区的人数
+     * 帖子数量
      */
     private int cnt;
+
+    /**
+     * 圈子成员数量
+     */
+    private int memberCount;
 
     /**
      * 是否官方 （0不是，1是）默认为不是

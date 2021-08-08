@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.learn.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.LearnComment;
 import com.example.babacirclecommunity.learn.entity.LearnCommentGive;
 import com.example.babacirclecommunity.learn.entity.LearnPostReply;
@@ -49,7 +50,7 @@ public interface ICommentLearnService {
      * @param paging 分页
      * @return
      */
-    List<LearnCommentVo> queryQuestionAskList(int tId, int userId, int tType, Paging paging);
+    ResultUtil queryQuestionAskList(int tId, int userId, int tType, Paging paging);
 
     /**
      * 评论点赞
