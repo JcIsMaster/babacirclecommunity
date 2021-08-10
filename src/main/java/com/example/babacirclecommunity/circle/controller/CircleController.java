@@ -111,6 +111,13 @@ public class CircleController {
         return iCircleService.joinedCircles(userId,paging);
     }
 
+    @ApiOperation(value = "官方圈子列表",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryOfficialCircleList")
+    public List<Community> queryOfficialCircleList(Paging paging){
+        return iCircleService.queryOfficialCircleList(paging);
+    }
+
 
     @ApiOperation(value = "发布圈子",notes = "成功返回数据 反则为空")
     @ResponseBody

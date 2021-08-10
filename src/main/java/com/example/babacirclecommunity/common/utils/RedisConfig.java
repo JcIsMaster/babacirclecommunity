@@ -31,10 +31,10 @@ public class RedisConfig {
    }
 
    /**
-    *     *  将存入的字符串取出来
-    *     * @param k
-    *     * @return
-    *     */
+    * 将存入的字符串取出来
+    * @param k
+    * @return
+    */
    public Object getString (Object k) {
       return redisTemplate.opsForValue().get(k);
    }

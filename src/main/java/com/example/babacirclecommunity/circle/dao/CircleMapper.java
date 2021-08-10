@@ -110,7 +110,7 @@ public interface CircleMapper {
      * @param paging
      * @return
      */
-    @Select("select a.type,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+    @Select("select a.type,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name,c.user_sex " +
             "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 and a.is_featured=1 ${paging}")
     List<CircleClassificationVo> queryFeatured(@Param("paging") String paging);
 
@@ -338,6 +338,12 @@ public interface CircleMapper {
     @Update("update tb_circles set is_delete=0 where id=${id}")
     int deletePosts(@Param("id") int id);
 
-
+    /**
+     * 查询官方圈子
+     * @param paging
+     * @return
+     */
+    @Select("select * from tb_community where whether_official = 1 and is_delete = 1")
+    List<Community> queryOfficialCircleList(@Param("paging") String paging);
 
 }

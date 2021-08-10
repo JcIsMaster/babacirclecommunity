@@ -69,8 +69,8 @@ public interface MakingPlanMapper {
      * @param planClassId 计划课程id
      * @return
      */
-    @Select("select a.*,(select count(DISTINCT user_id,plan_class_id) from tb_plan_class_record where plan_class_id=${planClassId}) as studentsNumber from tb_plan_class a " +
-            "where a.id = ${planClassId} and a.is_delete = 0")
+    @Select("select a.*,b.community_name,(select count(DISTINCT user_id,plan_class_id) from tb_plan_class_record where plan_class_id=${planClassId}) as studentsNumber from tb_plan_class a " +
+            "left join tb_community b on a.tag_id = b.tag_id where a.id = ${planClassId} and a.is_delete = 0")
     PlanClassVo queryPlanClassDetail(@Param("planClassId") int planClassId);
 
     /**
@@ -224,13 +224,22 @@ public interface MakingPlanMapper {
     UserPlan queryUserPlanSingRecord(@Param("userId") int userId,@Param("planId") int planId);
 
     /**
+     * 查询计划下有多少天的课程
+     * @param planId
+     * @return
+     */
+    @Select("select IFNULL(max(date_weight),0) from tb_plan_class where plan_id = ${planId}")
+    int queryMaxDateWeightByPlanId(@Param("planId") int planId);
+
+    /**
      * 签到（修改签到记录和学习进度）
      * @param singInRecord
+     * @param completeSchedule
      * @param updateTime
      * @param id
      * @return
      */
-    @Update("update tb_user_plan set sing_in_record = #{singInRecord},complete_schedule = complete_schedule + 1,update_time = #{updateTime} where " +
+    @Update("update tb_user_plan set sing_in_record = #{singInRecord},complete_schedule = ${completeSchedule},update_time = #{updateTime} where " +
             "id = ${id}")
-    int updateUserPlanSingInRecord(@Param("singInRecord") String singInRecord,@Param("updateTime") String updateTime,@Param("id") int id);
+    int updateUserPlanSingInRecord(@Param("singInRecord") String singInRecord,@Param("completeSchedule") int completeSchedule,@Param("updateTime") String updateTime,@Param("id") int id);
 }

@@ -620,6 +620,9 @@ public class CircleServiceImpl implements ICircleService {
 
                 //得到帖子评论数量
                 circles.get(i).setNumberPosts(commentMapper.selectCommentNumber(circles.get(i).getId()));
+
+                //将时间戳转换为多少天或者多少个小时和多少年
+                circles.get(i).setCreateAt(DateUtils.getTime(circles.get(i).getCreateAt()));
             }
         }
         map.put("hotCircleVos",circleVos);
@@ -632,16 +635,16 @@ public class CircleServiceImpl implements ICircleService {
         //创建的圈子
         Map<String, Object> map = new HashMap<>();
         //查看缓存是否存在 如果存在就查询缓存中的数据，否则查询数据库加入缓存
-        if (redisTemplate.hasKey("MyCirclesSquare::" + userId)) {
-            int pages = (paging.getPage() - 1) * paging.getLimit();
-            //查询缓存数据
-            List range = redisConfig.getList("MyCirclesSquare::" + userId, pages, paging.getPage() * paging.getLimit() - 1);
-            int createSize = (int) redisConfig.getString("myCreateCircleCount::" + userId);
-            int joinSize = (int) redisConfig.getString("joinedCircleCount::" + userId);
-            map.put("circle",range);
-            map.put("createSize",createSize);
-            map.put("joinSize",joinSize);
-        } else {
+//        if (redisTemplate.hasKey("MyCirclesSquare::" + userId)) {
+//            int pages = (paging.getPage() - 1) * paging.getLimit();
+//            //查询缓存数据
+//            List range = redisConfig.getList("MyCirclesSquare::" + userId, pages, paging.getPage() * paging.getLimit() - 1);
+//            int createSize = (int) redisConfig.getString("myCreateCircleCount::" + userId);
+//            int joinSize = (int) redisConfig.getString("joinedCircleCount::" + userId);
+//            map.put("circle",range);
+//            map.put("createSize",createSize);
+//            map.put("joinSize",joinSize);
+//        } else {
             //查询我创建的圈子
             List<CircleVo> createCircleVos = circleMapper.myCircleAndCircleJoined(userId, getPaging(paging));
             for (CircleVo createCircleVo : createCircleVos) {
@@ -654,17 +657,17 @@ public class CircleServiceImpl implements ICircleService {
             int myCircleCount = circleMapper.myCircleCount(userId);
             //查询加入的圈子数量
             int joinedCircleCount = circleMapper.circleJoinedCount(userId);
-            //存入redis缓存
-            if (createCircleVos.size() != 0) {
-                redisTemplate.opsForList().rightPushAll("MyCirclesSquare::" + userId, createCircleVos);
-                redisConfig.setString("myCreateCircleCount::" + userId, myCircleCount);
-                redisConfig.setString("joinedCircleCount::" + userId, joinedCircleCount);
-            }
+//            //存入redis缓存
+//            if (createCircleVos.size() != 0) {
+//                redisTemplate.opsForList().rightPushAll("MyCirclesSquare::" + userId, createCircleVos);
+//                redisConfig.setString("myCreateCircleCount::" + userId, myCircleCount);
+//                redisConfig.setString("joinedCircleCount::" + userId, joinedCircleCount);
+//            }
 
             map.put("circle",createCircleVos);
             map.put("createSize",myCircleCount);
             map.put("joinSize",joinedCircleCount);
-        }
+//        }
 
         return map;
     }
@@ -673,13 +676,13 @@ public class CircleServiceImpl implements ICircleService {
     public Map<String, Object> joinedCircles(int userId, Paging paging) {
         Map<String, Object> map = new HashMap<>();
         //查看缓存是否存在 如果存在就查询缓存中的数据，否则查询数据库加入缓存
-        if (redisTemplate.hasKey("JoinedCircles::" + userId)) {
-            int pages = (paging.getPage() - 1) * paging.getLimit();
-            //查询缓存数据
-            List range = redisConfig.getList("JoinedCircles::" + userId, pages, paging.getPage() * paging.getLimit() - 1);
-            map.put("joinedCircle",range);
-        } else {
-            //查询我创建的圈子
+//        if (redisTemplate.hasKey("JoinedCircles::" + userId)) {
+//            int pages = (paging.getPage() - 1) * paging.getLimit();
+//            //查询缓存数据
+//            List range = redisConfig.getList("JoinedCircles::" + userId, pages, paging.getPage() * paging.getLimit() - 1);
+//            map.put("joinedCircle",range);
+//        } else {
+            //查询我加入的圈子
             List<CircleVo> joinedCircleVos = circleMapper.circleJoined(userId, getPaging(paging));
             for (CircleVo createCircleVo : joinedCircleVos) {
                 //根据圈子对应的标签id查询封面和id
@@ -688,13 +691,18 @@ public class CircleServiceImpl implements ICircleService {
                 createCircleVo.setMemberCount(circleMapper.countCircleJoined(createCircleVo.getId()));
             }
             //存入redis缓存
-            if (joinedCircleVos.size() != 0) {
-                redisTemplate.opsForList().rightPushAll("JoinedCircles::" + userId, joinedCircleVos);
-            }
+//            if (joinedCircleVos.size() != 0) {
+//                redisTemplate.opsForList().rightPushAll("JoinedCircles::" + userId, joinedCircleVos);
+//            }
 
             map.put("joinedCircle",joinedCircleVos);
-        }
+//        }
         return map;
+    }
+
+    @Override
+    public List<Community> queryOfficialCircleList(Paging paging) {
+        return circleMapper.queryOfficialCircleList(getPaging(paging));
     }
 
     @Override

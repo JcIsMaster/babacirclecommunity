@@ -135,6 +135,13 @@ public interface ICircleService {
     Map<String,Object> joinedCircles(int userId, Paging paging);
 
     /**
+     * 官方圈子列表
+     * @param paging
+     * @return
+     */
+    List<Community> queryOfficialCircleList(Paging paging);
+
+    /**
      * 修改圈子
      * @param community
      */

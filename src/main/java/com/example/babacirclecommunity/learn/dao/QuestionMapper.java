@@ -67,8 +67,8 @@ public interface QuestionMapper {
      * @param id
      * @return
      */
-    @Select("select a.id,a.user_id,b.user_name,b.avatar,a.title,a.description,a.favour_num,a.comment_num,a.create_at from tb_question a " +
-            "left join tb_user b on a.user_id = b.id where a.id = ${id} and a.is_delete = 0")
+    @Select("select a.id,a.user_id,b.user_name,b.avatar,a.title,a.description,a.favour_num,a.comment_num,c.community_name,a.create_at from tb_question a " +
+            "left join tb_user b on a.user_id = b.id left join tb_community c on a.tags_two = c.tag_id where a.id = ${id} and a.is_delete = 0")
     QuestionVo queryQuestionById(@Param("id") int id);
 
     /**

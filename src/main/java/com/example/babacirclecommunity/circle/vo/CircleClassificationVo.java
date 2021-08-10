@@ -33,6 +33,11 @@ public class CircleClassificationVo {
     private String avatar;
 
     /**
+     * 用户性别
+     */
+    private int userSex;
+
+    /**
      * 图片组
      */
     private String[] img;

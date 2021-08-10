@@ -38,6 +38,11 @@ public class Community {
     private String announcement;
 
     /**
+     * 是否官方 （0不是，1是）默认是
+     */
+    private int whetherOfficial;
+
+    /**
      * 是否公开 （0不是，1是）默认是
      */
     private int whetherPublic;

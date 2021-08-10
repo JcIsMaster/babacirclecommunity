@@ -14,6 +14,11 @@ import java.util.List;
 public class PlanClassVo extends PlanClass {
 
     /**
+     * 关联圈子名称
+     */
+    private String communityName;
+
+    /**
      * 课程下的视频列表
      */
     private List<ClassVideo> classVideos;

@@ -41,6 +41,10 @@ public class QuestionVo {
      */
     private int commentNum;
     /**
+     * 圈子名称
+     */
+    private String communityName;
+    /**
      * 发布时间
      */
     private String createAt;

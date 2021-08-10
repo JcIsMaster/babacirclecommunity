@@ -53,6 +53,10 @@ public class MakingPlanServiceImpl implements IMakingPlanService {
         }
         //今日课程及继续播放进度
         PlanClassTodayVo planClassTodayVo = null;
+        if (userPlanVo.getCompleteSchedule() == -1){
+            //计划课程一全部完成返回空
+            return null;
+        }
         if (userPlanVo.getCompleteSchedule() != 1){
             planClassTodayVo = makingPlanMapper.queryTodayClass(userId);
         }
@@ -232,23 +236,28 @@ public class MakingPlanServiceImpl implements IMakingPlanService {
             singInVo.setMark("已签到");
             singInVo.setBgColor("#cce6ff");
             singInVo.setColor("#2a97ff");
-//            UserPlan userPlan = makingPlanMapper.queryUserPlanSingRecord(userId, planId);
             List<SingInVo> singInVos = new ArrayList<>();
             if (userPlan.getSingInRecord() != null && !userPlan.getSingInRecord().equals("")){
                 singInVos = JSONArray.parseArray(userPlan.getSingInRecord(), SingInVo.class);
-                singInVos.add(singInVo);
-                //修改课程学习进度和签到记录
-                int i = makingPlanMapper.updateUserPlanSingInRecord(JSONArray.toJSON(singInVos).toString(),System.currentTimeMillis() / 1000 + "",userPlan.getId());
-                if (i <= 0){
-                    throw new ApplicationException(CodeType.SERVICE_ERROR);
-                }
             }
-            else {
-                singInVos.add(singInVo);
-                int i = makingPlanMapper.updateUserPlanSingInRecord(JSONArray.toJSON(singInVos).toString(),System.currentTimeMillis() / 1000 + "",userPlan.getId());
-                if (i <= 0){
-                    throw new ApplicationException(CodeType.SERVICE_ERROR);
-                }
+            singInVos.add(singInVo);
+            //查询计划有多少天的课程
+            int maxDateWeight = makingPlanMapper.queryMaxDateWeightByPlanId(planId);
+            if (maxDateWeight == 0){
+                throw new ApplicationException(CodeType.RESOURCES_NOT_FIND);
+            }
+            //如果签到课程为最后一天的课程，则完成进度改为-1，代表已完成计划所有课程的学习
+            int completeSchedule = userPlan.getCompleteSchedule();
+            if(completeSchedule == maxDateWeight){
+                completeSchedule = -1;
+            }
+            else{
+                completeSchedule += 1;
+            }
+            //修改课程学习进度和签到记录
+            int i = makingPlanMapper.updateUserPlanSingInRecord(JSONArray.toJSON(singInVos).toString(),completeSchedule,System.currentTimeMillis() / 1000 + "",userPlan.getId());
+            if (i <= 0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
             return ResultUtil.success("签到打卡成功!");
         }
