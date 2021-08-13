@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.service.ICircleService;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
+import com.example.babacirclecommunity.circle.vo.CommunitySearchVo;
 import com.example.babacirclecommunity.circle.vo.CommunityVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
@@ -80,14 +81,6 @@ public class CircleController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         return  iCircleService.queryCheckMyCirclesSquare(userId,communityName,paging);
-    }
-
-
-    @ApiOperation(value = "发现圈子",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/fundCircle")
-    public Map<String,Object> fundCircle(int userId, String communityName,Paging paging)  {
-        return  iCircleService.fundCircle(userId,communityName,paging);
     }
 
     @ApiOperation(value = "发现圈子(新)",notes = "成功返回数据 反则为空")
@@ -209,6 +202,18 @@ public class CircleController {
         iCircleService.deletePosts(id);
     }
 
+    @ApiOperation(value = "根据圈子名称模糊查询圈子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCirclesByName")
+    public List<CommunitySearchVo> queryCirclesByName(String communityName){
+        return iCircleService.queryCirclesByName(communityName);
+    }
 
+    @ApiOperation(value = "查询热门圈子列表",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryHotCircleList")
+    public List<CircleVo> queryHotCircleList(int userId,Paging paging){
+        return iCircleService.queryHotCircleList(userId,paging);
+    }
 
 }

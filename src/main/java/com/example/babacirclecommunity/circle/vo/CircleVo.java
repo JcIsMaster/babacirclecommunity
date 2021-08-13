@@ -63,6 +63,11 @@ public class CircleVo {
     private int whetherPublic;
 
     /**
+     *是否加入了圈子 （0不是，1是）
+     */
+    private int whetherJoined = 0;
+
+    /**
      * 每个圈子的最新圈子封面和id
      */
     List<CircleImgIdVo> circleVoList;

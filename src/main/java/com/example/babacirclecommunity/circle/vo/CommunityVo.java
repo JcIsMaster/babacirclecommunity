@@ -74,6 +74,11 @@ public class CommunityVo {
     private int  whetherThere;
 
     /**
+     * 是否官方 （0不是，1是）默认为不是
+     */
+    private int whetherOfficial;
+
+    /**
      * 是否公开 （0不是，1是）默认是
      */
     private int whetherPublic;

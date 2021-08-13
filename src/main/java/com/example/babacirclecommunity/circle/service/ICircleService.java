@@ -4,6 +4,7 @@ import com.example.babacirclecommunity.circle.entity.Circle;
 import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
+import com.example.babacirclecommunity.circle.vo.CommunitySearchVo;
 import com.example.babacirclecommunity.circle.vo.CommunityVo;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.home.entity.Community;
@@ -65,6 +66,7 @@ public interface ICircleService {
     /**
      * 添加圈子
      * @param community
+     * @throws ParseException
      */
     void addCircle(Community community) throws ParseException;
 
@@ -101,14 +103,6 @@ public interface ICircleService {
      */
     List<CircleClassificationVo> queryClickUnitNavigationBar(int typeId,int userId,int tagId,Paging paging);
 
-    /**
-     * 发现圈子
-     * @param userId
-     * @param communityName
-     * @param paging
-     * @return
-     */
-    Map<String,Object> fundCircle(int userId, String communityName, Paging paging);
 
     /**
      * 发现圈子(新)
@@ -174,4 +168,19 @@ public interface ICircleService {
      * @param id 帖子id
      */
     void deletePosts(int id);
+
+    /**
+     * 根据圈子名称模糊查询圈子
+     * @param communityName
+     * @return
+     */
+    List<CommunitySearchVo> queryCirclesByName(String communityName);
+
+    /**
+     * 查询热门圈子列表
+     * @param paging
+     * @param userId
+     * @return
+     */
+    List<CircleVo> queryHotCircleList(int userId,Paging paging);
 }

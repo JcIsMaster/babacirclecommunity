@@ -6,6 +6,7 @@ import com.example.babacirclecommunity.circle.entity.Haplont;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
+import com.example.babacirclecommunity.circle.vo.CommunitySearchVo;
 import com.example.babacirclecommunity.home.entity.Community;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.user.vo.UserVo;
@@ -78,18 +79,26 @@ public interface CircleMapper {
      * @param paging
      * @return
      */
-    @Select("select a.whether_public,a.user_id,a.community_name,a.id,count(b.tags_two) as cnt,a.tag_id,a.introduce,a.posters from tb_community a " +
-            "INNER JOIN tb_circles b on a.tag_id=b.tags_two where b.is_delete=1 and a.whether_public=1 GROUP BY b.tags_two order by cnt desc ${paging}")
+    @Select("select a.whether_public,a.user_id,a.community_name,a.id,(select count(tags_two) from tb_circles where is_delete = 1 and tags_two = a.tag_id) as cnt," +
+            "a.tag_id,a.introduce,a.posters from tb_community a " +
+            "where a.is_delete=1 and a.whether_public=1 GROUP BY a.tag_id order by cnt desc ${paging}")
     List<CircleVo> queryPopularCircles(@Param("paging") String paging);
 
     /**
-     * 模糊查询圈子（社区）
+     * 模糊查询圈子
      * @param communityName 内容
      * @return
      */
-    @Select("select posters,tag_id,introduce,community_name,whether_official from tb_community where whether_public=1 and community_name like CONCAT('%',#{communityName},'%')")
-    List<CircleVo> queryCircles(@Param("communityName") String communityName);
+    @Select("select id,posters,tag_id,community_name,whether_official from tb_community where whether_public=1 and community_name like CONCAT('%',#{communityName},'%')")
+    List<CommunitySearchVo> queryCirclesByName(@Param("communityName") String communityName);
 
+    /**
+     * 查询是否有同名圈子
+     * @param communityName 圈子名
+     * @return
+     */
+    @Select("select count(id) from tb_community where is_delete = 1 and community_name = #{communityName}")
+    int querySameNameExist(@Param("communityName") String communityName);
 
     /**
      * 查询官方圈子
@@ -278,7 +287,7 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
             "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where  a.is_delete=1 and a.tags_two=${tagId} ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("tagId") int tagId, @Param("paging") String paging);
 
@@ -297,8 +306,8 @@ public interface CircleMapper {
      * @param paging
      * @return
      */
-    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId" +
-            ",c.avatar,c.id as uId,c.user_name ,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts" +
+    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId" +
+            ",c.avatar,c.id as uId,c.user_name,c.user_sex,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts" +
             " from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
             " where a.is_delete=1 order by a.create_at desc  ${paging}")
@@ -324,9 +333,11 @@ public interface CircleMapper {
     /**
      * 根据三级标签查询资源数据
      * @param haplontType
+     * @param paging
+     * @param tagId
      * @return
      */
-    @Select("select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,a.content,b.tag_name,b.id as tagId from" +
+    @Select("select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,a.address,a.create_at,a.content,b.tag_name,b.id as tagId from" +
             " tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.haplont_type=${haplontType} and a.tags_two=${tagId} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryPostByHaplontType(@Param("haplontType") int haplontType, @Param("paging") String paging, @Param("tagId") int tagId);
 
@@ -346,4 +357,12 @@ public interface CircleMapper {
     @Select("select * from tb_community where whether_official = 1 and is_delete = 1")
     List<Community> queryOfficialCircleList(@Param("paging") String paging);
 
+    /**
+     * 查询用户是否加入了某圈子
+     * @param id
+     * @param userId
+     * @return
+     */
+    @Select("select count(*) from tb_community_user where community_id = ${id} and user_id = ${userId}")
+    int queryWhetherJoinedCircle(@Param("id") int id,@Param("userId") int userId);
 }
