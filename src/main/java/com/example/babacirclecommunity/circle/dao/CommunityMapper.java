@@ -87,7 +87,8 @@ public interface CommunityMapper {
      * @param community
      * @return
      */
-    @Update("update tb_community set community_name=#{community.communityName},posters=#{community.posters},introduce=#{community.introduce},announcement=#{community.announcement},whether_public=${community.whetherPublic} where id=${community.id}")
+    @Update("update tb_community set community_name=#{community.communityName},posters=#{community.posters},introduce=#{community.introduce}," +
+            "announcement=#{community.announcement},whether_public=${community.whetherPublic} where id=${community.id}")
     int updateCircle(@Param("community") Community community);
 
     /**
@@ -97,4 +98,20 @@ public interface CommunityMapper {
      */
     @Update("update tb_community set is_delete=0 where id=${id}")
     int deleteCircle(@Param("id") int id);
+
+    /**
+     * 置顶圈子
+     * @param id
+     * @return
+     */
+    @Update("update tb_community set whether_top = 1 where id=${id}")
+    int topCircle(@Param("id") int id);
+
+    /**
+     * 取消置顶圈子
+     * @param userId
+     * @return
+     */
+    @Update("update tb_community set whether_top = 0 where user_id=${userId}")
+    int cancelTopCircle(@Param("userId") int userId);
 }

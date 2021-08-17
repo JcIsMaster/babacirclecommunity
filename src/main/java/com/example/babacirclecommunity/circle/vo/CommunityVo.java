@@ -25,7 +25,6 @@ public class CommunityVo {
      */
     private String posters;
 
-
     /**
      * 圈子介绍
      */

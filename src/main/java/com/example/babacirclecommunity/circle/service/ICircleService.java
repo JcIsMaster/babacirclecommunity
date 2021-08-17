@@ -166,8 +166,16 @@ public interface ICircleService {
     /**
      * 删除帖子
      * @param id 帖子id
+     * @param tagId
      */
-    void deletePosts(int id);
+    void deletePosts(int id,int tagId);
+
+    /**
+     * 置顶我的圈子
+     * @param id
+     * @param userId
+     */
+    void TopPosts(int id,int userId);
 
     /**
      * 根据圈子名称模糊查询圈子

@@ -195,11 +195,18 @@ public class CircleController {
          iCircleService.addTagHaplont(tagId,hName);
     }
 
-    @ApiOperation(value = "删除帖子", notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "删除圈子", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/deletePosts")
-    public void deletePosts(int id) {
-        iCircleService.deletePosts(id);
+    public void deletePosts(int id,int tagId) {
+        iCircleService.deletePosts(id,tagId);
+    }
+
+    @ApiOperation(value = "置顶我创建的圈子", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/TopPosts")
+    public void TopPosts(int id,int userId) {
+        iCircleService.TopPosts(id,userId);
     }
 
     @ApiOperation(value = "根据圈子名称模糊查询圈子",notes = "成功返回数据 反则为空")

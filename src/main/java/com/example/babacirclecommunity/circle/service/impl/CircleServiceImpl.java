@@ -685,9 +685,10 @@ public class CircleServiceImpl implements ICircleService {
         if (redisTemplate.hasKey(key)) {
             //删除缓存
             redisConfig.remove(key);
-        }else{
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"redis缓存异常！");
         }
+//        else{
+//            throw new ApplicationException(CodeType.SERVICE_ERROR,"redis缓存异常！");
+//        }
 
         int i = communityMapper.updateCircle(community);
         if (i <= 0) {
@@ -731,10 +732,31 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public void deletePosts(int id) {
-        int i = circleMapper.deletePosts(id);
-        if(i<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"删除失败");
+    public void deletePosts(int id,int tagId) {
+        int i = communityMapper.deleteCircle(id);
+        if(i <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"删除圈子失败");
+        }
+        List<CircleClassificationVo> circleClassificationVos = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, "limit 0,10");
+        if (circleClassificationVos.size() != 0){
+            int j = circleMapper.deletePosts(tagId);
+            if(j <= 0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"删除圈子内帖子失败");
+            }
+        }
+    }
+
+    @Override
+    public void TopPosts(int id,int userId) {
+        //先取消所有用户创建圈子的置顶
+        int i = communityMapper.cancelTopCircle(userId);
+        if(i <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"取消置顶圈子失败");
+        }
+        //置顶用户创建的圈子
+        int j = communityMapper.topCircle(id);
+        if(j <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"置顶圈子失败");
         }
     }
 

@@ -29,9 +29,9 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select r.whether_public,r.user_id,r.whether_official,r.id,r.tag_id, r.community_name,r.posters,r.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community r LEFT JOIN" +
-            " (SELECT community_id,user_id,COUNT(*) AS count1 FROM tb_community_user p GROUP BY community_id) t1" +
-            " on r.id=t1.community_id where r.user_id=${userId} ORDER BY cnt desc ${paging}")
+    @Select("select r.whether_public,r.user_id,r.whether_official,r.id,r.tag_id, r.community_name,r.posters,r.introduce, " +
+            "(select count(tags_two) from tb_circles where is_delete = 1 and tags_two = r.tag_id) AS cnt from tb_community r " +
+            "where r.is_delete = 1 and r.user_id=${userId} ORDER BY r.whether_top desc ${paging}")
     List<CircleVo> myCircleAndCircleJoined(@Param("userId") int userId, @Param("paging") String paging);
 
     /**
@@ -204,11 +204,11 @@ public interface CircleMapper {
      * @param id 帖子id
      * @return
      */
-    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.create_at,b.tag_name,b.id as tagId," +
+    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId," +
             "c.avatar,c.id as uId,c.user_name,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
             "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id " +
-            "INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
             "where a.id=${id} and a.is_delete=1")
     CircleClassificationVo selectSingleCircle(@Param("id") int id);
 
@@ -288,7 +288,7 @@ public interface CircleMapper {
      * @return
      */
     @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
-            "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where  a.is_delete=1 and a.tags_two=${tagId} ${paging}")
+            "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 and a.tags_two=${tagId} ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("tagId") int tagId, @Param("paging") String paging);
 
 
@@ -307,10 +307,10 @@ public interface CircleMapper {
      * @return
      */
     @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId" +
-            ",c.avatar,c.id as uId,c.user_name,c.user_sex,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts" +
-            " from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
+            ",c.avatar,c.id as uId,c.user_name,c.user_sex,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
+            "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
-            " where a.is_delete=1 order by a.create_at desc  ${paging}")
+            "where a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryReferenceCircles(@Param("paging") String paging);
 
     /**
@@ -343,10 +343,10 @@ public interface CircleMapper {
 
     /**
      * 删除资源 圈子
-     * @param id 帖id
+     * @param id 标签id
      * @return
      */
-    @Update("update tb_circles set is_delete=0 where id=${id}")
+    @Update("update tb_circles set is_delete = 0 where tags_two=${id}")
     int deletePosts(@Param("id") int id);
 
     /**
