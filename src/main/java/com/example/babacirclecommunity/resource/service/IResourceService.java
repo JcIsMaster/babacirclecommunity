@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.resource.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.resource.entity.Collection;
 import com.example.babacirclecommunity.resource.entity.Resources;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
@@ -19,7 +20,7 @@ public interface IResourceService {
     /**
      * 查询资源数据
      * @param paging 分页
-     * @param orderRule 0 推荐 1 最新 2最热
+     * @param orderRule 0 推荐 1 最新 2最热 3爆款
      * @param tagId 标签id
      * @param title 标题
      * @return
@@ -44,6 +45,14 @@ public interface IResourceService {
     Map<String,Object> queryHavePostedPosts(int userId,int othersId, Paging paging);
 
     /**
+     * 编辑用户资源介绍
+     * @param userId
+     * @param introduce
+     * @return
+     */
+    ResultUtil editUserResourceIntroduce(int userId, String introduce);
+
+    /**
      * 根据二级标签id查询推荐数据
      * @param id 二级标签id
      * @param userId 用户id
@@ -56,6 +65,7 @@ public interface IResourceService {
      * 根据一级标签id查询所有视频
      * @param id 一级标签id
      * @param paging 分页
+     * @throws ParseException
      * @return
      */
     List<ResourcesVo> queryAllVideosPrimaryTagId(int id, Paging paging,int userId) throws ParseException;

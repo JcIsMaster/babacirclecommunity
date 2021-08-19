@@ -3,10 +3,7 @@ package com.example.babacirclecommunity.resource.dao;
 import com.example.babacirclecommunity.resource.entity.Resources;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,7 +18,7 @@ public interface ResourceMapper {
     /**
      * 查询资源数据
      * @param paging 分页
-     * @param orderRule 0 推荐 1 最新 2最热
+     * @param orderRule 0 推荐 1 最新 2最热 3爆款
      * @param title 标题
      * @param tagId 标签id
      * @return
@@ -41,6 +38,9 @@ public interface ResourceMapper {
             "</if>" +
             "<if test='orderRule==2'>" +
             " order by a.browse DESC" +
+            "</if>" +
+            "<if test='orderRule==3'>" +
+            " order by a.collect DESC" +
             "</if>" +
             " ${paging}"+
             "</script>"})
@@ -82,6 +82,22 @@ public interface ResourceMapper {
     int updateBrowse(@Param("id") int id);
 
     /**
+     * 收藏量加一
+     * @param id
+     * @return
+     */
+    @Insert("update tb_resources set collect = collect + 1 where id=${id} ")
+    int updateCollect(@Param("id") int id);
+
+    /**
+     * 收藏量减一
+     * @param id
+     * @return
+     */
+    @Insert("update tb_resources set collect = collect - 1 where id=${id} ")
+    int updateCollectCut(@Param("id") int id);
+
+    /**
      * 根据帖子id查询当前帖子图片
      * @param id
      * @return
@@ -116,11 +132,14 @@ public interface ResourceMapper {
     /**
      * 查询我发布资源帖子
      * @param userId 用户id
+     * @param type 图文or视频
      * @param paging 分页
      * @return
      */
-    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1 order by a.create_at desc ${paging}")
-    List<ResourceClassificationVo> queryHavePostedPosts(@Param("userId") int userId,@Param("paging") String paging);
+    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a " +
+            "INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
+            "where a.u_id=${userId} and a.type = ${type} and a.is_delete=1 order by a.create_at desc ${paging}")
+    List<ResourceClassificationVo> queryHavePostedPosts(@Param("userId") int userId,@Param("type") int type,@Param("paging") String paging);
 
     /**
      * 根据二级标签id查询推荐的数据
@@ -174,4 +193,30 @@ public interface ResourceMapper {
      */
     @Select("select create_at from tb_browse where zq_id=${tid} and u_id=${userId} and type=0 and is_delete=1 order by create_at desc limit 1")
     String queryCreateAt(@Param("tid") int tid,@Param("userId") int userId);
+
+    /**
+     * 查询用户资源介绍
+     * @param userId
+     * @return
+     */
+    @Select("select resource_introduce from tb_resource_introduce where user_id = ${userId}")
+    String queryUserResourceIntroduce(@Param("userId") int userId);
+
+    /**
+     * 修改用户资源介绍
+     * @param userId
+     * @param introduce
+     * @return
+     */
+    @Update("update tb_resource_introduce set resource_introduce = #{introduce} where user_id = ${userId}")
+    int updateUserResourceIntroduce(@Param("userId") int userId,@Param("introduce") String introduce);
+
+    /**
+     * 新增用户资源介绍
+     * @param userId
+     * @param introduce
+     * @return
+     */
+    @Insert("insert into tb_resource_introduce(user_id,resource_introduce) values(${userId},#{introduce})")
+    int addUserResourceIntroduce(@Param("userId") int userId,@Param("introduce") String introduce);
 }

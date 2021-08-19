@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.resource.controller;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.resource.entity.Collection;
 import com.example.babacirclecommunity.resource.entity.Resources;
 import com.example.babacirclecommunity.resource.service.IResourceService;
@@ -61,6 +62,13 @@ public class ResourceController {
     @PostMapping("/queryHavePostedPosts")
     public Map<String,Object> queryHavePostedPosts(int userId,int othersId, Paging paging) {
         return iResourceService.queryHavePostedPosts(userId,othersId,paging);
+    }
+
+    @ApiOperation(value = "编辑用户资源介绍", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/editUserResourceIntroduce")
+    public ResultUtil editUserResourceIntroduce(int userId,String introduce){
+        return iResourceService.editUserResourceIntroduce(userId, introduce);
     }
 
     /**

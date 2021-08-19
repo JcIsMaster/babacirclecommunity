@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.user.dao;
 import com.example.babacirclecommunity.user.entity.User;
 import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
 import com.example.babacirclecommunity.user.vo.PersonalUserVo;
+import com.example.babacirclecommunity.user.vo.UserPersonalVo;
 import com.example.babacirclecommunity.user.vo.UserVo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
@@ -26,6 +27,15 @@ public interface UserMapper {
      */
     @Select("select id,user_name,introduce,picture,avatar from tb_user where id=${userId}")
     PersonalCenterUserVo queryUserById(@Param("userId") int userId);
+
+    /**
+     * 根据用户id查询货源用户字段信息
+     * @param userId 当前登录id
+     * @return
+     */
+    @Select("select a.id,a.user_name,a.city,a.user_sex,a.birthday,a.avatar,b.resource_introduce from tb_user a left join tb_resource_introduce b " +
+            "on a.id = b.user_id where a.id=${userId}")
+    UserPersonalVo queryResourceUserById(@Param("userId") int userId);
 
     /**
      * 根据用户id查询个别用户字段信息

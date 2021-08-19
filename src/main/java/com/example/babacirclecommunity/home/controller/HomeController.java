@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.home.controller;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.home.service.IHomeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +34,7 @@ public class HomeController {
     @ApiOperation(value = "搜索数据接口",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectAllSearch")
-    public Object selectAllSearch(int strata,String postingName,int userId, Paging paging)  {
+    public Object selectAllSearch(int strata,String postingName,int userId, Paging paging) {
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0，page传1");
         }
@@ -48,7 +49,17 @@ public class HomeController {
     @ApiOperation(value = "查询搜索记录和其他相关信息",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/querySearchRecords")
-    public Map<String,Object> querySearchRecords(int userId)  {
+    public Map<String,Object> querySearchRecords(int userId) {
         return iHomeService.querySearchRecords(userId);
+    }
+
+    @ApiOperation(value = "删除搜索历史记录",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/deleteSearchHistory")
+    public ResultUtil deleteSearchHistory(int userId) {
+        if (userId == 0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"用户未登录，id为0");
+        }
+        return iHomeService.deleteSearchHistory(userId);
     }
 }

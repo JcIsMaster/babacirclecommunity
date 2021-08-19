@@ -1,9 +1,7 @@
 package com.example.babacirclecommunity.home.dao;
 
 import com.example.babacirclecommunity.home.entity.SearchHistory;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,6 +27,21 @@ public interface SearchRecordMapper {
      * @param userId
      * @return
      */
-    @Select("select id,historical_content from tb_search_history where user_id = ${userId} order by create_at desc limit 8")
+    @Select("select id,historical_content from tb_search_history where user_id = ${userId} and is_delete = 1 order by create_at desc limit 8")
     List<SearchHistory> selectSearchRecordByUserId(@Param("userId") int userId);
+
+    /**
+     * 查询热搜记录top5
+     * @return
+     */
+    @Select("select historical_content from tb_search_history GROUP BY historical_content ORDER BY count(*) desc limit 5")
+    List<String> queryHotSearchHistorical();
+
+    /**
+     * 删除搜索历史记录
+     * @param userId
+     * @return
+     */
+    @Update("update tb_search_history set is_delete = 0 where user_id = ${userId}")
+    int deleteHistorySearch(@Param("userId") int userId);
 }

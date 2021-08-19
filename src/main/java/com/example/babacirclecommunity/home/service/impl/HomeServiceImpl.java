@@ -5,9 +5,11 @@ import com.example.babacirclecommunity.circle.dao.CircleGiveMapper;
 import com.example.babacirclecommunity.circle.dao.CircleMapper;
 import com.example.babacirclecommunity.circle.dao.CommentMapper;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
+import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.home.dao.SearchRecordMapper;
 import com.example.babacirclecommunity.home.entity.SearchHistory;
 import com.example.babacirclecommunity.home.service.IHomeService;
@@ -150,6 +152,11 @@ public class HomeServiceImpl implements IHomeService {
         //使用stream流根据字段去重
         List<SearchHistory> collect = searchHistories.stream().filter(distinctByKey1(s -> s.getHistoricalContent())).collect(Collectors.toList());
 
+        //查询热搜 top5
+        List<String> hotSearchHistorical = searchRecordMapper.queryHotSearchHistorical();
+
+        //查询热门圈子 top5
+        List<CircleVo> circleVos = circleMapper.queryPopularCircles("limit 0,5");
         /**
          * 查询前三名的圈子
          */
@@ -182,7 +189,18 @@ public class HomeServiceImpl implements IHomeService {
 
         map.put("searchHistories", collect);
 //        map.put("collect1",tagVoList1);
+        map.put("hotSearchHistories",hotSearchHistorical);
+        map.put("hotCircle",circleVos);
         return map;
 
+    }
+
+    @Override
+    public ResultUtil deleteSearchHistory(int userId) {
+        int i = searchRecordMapper.deleteHistorySearch(userId);
+        if(i <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"删除搜索历史记录失败");
+        }
+        return ResultUtil.success(i);
     }
 }

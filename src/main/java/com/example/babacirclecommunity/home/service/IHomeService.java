@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.home.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 
 import java.util.Map;
 
@@ -26,4 +27,11 @@ public interface IHomeService {
      * @return
      */
     Map<String,Object> querySearchRecords(int userId);
+
+    /**
+     * 删除搜索历史记录
+     * @param userId
+     * @return
+     */
+    ResultUtil deleteSearchHistory(int userId);
 }

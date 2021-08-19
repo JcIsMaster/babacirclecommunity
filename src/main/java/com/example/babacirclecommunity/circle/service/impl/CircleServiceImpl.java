@@ -111,6 +111,10 @@ public class CircleServiceImpl implements ICircleService {
 
             //将所有关注状态为1关注状态
             circleClassificationVos.get(i).setWhetherAttention(1);
+
+            //将时间戳转换为多少天或者多少个小时和多少年
+            String time = DateUtils.getTime(circleClassificationVos.get(i).getCreateAt());
+            circleClassificationVos.get(i).setCreateAt(time);
         }
 
         return circleClassificationVos;

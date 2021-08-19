@@ -1,5 +1,6 @@
 package com.example.babacirclecommunity.resource.service.impl;
 
+import com.example.babacirclecommunity.circle.dao.AttentionMapper;
 import com.example.babacirclecommunity.circle.dao.BrowseMapper;
 import com.example.babacirclecommunity.circle.entity.Browse;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
@@ -15,6 +16,7 @@ import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
+import com.example.babacirclecommunity.user.vo.UserPersonalVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -28,10 +30,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +54,9 @@ public class ResourceServiceImpl implements IResourceService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private AttentionMapper attentionMapper;
 
     public String getPaging(Paging paging) {
         Integer page = (paging.getPage() - 1) * paging.getLimit();
@@ -143,28 +145,59 @@ public class ResourceServiceImpl implements IResourceService {
     @Override
     public Map<String, Object> queryHavePostedPosts(int userId, int othersId, Paging paging) {
 
-        //插叙资源帖子信息
-        List<ResourceClassificationVo> homeClassificationVos = resourceMapper.queryHavePostedPosts(othersId, getPaging(paging));
+        //查询资源帖子信息
+        List<ResourceClassificationVo> homeClassificationVos = resourceMapper.queryHavePostedPosts(othersId,0,getPaging(paging));
+
+        //查询资源视频帖子信息
+        List<ResourceClassificationVo> videoClassificationVos = resourceMapper.queryHavePostedPosts(othersId,1,getPaging(paging));
 
         //根据用户id查询出用户信息
-        PersonalCenterUserVo personalCenterUserVo = userMapper.queryUserById(othersId);
+        UserPersonalVo userPersonalVo = userMapper.queryResourceUserById(othersId);
+        //获取当前年份
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        //设置用户年龄
+        if(userPersonalVo.getBirthday() != null){
+            userPersonalVo.setAge(String.valueOf(year - Integer.parseInt(userPersonalVo.getBirthday().substring(0,4))));
+        }
+        else {
+            userPersonalVo.setAge("未知");
+        }
 
         Map<String, Object> map = new HashMap<>(5);
 
         map.put("homeClassificationVos", homeClassificationVos);
-        map.put("user", personalCenterUserVo);
+        map.put("videoClassificationVos", videoClassificationVos);
+        map.put("user", userPersonalVo);
 
-        if (userId == 0) {
-            map.put("isMe", 0);
-            return map;
+        //查询是否关注该用户
+        int i1 = attentionMapper.queryWhetherAttention(userId, othersId);
+        if (i1 > 0) {
+            map.put("attention",1);
         }
-        if (userId == othersId) {
-            map.put("isMe", 1);
-            return map;
+        else {
+            map.put("attention",0);
         }
-        map.put("isMe", 0);
 
         return map;
+    }
+
+    @Override
+    public ResultUtil editUserResourceIntroduce(int userId, String introduce) {
+        String userIntroduce = resourceMapper.queryUserResourceIntroduce(userId);
+        //如果数据存在，修改介绍
+        if (userIntroduce != null){
+            int i = resourceMapper.updateUserResourceIntroduce(userId,introduce);
+            if (i <= 0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"修改用户资源介绍失败");
+            }
+            return ResultUtil.success(i);
+        }
+        //如果数据不存在，则添加介绍
+        int i = resourceMapper.addUserResourceIntroduce(userId,introduce);
+        if (i <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加用户资源介绍失败");
+        }
+        return ResultUtil.success(i);
     }
 
     @Override
@@ -296,25 +329,35 @@ public class ResourceServiceImpl implements IResourceService {
             if (addCollection <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR, "添加收藏信息错误");
             }
+            int i = resourceMapper.updateCollect(collection1.getTId());
+            if (i <= 0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR, "修改收藏数量错误");
+            }
             return addCollection;
         }
 
         int i = 0;
+        int j = 0;
         //如果当前状态是1 那就改为0 取消收藏
         if (collection1.getIsDelete() == 1) {
             i = collectionMapper.updateCollectionStatus(collection1.getId(), 0, 0);
+            j = resourceMapper.updateCollectCut(collection1.getTId());
         }
 
         //如果当前状态是0 那就改为1 为收藏状态
         if (collection1.getIsDelete() == 0) {
             i = collectionMapper.updateCollectionStatus(collection1.getId(), 1, 0);
+            j = resourceMapper.updateCollect(collection1.getTId());
         }
 
         if (i <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
+        if (j <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR, "修改收藏数量错误");
+        }
 
-        return i;
+        return j;
     }
 
     @Override

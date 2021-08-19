@@ -18,6 +18,7 @@ public interface CollectionMapper {
      * 根据用户id和帖子id查询数据是否存在数据库
      * @param userId 用户id
      * @param tid 帖子id
+     * @param typeCollection
      * @return
      */
     @Select("select * from tb_user_collection where u_id=${userId} and t_id=${tid} and type_collection=${typeCollection}")
@@ -38,6 +39,7 @@ public interface CollectionMapper {
      * @param tId 贴子id
      * @param createAt 创建时间
      * @param remarks 备注
+     * @param typeCollection
      * @return
      */
     @Insert("insert into tb_user_collection(u_id,t_id,create_at,remarks,type_collection) values(${uId},${tId},#{createAt},#{remarks},${typeCollection})")
@@ -47,6 +49,7 @@ public interface CollectionMapper {
      * 修改帖子收藏的状态
      * @param id 收藏id
      * @param status 状态id
+     * @param typeCollection
      * @return
      */
     @Update("update tb_user_collection set is_delete=${status} where id=${id} and type_collection=${typeCollection}")
