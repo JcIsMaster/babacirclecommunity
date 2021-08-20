@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.resource.vo.ResourcesVo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -115,11 +116,14 @@ public interface CollaborateMapper {
     /**
      * 查询我发布合作帖子
      * @param userId 用户id
+     * @param type 图文or视频
      * @param paging 分页
      * @return
      */
-    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1 and tags_one=13 order by a.create_at desc ${paging}")
-    List<ResourceClassificationVo> queryHavePostedPosts(@Param("userId") int userId,@Param("paging") String paging);
+    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a " +
+            "INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
+            "where a.u_id=${userId} and a.is_delete=1 and tags_one=13 and a.type = ${type} order by a.create_at desc ${paging}")
+    List<ResourceClassificationVo> queryHavePostedPosts(@Param("userId") int userId,@Param("type") int type,@Param("paging") String paging);
 
 
     /**
@@ -149,4 +153,30 @@ public interface CollaborateMapper {
     @Select("select a.id,a.cover,a.tags_one,a.content,c.avatar,c.id as uId,c.user_name,a.title,a.favour,a.collect,a.browse,a.create_at,a.type,a.video,b.tag_name,b.id as tagId" +
             " from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one=${tagsOne} and a.type=1 and a.is_delete=1 ${paging}")
     List<ResourcesVo> queryAllVideosPrimaryTagId(@Param("tagsOne") int tagsOne,@Param("paging") String paging);
+
+    /**
+     * 查询用户合作介绍
+     * @param userId
+     * @return
+     */
+    @Select("select collaborate_introduce from tb_collaborate_introduce where user_id = ${userId}")
+    String queryUserCollaborateIntroduce(@Param("userId") int userId);
+
+    /**
+     * 修改用户合作介绍
+     * @param userId
+     * @param introduce
+     * @return
+     */
+    @Update("update tb_collaborate_introduce set collaborate_introduce = #{introduce} where user_id = ${userId}")
+    int updateUserCollaborateIntroduce(@Param("userId") int userId,@Param("introduce") String introduce);
+
+    /**
+     * 新增用户合作介绍
+     * @param userId
+     * @param introduce
+     * @return
+     */
+    @Insert("insert into tb_collaborate_introduce(user_id,collaborate_introduce) values(${userId},#{introduce})")
+    int addUserCollaborateIntroduce(@Param("userId") int userId,@Param("introduce") String introduce);
 }

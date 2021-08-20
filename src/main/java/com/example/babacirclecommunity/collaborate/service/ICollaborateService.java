@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.collaborate.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.resource.entity.Collection;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
@@ -41,6 +42,14 @@ public interface ICollaborateService {
      * @return
      */
     Map<String,Object> queryHaveCollaboratePostedPosts(int userId, int othersId, Paging paging);
+
+    /**
+     * 编辑用户资源介绍
+     * @param userId
+     * @param introduce
+     * @return
+     */
+    ResultUtil editUserCollaborateIntroduce(int userId, String introduce);
 
     /**
      * 根据二级标签id查询推荐数据 点进帖子详情 触发

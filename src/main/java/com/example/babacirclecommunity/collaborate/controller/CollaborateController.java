@@ -4,6 +4,7 @@ import com.example.babacirclecommunity.collaborate.service.ICollaborateService;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.resource.entity.Collection;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
@@ -60,6 +61,13 @@ public class CollaborateController {
     @PostMapping("/queryHaveCollaboratePostedPosts")
     public Map<String,Object> queryHaveCollaboratePostedPosts(int userId, int othersId, Paging paging) {
         return iCollaborateService.queryHaveCollaboratePostedPosts(userId,othersId,paging);
+    }
+
+    @ApiOperation(value = "编辑用户合作介绍", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/editUserCollaborateIntroduce")
+    public ResultUtil editUserCollaborateIntroduce(int userId, String introduce){
+        return iCollaborateService.editUserCollaborateIntroduce(userId, introduce);
     }
 
     /**

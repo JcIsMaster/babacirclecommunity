@@ -38,6 +38,15 @@ public interface UserMapper {
     UserPersonalVo queryResourceUserById(@Param("userId") int userId);
 
     /**
+     * 根据用户id查询合作用户字段信息
+     * @param userId 当前登录id
+     * @return
+     */
+    @Select("select a.id,a.user_name,a.city,a.user_sex,a.birthday,a.avatar,b.collaborate_introduce as resource_introduce from tb_user a left join tb_collaborate_introduce b " +
+            "on a.id = b.user_id where a.id=${userId}")
+    UserPersonalVo queryCollaborateUserById(@Param("userId") int userId);
+
+    /**
      * 根据用户id查询个别用户字段信息
      * @param userId 当前登录id
      * @return

@@ -112,11 +112,11 @@ public class ResourceController {
     @ApiOperation(value = "发布",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/issueResourceOrCircle")
-    public void issueResourceOrCircle(Resources resources, String imgUrl,int whetherCover) throws Exception {
+    public int issueResourceOrCircle(Resources resources, String imgUrl) throws Exception {
         if(resources.getUId()==0 || resources.getTagsTwo()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        iResourceService.issueResourceOrCircle(resources,imgUrl,whetherCover);
+        return iResourceService.issueResourceOrCircle(resources,imgUrl);
     }
 
 

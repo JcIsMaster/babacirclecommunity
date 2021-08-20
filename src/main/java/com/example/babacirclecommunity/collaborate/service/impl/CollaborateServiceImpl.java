@@ -1,5 +1,6 @@
 package com.example.babacirclecommunity.collaborate.service.impl;
 
+import com.example.babacirclecommunity.circle.dao.AttentionMapper;
 import com.example.babacirclecommunity.circle.dao.BrowseMapper;
 import com.example.babacirclecommunity.circle.entity.Browse;
 import com.example.babacirclecommunity.collaborate.dao.CollaborateMapper;
@@ -8,6 +9,7 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.DateUtils;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.common.utils.TimeUtil;
 import com.example.babacirclecommunity.resource.dao.CollectionMapper;
 import com.example.babacirclecommunity.resource.entity.Collection;
@@ -15,16 +17,14 @@ import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.resource.vo.ResourcesVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
+import com.example.babacirclecommunity.user.vo.UserPersonalVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +47,9 @@ public class CollaborateServiceImpl implements ICollaborateService {
 
     @Autowired
     private CollectionMapper collectionMapper;
+
+    @Autowired
+    private AttentionMapper attentionMapper;
 
     @Override
     public List<ResourceClassificationVo> queryCollaborate(Paging paging, int orderRule, int tagId, String title) {
@@ -133,28 +136,59 @@ public class CollaborateServiceImpl implements ICollaborateService {
         Integer page = (paging.getPage() - 1) * paging.getLimit();
         String pag = "limit " + page + "," + paging.getLimit() + "";
 
-        //插叙资源帖子信息
-        List<ResourceClassificationVo> homeClassificationVos = collaborateMapper.queryHavePostedPosts(othersId, pag);
+        //查询资源帖子信息
+        List<ResourceClassificationVo> homeClassificationVos = collaborateMapper.queryHavePostedPosts(othersId,0, pag);
+
+        //查询视频资源帖子信息
+        List<ResourceClassificationVo> videoClassificationVos = collaborateMapper.queryHavePostedPosts(othersId,1, pag);
 
         //根据用户id查询出用户信息
-        PersonalCenterUserVo personalCenterUserVo = userMapper.queryUserById(othersId);
+        UserPersonalVo userPersonalVo = userMapper.queryCollaborateUserById(othersId);
+        //获取当前年份
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        //设置用户年龄
+        if(userPersonalVo.getBirthday() != null){
+            userPersonalVo.setAge(String.valueOf(year - Integer.parseInt(userPersonalVo.getBirthday().substring(0,4))));
+        }
+        else {
+            userPersonalVo.setAge("未知");
+        }
 
         Map<String, Object> map = new HashMap<>(5);
 
         map.put("homeClassificationVos", homeClassificationVos);
-        map.put("user", personalCenterUserVo);
+        map.put("videoClassificationVos", videoClassificationVos);
+        map.put("user", userPersonalVo);
 
-        if (userId == 0) {
-            map.put("isMe", 0);
-            return map;
+        //查询是否关注该用户
+        int i1 = attentionMapper.queryWhetherAttention(userId, othersId);
+        if (i1 > 0) {
+            map.put("attention",1);
         }
-        if (userId == othersId) {
-            map.put("isMe", 1);
-            return map;
+        else {
+            map.put("attention",0);
         }
-        map.put("isMe", 0);
 
         return map;
+    }
+
+    @Override
+    public ResultUtil editUserCollaborateIntroduce(int userId, String introduce) {
+        String userIntroduce = collaborateMapper.queryUserCollaborateIntroduce(userId);
+        //如果数据存在，修改介绍
+        if (userIntroduce != null){
+            int i = collaborateMapper.updateUserCollaborateIntroduce(userId,introduce);
+            if (i <= 0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"修改用户合作介绍失败");
+            }
+            return ResultUtil.success(i);
+        }
+        //如果数据不存在，则添加介绍
+        int i = collaborateMapper.addUserCollaborateIntroduce(userId,introduce);
+        if (i <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加用户合作介绍失败");
+        }
+        return ResultUtil.success(i);
     }
 
     @Override

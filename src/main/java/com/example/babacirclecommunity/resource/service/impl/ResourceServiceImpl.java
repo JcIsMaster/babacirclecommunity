@@ -361,7 +361,7 @@ public class ResourceServiceImpl implements IResourceService {
     }
 
     @Override
-    public void issueResourceOrCircle(Resources resources, String imgUrl, int whetherCover) throws Exception {
+    public int issueResourceOrCircle(Resources resources, String imgUrl) throws Exception {
 
         //获取token
         String token = ConstantUtil.getToken();
@@ -377,7 +377,7 @@ public class ResourceServiceImpl implements IResourceService {
             throw new ApplicationException(CodeType.SERVICE_ERROR, "内容违规");
         }
 
-        issue(resources, imgUrl, whetherCover);
+        return issue(resources, imgUrl);
     }
 
     @Override
@@ -470,19 +470,19 @@ public class ResourceServiceImpl implements IResourceService {
         return posterList;
     }
 
-    public void issue(Resources resources, String imgUrl, int whetherCover) throws Exception {
+    public int issue(Resources resources, String imgUrl) throws Exception {
         resources.setCreateAt(System.currentTimeMillis() / 1000 + "");
         String[] split = null;
 
         //自己选封面
-        if (whetherCover == 1) {
-            if (resources.getType() == 0) {
-                split = imgUrl.split(",");
-            }
-        }
+//        if (whetherCover == 1) {
+//            if (resources.getType() == 0) {
+//                split = imgUrl.split(",");
+//            }
+//        }
 
         //系统默认封面
-        if (whetherCover == 0) {
+//        if (whetherCover == 0) {
             //视频
             if (resources.getType() == 1) {
                 String videoCover = FfmpegUtil.getVideoCover(resources.getVideo());
@@ -492,7 +492,7 @@ public class ResourceServiceImpl implements IResourceService {
                 split = imgUrl.split(",");
                 resources.setCover(split[0]);
             }
-        }
+//        }
 
         int i = resourceMapper.addResourcesPost(resources);
         if (i <= 0) {
@@ -506,6 +506,6 @@ public class ResourceServiceImpl implements IResourceService {
             }
         }
 
-
+        return i;
     }
 }

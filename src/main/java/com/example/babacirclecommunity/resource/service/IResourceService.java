@@ -82,10 +82,10 @@ public interface IResourceService {
      * 发布
      * @param resources 对象
      * @param imgUrl 图片地址
-     * @param whetherCover（1自己选的，0系统默认）
      * @throws Exception
+     * @return
      */
-    void issueResourceOrCircle(Resources resources, String imgUrl, int whetherCover) throws Exception;
+    int issueResourceOrCircle(Resources resources, String imgUrl) throws Exception;
 
     /**
      * 得到资源海报图
