@@ -28,14 +28,12 @@ public class Upload {
 
     Path path=null;
     public synchronized List<String> upload(MultipartFile files) throws Exception {
-
         //得到存入数据库的token
         String token = ConstantUtil.getToken();
         String checkImg = ConstantUtil.checkImg(files, token);
         if(checkImg.equals("87014")){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"文件违规!");
         }
-
         String modeFiles=null;
             String modeFile=null;
             String times="";
@@ -53,7 +51,6 @@ public class Upload {
 
                 path = Paths.get("e:/file/"+visbit+"/"+ times);
                 Files.write(path,bytes);
-
                  modeFiles=path.toString();
                 if (visbit.equals("img")) {
                     //在拿到压缩后的图片  处理后 返回给小程序

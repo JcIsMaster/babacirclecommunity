@@ -49,11 +49,11 @@ public class TalentServiceImpl implements ITalentService {
     }
 
     @Override
-    public TalentsPersonalVo queryTalentById(int userId) {
-        if (userId == 0) {
+    public TalentsPersonalVo queryTalentById(int otherId) {
+        if (otherId == 0) {
             return null;
         }
-        return talentsMapper.queryTalentByUserId(userId);
+        return talentsMapper.queryTalentByUserId(otherId);
     }
 
     @Override

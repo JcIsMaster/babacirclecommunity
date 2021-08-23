@@ -33,13 +33,13 @@ public interface TalentsMapper {
 
     /**
      * 根据user_id查询人才名片
-     * @param userId
+     * @param otherId
      * @return
      */
     @Select("select a.id,b.id as user_id,b.avatar,b.user_name,b.curr_province,b.city," +
             "a.introduction,a.position,a.specialty,a.img_works,a.video_works from tb_talents a right join tb_user b on a.user_id = b.id " +
-            "where b.id = ${userId} and b.is_delete = 1")
-    TalentsPersonalVo queryTalentByUserId(@Param("userId") int userId);
+            "where b.id = ${otherId} and b.is_delete = 1")
+    TalentsPersonalVo queryTalentByUserId(@Param("otherId") int otherId);
 
     /**
      * 根据id查询人才名片

@@ -38,8 +38,8 @@ public class TalentsController {
     @ApiOperation(value = "根据用户id查询人才名片",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryTalentById")
-    public TalentsPersonalVo queryTalentById(int userId){
-        return iTalentService.queryTalentById(userId);
+    public TalentsPersonalVo queryTalentById(int otherId){
+        return iTalentService.queryTalentById(otherId);
     }
 
     @ApiOperation(value = "修改个人名片",notes = "成功返回数据 反则为空")

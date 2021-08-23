@@ -25,10 +25,10 @@ public interface ITalentService {
 
     /**
      * 根据id查询人才名片
-     * @param userId
+     * @param otherId
      * @return
      */
-    TalentsPersonalVo queryTalentById(int userId);
+    TalentsPersonalVo queryTalentById(int otherId);
 
     /**
      * 修改个人名片
