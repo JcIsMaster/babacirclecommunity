@@ -4,10 +4,10 @@ import lombok.Data;
 
 /**
  * @author JC
- * @date 2021/6/5 14:43
+ * @date 2021/8/21 11:04
  */
 @Data
-public class TalentsVo {
+public class TalentsPersonalVo {
 
     /**
      * id
@@ -30,11 +30,6 @@ public class TalentsVo {
     private String userName;
 
     /**
-     * 性别 0女 1男
-     */
-    private int sex;
-
-    /**
      * 城市(省)
      */
     private String currProvince;
@@ -50,18 +45,22 @@ public class TalentsVo {
     private String position;
 
     /**
+     * 特长（擅长）
+     */
+    private String specialty;
+
+    /**
      * 一句话介绍
      */
     private String introduction;
 
     /**
-     * 创建时间
+     * 图片作品
      */
-    private String createAt;
+    private String imgWorks;
 
     /**
-     * 是否展示(删除)
+     * 视频作品
      */
-    private int isDelete;
-
+    private String videoWorks;
 }

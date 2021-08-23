@@ -4,9 +4,11 @@ import com.example.babacirclecommunity.circle.dao.AttentionMapper;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.talents.dao.TalentsMapper;
 import com.example.babacirclecommunity.talents.entity.Talents;
 import com.example.babacirclecommunity.talents.service.ITalentService;
+import com.example.babacirclecommunity.talents.vo.TalentsPersonalVo;
 import com.example.babacirclecommunity.talents.vo.TalentsVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +29,11 @@ public class TalentServiceImpl implements ITalentService {
     @Autowired
     private TalentsMapper talentsMapper;
 
-    @Autowired
-    private AttentionMapper attentionMapper;
-
     @Override
-    public List<Talents> queryTalentsList(int userId, String content, String city, Paging paging) {
+    public List<TalentsVo> queryTalentsList(String content, String city, Paging paging) {
 
         int page = (paging.getPage() - 1) * paging.getLimit();
-        String sql = "limit " + page + "," + paging.getLimit() + "";
+        String sql = "limit " + page + "," + paging.getLimit();
 
         if ("undefined".equals(content) || "".equals(content) || content == null) {
             content = null;
@@ -44,21 +43,13 @@ public class TalentServiceImpl implements ITalentService {
             city = null;
         }
 
-        List<Talents> talents = talentsMapper.queryTalentsList(content, city, sql);
-        if (userId != 0) {
-            for (Talents talent : talents) {
-                //查看我是否关注了此人
-                int i = attentionMapper.queryWhetherAttention(userId, talent.getId());
-                if (i > 0) {
-                    talent.setWhetherAttention(1);
-                }
-            }
-        }
+        List<TalentsVo> talents = talentsMapper.queryTalentsList(content, city, sql);
+
         return talents;
     }
 
     @Override
-    public TalentsVo queryTalentById(int userId) {
+    public TalentsPersonalVo queryTalentById(int userId) {
         if (userId == 0) {
             return null;
         }
@@ -66,12 +57,16 @@ public class TalentServiceImpl implements ITalentService {
     }
 
     @Override
-    public int updatePersonalTalent(Talents talents) {
-        Talents talent = talentsMapper.queryTalentById(talents.getId());
+    public ResultUtil updatePersonalTalent(Talents talents) {
+        Talents talent = talentsMapper.queryTalentById(talents.getUserId());
         int i;
         //名片数据不为空则修改名片
         if (talent != null) {
             i = talentsMapper.updatePersonalTalent(talents);
+            if (i <= 0) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"修改人才失败");
+            }
+            return ResultUtil.success(i,0);
         }
         //反之新增名片
         else {
@@ -79,8 +74,8 @@ public class TalentServiceImpl implements ITalentService {
             i = talentsMapper.addPersonalTalent(talents);
         }
         if (i <= 0) {
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加人才失败");
         }
-        return i;
+        return ResultUtil.success(i,1);
     }
 }

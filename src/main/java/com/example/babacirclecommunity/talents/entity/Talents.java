@@ -10,55 +10,48 @@ import lombok.Data;
 public class Talents {
 
     /**
-     * id实质为user_id
+     * id
      */
     private int id;
+
     /**
-     * 头像
+     * 用户id
      */
-    private String avatar;
+    private int userId;
+
     /**
-     * 昵称
+     * 职位
      */
-    private String nickName;
+    private String position;
+
     /**
-     * 性别 0女 1男
+     * 特长（擅长）
      */
-    private int sex;
-    /**
-     * 城市
-     */
-    private String city;
-    /**
-     * 主要标签
-     */
-    private String tagPrimary;
-    /**
-     * 个性标签1
-     */
-    private String tagIndividualityOne;
-    /**
-     * 个性标签2
-     */
-    private String tagIndividualityTwo;
+    private String specialty;
+
     /**
      * 一句话介绍
      */
     private String introduction;
+
+    /**
+     * 图片作品
+     */
+    private String imgWorks;
+
+    /**
+     * 视频作品
+     */
+    private String videoWorks;
+
     /**
      * 创建时间
      */
     private String createAt;
+
     /**
      * 是否展示(删除)
      */
     private int isDelete;
-    /**
-     * 是否关注
-     */
-    private int whetherAttention = 0;
-    /**
-     * 背景图
-     */
-    private String picture;
+
 }

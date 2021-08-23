@@ -1,7 +1,9 @@
 package com.example.babacirclecommunity.talents.service;
 
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.talents.entity.Talents;
+import com.example.babacirclecommunity.talents.vo.TalentsPersonalVo;
 import com.example.babacirclecommunity.talents.vo.TalentsVo;
 
 import java.util.List;
@@ -19,20 +21,20 @@ public interface ITalentService {
      * @param paging
      * @return
      */
-    List<Talents> queryTalentsList(int userId,String content, String city, Paging paging);
+    List<TalentsVo> queryTalentsList(String content, String city, Paging paging);
 
     /**
      * 根据id查询人才名片
      * @param userId
      * @return
      */
-    TalentsVo queryTalentById(int userId);
+    TalentsPersonalVo queryTalentById(int userId);
 
     /**
      * 修改个人名片
      * @param talents
      * @return
      */
-    int updatePersonalTalent(Talents talents);
+    ResultUtil updatePersonalTalent(Talents talents);
 
 }
