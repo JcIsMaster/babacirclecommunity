@@ -4,6 +4,7 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.user.entity.User;
 import com.example.babacirclecommunity.user.service.IUserService;
+import com.example.babacirclecommunity.user.vo.UserLoginVo;
 import com.example.babacirclecommunity.user.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +40,17 @@ public class UserController {
         }
 
         return iUserService.wxLogin(code,userName,avatar,address,sex);
+    }
+
+    /**
+     * 查询用户历史浏览、粉丝、关注数量
+     * @return
+     */
+    @ApiOperation(value = "查询用户历史浏览、粉丝、关注数量",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/loginVo")
+    public UserLoginVo loginVo(int userId){
+        return iUserService.loginVo(userId);
     }
 
     /**

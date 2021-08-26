@@ -6,9 +6,11 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
 import com.example.babacirclecommunity.gold.dao.GoldMapper;
+import com.example.babacirclecommunity.my.dao.MyMapper;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.entity.User;
 import com.example.babacirclecommunity.user.service.IUserService;
+import com.example.babacirclecommunity.user.vo.UserLoginVo;
 import com.example.babacirclecommunity.user.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private GoldMapper goldMapper;
+
+    @Autowired
+    private MyMapper myMapper;
 
     @Override
     public User wxLogin(String code, String userName, String avatar, String address, int sex) {
@@ -75,6 +80,9 @@ public class UserServiceImpl implements IUserService {
             }
             //算出金币总和
             user.setSumGoldNumber(user.getCanWithdrawGoldCoins()+user.getMayNotWithdrawGoldCoins());
+            //算出今日金币收益
+            int todayIncome = goldMapper.queryGoldTodayIncome(user.getId());
+            user.setTodayIncome(todayIncome);
             return user;
         }else{
             //增加新用户信息
@@ -85,6 +93,7 @@ public class UserServiceImpl implements IUserService {
             user1.setUserSex(sex);
             user1.setCreateAt(System.currentTimeMillis()/1000+"");
             user1.setCanWithdrawGoldCoins(0);
+            user.setTodayIncome(0);
             user1.setMayNotWithdrawGoldCoins(0);
             user1.setSumGoldNumber(0);
             int i1 = userMapper.selectMaxId()+1;
@@ -103,6 +112,18 @@ public class UserServiceImpl implements IUserService {
             return user1;
         }
 
+    }
+
+    @Override
+    public UserLoginVo loginVo(int userId) {
+        UserLoginVo userLoginVo = new UserLoginVo();
+        //查询并设置历史浏览数量
+        userLoginVo.setHistoryPageView(myMapper.queryCheckPostsBeenReadingPastMonthCount(userId));
+        //查询并设置粉丝数量
+        userLoginVo.setFansNum(myMapper.queryFanCountByUserId(userId));
+        //查询并设置关注数量
+        userLoginVo.setAttentionNum(myMapper.queryCareAboutCountByUserId(userId));
+        return userLoginVo;
     }
 
     @Override

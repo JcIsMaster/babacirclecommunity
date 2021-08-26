@@ -43,4 +43,11 @@ public interface ICommentService {
      * @return
      */
     int addCommentGive(CommentGive commentGive);
+
+    /**
+     * 删除评论
+     * @param id
+     * @return
+     */
+    int deleteComment(int id);
 }

@@ -24,9 +24,9 @@ public interface InformMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.cover,c.content as title,a.one_type,c.is_delete " +
+    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.content as title,a.one_type,c.is_delete " +
             "from tb_inform a INNER JOIN tb_circles c on a.t_id=c.id INNER JOIN tb_user b on a.notifier_id=b.id " +
-            "where a.is_delete=1 and a.inform_type=${type} and a.notified_party_id=${userId}  and a.one_type=0  order by a.create_at desc ${paging}")
+            "where a.is_delete=1 and a.inform_type=${type} and a.notified_party_id=${userId} and a.one_type=0 order by a.create_at desc ${paging}")
     List<InformUserVo> queryCommentsNoticeCircle(@Param("userId") int userId, @Param("type") int type, @Param("paging") String paging);
 
     /**
@@ -36,9 +36,9 @@ public interface InformMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.cover_img as cover,c.title,a.one_type,c.is_delete " +
+    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.title,a.one_type,c.is_delete " +
             "from tb_inform a INNER JOIN tb_question c on a.t_id=c.id INNER JOIN tb_user b on a.notifier_id=b.id " +
-            "where a.is_delete=1 and a.inform_type=${type} and a.notified_party_id=${userId}  and a.one_type=1  order by a.create_at desc ${paging}")
+            "where a.is_delete=1 and a.inform_type=${type} and a.notified_party_id=${userId} and a.one_type=1 order by a.create_at desc ${paging}")
     List<InformUserVo> queryCommentsNoticeQuestion(@Param("userId") int userId, @Param("type") int type, @Param("paging") String paging);
 
     /**
@@ -48,7 +48,7 @@ public interface InformMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.cover_img as cover,c.title,a.one_type,c.is_delete " +
+    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.title,a.one_type,c.is_delete " +
             "from tb_inform a INNER JOIN tb_dry_goods c on a.t_id=c.id INNER JOIN tb_user b on a.notifier_id=b.id " +
             "where a.is_delete=1 and a.inform_type=${type} and a.notified_party_id=${userId}  and a.one_type=2  order by a.create_at desc ${paging}")
     List<InformUserVo> queryCommentsNoticeDryGoods(@Param("userId") int userId, @Param("type") int type, @Param("paging") String paging);
@@ -61,7 +61,7 @@ public interface InformMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.cover,c.content as title,a.one_type,c.is_delete " +
+    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.content as title,a.one_type,c.is_delete " +
             "from tb_inform a INNER JOIN tb_circles c on a.t_id=c.id INNER JOIN tb_user b on a.notifier_id=b.id " +
             "where a.is_delete=1 and a.inform_type=${type} and a.notified_party_id=${userId} and a.one_type=0 order by a.create_at desc ${paging}")
     List<InformUserVo> queryCommentsNoticeCircleGive(@Param("userId") int userId, @Param("type") int type, @Param("paging") String paging);
@@ -73,7 +73,7 @@ public interface InformMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.cover_img as cover,c.title,a.one_type,c.is_delete " +
+    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.title,a.one_type,c.is_delete " +
             "from tb_inform a INNER JOIN tb_question c on a.t_id=c.id INNER JOIN tb_user b on a.notifier_id=b.id " +
             "where a.is_delete=1 and a.inform_type=${type} and a.notified_party_id=${userId} and a.one_type=1 order by a.create_at desc ${paging}")
     List<InformUserVo> queryCommentsNoticeQuestionGive(@Param("userId") int userId, @Param("type") int type, @Param("paging") String paging);
@@ -85,7 +85,7 @@ public interface InformMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.cover_img as cover,c.title,a.one_type,c.is_delete " +
+    @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.title,a.one_type,c.is_delete " +
             "from tb_inform a INNER JOIN tb_dry_goods c on a.t_id=c.id INNER JOIN tb_user b on a.notifier_id=b.id " +
             "where a.is_delete=1 and a.inform_type=${type} and a.notified_party_id=${userId} and a.one_type=2  order by a.create_at desc ${paging}")
     List<InformUserVo> queryCommentsNoticeDryGoodsGive(@Param("userId") int userId, @Param("type") int type, @Param("paging") String paging);
@@ -113,7 +113,7 @@ public interface InformMapper {
      * @param informType（0评论我，1获赞）
      * @return
      */
-    @Select("select COALESCE(count(*),0) from tb_inform where read_unread=0 and notified_party_id=${userId} and inform_type=${informType} ")
+    @Select("select COALESCE(count(*),0) from tb_inform where read_unread=0 and notified_party_id=${userId} and inform_type=${informType}")
     int queryNumberUnreadMessagesBasedUserId(@Param("userId") int userId,@Param("informType") int informType);
 
 

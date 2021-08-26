@@ -125,4 +125,13 @@ public interface GoldMapper {
     @Select("select source_gold_coin,positive_negative_gold_coins,create_at from tb_gold_coin_change where user_id=${userId} and source_gold_coin='签到' ")
     List<GoldTimeVo> querySign(@Param("userId") int userId);
 
+    /**
+     * 查询金币今日收益
+     * @param userId
+     * @return
+     */
+    @Select("select count(positive_negative_gold_coins) from tb_gold_coin_change where user_id = ${userId} and expenditure_or_income = 1 " +
+            "and FROM_UNIXTIME(create_at,\"%Y-%m-%d\") = DATE_FORMAT(NOW(),\"%Y-%m-%d\")")
+    int queryGoldTodayIncome(@Param("userId") int userId);
+
 }

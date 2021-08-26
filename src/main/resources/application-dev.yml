@@ -7,7 +7,7 @@ spring:
     password: root99
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      max-lifetime: 60000
+      max-lifetime: 120000
       idle-timeout: 60000
       connection-timeout: 50000
       maximum-pool-size: 60

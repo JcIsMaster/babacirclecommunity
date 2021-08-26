@@ -25,7 +25,7 @@ public interface CommentMapper {
      * @param tid
      * @return
      */
-    @Select("select COALESCE(count(*)) from tb_comment where t_id=${tid}")
+    @Select("select COALESCE(count(*)) from tb_comment where t_id=${tid} and is_delete = 1")
     Integer selectCommentNumber(@Param("tid") int tid);
 
 
@@ -100,5 +100,13 @@ public interface CommentMapper {
      */
     @Update("Update tb_comment_give set give_status=${giveStatus}  where d_id=${dId} and comment_id=${commentId} and  type=${type}")
     int updateCommentGiveStatus(@Param("giveStatus") int giveStatus,@Param("dId") int dId,@Param("commentId") int commentId,@Param("type") int type);
+
+    /**
+     * 删除评论
+     * @param id
+     * @return
+     */
+    @Update("update tb_comment set is_delete = 0 where id = ${id}")
+    int deleteComment(@Param("id") int id);
 
 }

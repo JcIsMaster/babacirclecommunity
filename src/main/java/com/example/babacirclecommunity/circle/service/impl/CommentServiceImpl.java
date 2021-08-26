@@ -251,4 +251,9 @@ public class CommentServiceImpl implements ICommentService {
 
         return i;
     }
+
+    @Override
+    public int deleteComment(int id) {
+        return commentMapper.deleteComment(id);
+    }
 }

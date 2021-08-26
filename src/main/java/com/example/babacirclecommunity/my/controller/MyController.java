@@ -7,6 +7,7 @@ import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.service.IMyService;
 import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
+import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
 import com.example.babacirclecommunity.user.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +40,7 @@ public class MyController {
     @ApiOperation(value = "查询我关注的人",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryPeopleCareAbout")
-    public Map<String,Object> queryPeopleCareAbout(Paging paging, int userId){
+    public List<PeopleCareAboutVo> queryPeopleCareAbout(Paging paging, int userId){
         return  iMyService.queryPeopleCareAbout(paging,userId);
     }
 

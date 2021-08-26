@@ -68,7 +68,8 @@ public interface UserMapper {
      * @param openId
      * @return
      */
-    @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce,open_id,is_delete,picture,b.can_withdraw_gold_coins,b.may_not_withdraw_gold_coins from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where open_id=#{openId}")
+    @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce,open_id,is_delete,picture,b.can_withdraw_gold_coins,b.may_not_withdraw_gold_coins " +
+            "from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where open_id=#{openId}")
     User selectUserByOpenId(@Param("openId") String openId);
 
 

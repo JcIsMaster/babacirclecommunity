@@ -219,5 +219,15 @@ public interface MyMapper {
             "and a.u_id=${userId} and b.is_delete=1 and b.tags_one=${tagsOne} and a.type=0  ORDER BY a.create_at desc ${paging}")
     List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonthResource(@Param("userId")int userId,@Param("tagsOne") int tagsOne, @Param("paging") String paging);
 
+    /**
+     * 查询我近一个月浏览记录数量
+     * @param userId 用户id
+     * @return
+     */
+    @Select("select count(*) from tb_browse a " +
+            "INNER JOIN tb_circles b on a.zq_id=b.id INNER JOIN tb_user c on b.user_id=c.id " +
+            "INNER JOIN tb_tags d on b.tags_two=d.id where UNIX_TIMESTAMP(DATE_SUB(FROM_UNIXTIME(unix_timestamp(now()),'%Y-%m-%d %H:%i:%s'), INTERVAL 30 DAY))<=a.create_at " +
+            "and a.u_id=${userId} and b.is_delete=1 and a.type=1 ORDER BY a.create_at desc")
+    int queryCheckPostsBeenReadingPastMonthCount(@Param("userId")int userId);
 
 }

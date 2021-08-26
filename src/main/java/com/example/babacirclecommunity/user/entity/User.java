@@ -87,12 +87,17 @@ public class User {
 	/**
 	 *  是有效（1有效，0无效）默认1
 	 */
-	int  isDelete;
+	int isDelete;
 
 	/**
 	 * 可提现金币
 	 */
 	private int canWithdrawGoldCoins;
+
+	/**
+	 * 今日收益
+	 */
+	private int todayIncome;
 
 	/**
 	 * 不可提现金币

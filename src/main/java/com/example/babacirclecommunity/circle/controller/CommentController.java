@@ -90,4 +90,19 @@ public class CommentController {
         }
         return  iCommentService.addCommentGive(commentGive);
     }
+
+    /**
+     * 删除评论
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "删除评论",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/deleteComment")
+    public int deleteComment(int id){
+        if(id == 0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iCommentService.deleteComment(id);
+    }
 }

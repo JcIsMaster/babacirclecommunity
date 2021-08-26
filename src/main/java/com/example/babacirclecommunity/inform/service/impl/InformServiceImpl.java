@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.inform.service.impl;
 
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
+import com.example.babacirclecommunity.common.utils.DateUtils;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.inform.dao.InformMapper;
 import com.example.babacirclecommunity.inform.service.IInformService;
@@ -48,6 +49,8 @@ public class InformServiceImpl implements IInformService {
             //干货评论
             List<InformUserVo> informUserVos2 = informMapper.queryCommentsNoticeDryGoods(userId, type, getPaging(paging));
 
+            Stream.of(informUserVos, informUserVos1, informUserVos2).flatMap(Collection::stream).collect(Collectors.toList()).forEach(x -> x.setCreateAt(DateUtils.getTime(x.getCreateAt())));
+
             return Stream.of(informUserVos, informUserVos1, informUserVos2).flatMap(Collection::stream).collect(Collectors.toList());
         }
 
@@ -61,6 +64,8 @@ public class InformServiceImpl implements IInformService {
 
             //干货点赞
             List<InformUserVo> informUserVos2 = informMapper.queryCommentsNoticeDryGoodsGive(userId, type, getPaging(paging));
+
+            Stream.of(informUserVos, informUserVos1, informUserVos2).flatMap(Collection::stream).collect(Collectors.toList()).forEach(x -> x.setCreateAt(DateUtils.getTime(x.getCreateAt())));
 
             return Stream.of(informUserVos, informUserVos1, informUserVos2).flatMap(Collection::stream).collect(Collectors.toList());
         }

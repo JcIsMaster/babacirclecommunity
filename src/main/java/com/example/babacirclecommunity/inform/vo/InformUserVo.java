@@ -45,11 +45,6 @@ public class InformUserVo {
     private int tId;
 
     /**
-     * 帖子封面
-     */
-    private String cover;
-
-    /**
      * 帖子内容
      */
     private String title;

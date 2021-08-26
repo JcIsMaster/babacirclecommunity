@@ -23,7 +23,7 @@ public interface IMyService {
      * @param userId 用户id
      * @return
      */
-    Map<String,Object> queryPeopleCareAbout(Paging paging, int userId);
+    List<PeopleCareAboutVo> queryPeopleCareAbout(Paging paging, int userId);
 
     /**
      * 查询我的粉丝

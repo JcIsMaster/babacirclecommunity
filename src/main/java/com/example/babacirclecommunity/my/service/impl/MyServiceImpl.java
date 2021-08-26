@@ -75,19 +75,12 @@ public class MyServiceImpl implements IMyService {
 
 
     @Override
-    public Map<String, Object> queryPeopleCareAbout(Paging paging, int userId) {
-        Map<String, Object> map = null;
+    public List<PeopleCareAboutVo> queryPeopleCareAbout(Paging paging, int userId) {
 
         //查询我关注人
         List<PeopleCareAboutVo> peopleCareAboutVos = myMapper.queryPeopleCareAbout(userId, getPaging(paging));
-        if (peopleCareAboutVos != null && peopleCareAboutVos.size() != 0) {
-            map = new HashMap<>(2);
-            map.put("peopleCareAboutVos", peopleCareAboutVos);
-            map.put("count", peopleCareAboutVos.size());
-            return map;
-        }
 
-        return null;
+        return peopleCareAboutVos;
     }
 
     @Override
@@ -260,7 +253,7 @@ public class MyServiceImpl implements IMyService {
     @Override
     public List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int tagsOne, Paging paging) {
 
-        //货源源
+        //货源
         if (tagsOne == 1) {
             List<CircleClassificationVo> circleClassificationVos = myMapper.queryCheckPostsBeenReadingPastMonthResource(userId, 12, getPaging(paging));
             for (CircleClassificationVo s : circleClassificationVos) {
