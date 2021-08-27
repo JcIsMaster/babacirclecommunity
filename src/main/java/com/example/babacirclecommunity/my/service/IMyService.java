@@ -31,7 +31,7 @@ public interface IMyService {
      * @param userId 用户id
      * @return
      */
-    Map<String,Object> queryFan(Paging paging, int userId);
+    List<PeopleCareAboutVo> queryFan(Paging paging, int userId);
 
     /**
      * 建议
@@ -60,6 +60,7 @@ public interface IMyService {
      * 修改用户信息
      * @param user
      * @return
+     * @throws ParseException
      */
     int updateUserInformation(User user) throws ParseException;
 

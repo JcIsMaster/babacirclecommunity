@@ -31,7 +31,7 @@ public class PeopleCareAboutVo {
     private String introduce;
 
     /**
-     * 是否关注 0没有 1关注
+     * 是否关注 0没有 1关注 2互相关注
      */
     private int whetherFocus;
 }

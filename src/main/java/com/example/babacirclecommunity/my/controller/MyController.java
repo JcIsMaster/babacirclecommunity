@@ -4,6 +4,7 @@ import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.service.IMyService;
 import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
@@ -51,7 +52,7 @@ public class MyController {
     @ApiOperation(value = "查询我的粉丝",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryFan")
-    public Map<String,Object> queryFan(Paging paging, int userId){
+    public List<PeopleCareAboutVo> queryFan(Paging paging, int userId){
         return  iMyService.queryFan(paging,userId);
     }
 
@@ -97,7 +98,7 @@ public class MyController {
         if(user.getId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        int i=iMyService.updateUserInformation(user);
+        int i = iMyService.updateUserInformation(user);
         return i;
     }
 
@@ -128,7 +129,6 @@ public class MyController {
         }
         return iMyService.queryCheckPostsBeenReadingPastMonth(userId,tagsOne,paging);
     }
-
 
 
 
