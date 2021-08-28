@@ -243,42 +243,18 @@ public class ResourceServiceImpl implements IResourceService {
         //去除一样的
         List<ResourcesVo> resourcesVos = resourcesVos1.stream().filter(u -> u.getId() != resourcesVo.getId()).collect(Collectors.toList());
         for (int i = 0; i < resourcesVos.size(); i++) {
-
-            //查看是否收藏
-            selectWhetherCollection = resourceMapper.selectWhetherCollection(userId, resourcesVos.get(i).getId());
-            if (selectWhetherCollection > 0) {
-                resourcesVos.get(i).setWhetherCollection(1);
-            }
-
-            //得到当前时间戳和过去时间戳比较相隔多少分钟或者多少小时或者都少天或者多少年
-            String time = DateUtils.getTime(resourcesVos.get(i).getCreateAt());
-            resourcesVos.get(i).setCreateAt(time);
-
-            //得到上一次观看帖子的时间
-            Browse browse = new Browse();
-            String s = browseMapper.selectCreateAt(resourcesVos.get(i).getId(), userId);
-            if (s == null) {
-                //增加浏览记录
-                browse.setCreateAt(System.currentTimeMillis() / 1000 + "");
-                browse.setUId(userId);
-                browse.setZqId(resourcesVos.get(i).getId());
-                browse.setType(0);
-
-                //增加浏览记录
-                int iq = browseMapper.addBrowse(browse);
-                if (iq <= 0) {
-                    throw new ApplicationException(CodeType.SERVICE_ERROR, "增加浏览记录错误");
+            if (userId != 0){
+                //查看是否收藏
+                selectWhetherCollection = resourceMapper.selectWhetherCollection(userId, resourcesVos.get(i).getId());
+                if (selectWhetherCollection > 0) {
+                    resourcesVos.get(i).setWhetherCollection(1);
                 }
 
-                //修改帖子浏览数量
-                int i1 = resourceMapper.updateBrowse(resourcesVos.get(i).getId());
-                if (i1 <= 0) {
-                    throw new ApplicationException(CodeType.SERVICE_ERROR);
-                }
-            } else {
-                //得到过去时间和现在的时间是否相隔1440分钟 如果相隔了 就添加新的浏览记录
-                long minutesApart = TimeUtil.getMinutesApart(s);
-                if (minutesApart >= 1440) {
+                //得到上一次观看帖子的时间
+                Browse browse = new Browse();
+                String s = resourceMapper.queryCreateAt(resourcesVos.get(i).getId(), userId);
+                if (s == null) {
+                    System.out.println("增加");
                     //增加浏览记录
                     browse.setCreateAt(System.currentTimeMillis() / 1000 + "");
                     browse.setUId(userId);
@@ -286,8 +262,8 @@ public class ResourceServiceImpl implements IResourceService {
                     browse.setType(0);
 
                     //增加浏览记录
-                    int ie = browseMapper.addBrowse(browse);
-                    if (ie <= 0) {
+                    int iq = browseMapper.addBrowse(browse);
+                    if (iq <= 0) {
                         throw new ApplicationException(CodeType.SERVICE_ERROR, "增加浏览记录错误");
                     }
 
@@ -296,9 +272,36 @@ public class ResourceServiceImpl implements IResourceService {
                     if (i1 <= 0) {
                         throw new ApplicationException(CodeType.SERVICE_ERROR);
                     }
+                } else {
+                    //得到过去时间和现在的时间是否相隔1440分钟 如果相隔了 就添加新的浏览记录
+                    long minutesApart = TimeUtil.getMinutesApart(s);
+                    if (minutesApart >= 1440) {
+                        //增加浏览记录
+                        browse.setCreateAt(System.currentTimeMillis() / 1000 + "");
+                        browse.setUId(userId);
+                        browse.setZqId(resourcesVos.get(i).getId());
+                        browse.setType(0);
 
+                        //增加浏览记录
+                        int ie = browseMapper.addBrowse(browse);
+                        if (ie <= 0) {
+                            throw new ApplicationException(CodeType.SERVICE_ERROR, "增加浏览记录错误");
+                        }
+
+                        //修改帖子浏览数量
+                        int i1 = resourceMapper.updateBrowse(resourcesVos.get(i).getId());
+                        if (i1 <= 0) {
+                            throw new ApplicationException(CodeType.SERVICE_ERROR);
+                        }
+
+                    }
                 }
             }
+
+            //得到当前时间戳和过去时间戳比较相隔多少分钟或者多少小时或者都少天或者多少年
+            String time = DateUtils.getTime(resourcesVos.get(i).getCreateAt());
+            resourcesVos.get(i).setCreateAt(time);
+
 
             //得到这个帖子的观看数量
             int i2 = resourceMapper.countPostNum(resourcesVos.get(i).getId());

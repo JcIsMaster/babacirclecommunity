@@ -22,7 +22,7 @@ public interface BrowseMapper {
     int addBrowse(@Param("browse") Browse browse);
 
     /**
-     * 查询上次观看帖子的时间
+     * 查询上次观看帖子的时间(圈子)
      * @param tid
      * @param userId
      * @return

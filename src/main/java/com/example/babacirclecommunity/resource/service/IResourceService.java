@@ -65,6 +65,7 @@ public interface IResourceService {
      * 根据一级标签id查询所有视频
      * @param id 一级标签id
      * @param paging 分页
+     * @param userId
      * @throws ParseException
      * @return
      */
