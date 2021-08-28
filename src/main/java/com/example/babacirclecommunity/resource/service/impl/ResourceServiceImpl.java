@@ -470,6 +470,14 @@ public class ResourceServiceImpl implements IResourceService {
         return posterList;
     }
 
+    @Override
+    public void deleteResourceById(int id) {
+        int i = resourceMapper.deleteResourceById(id);
+        if (i <= 0) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+    }
+
     public int issue(Resources resources, String imgUrl) throws Exception {
         resources.setCreateAt(System.currentTimeMillis() / 1000 + "");
         String[] split = null;

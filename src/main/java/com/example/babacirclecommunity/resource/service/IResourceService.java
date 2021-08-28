@@ -95,4 +95,10 @@ public interface IResourceService {
      * @throws Exception
      */
     List<String> getPosterImage(String pageUrl,String id) throws Exception;
+
+    /**
+     * 删除货源
+     * @param id
+     */
+    void deleteResourceById(int id);
 }

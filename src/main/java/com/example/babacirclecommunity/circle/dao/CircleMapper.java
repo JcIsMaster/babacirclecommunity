@@ -3,10 +3,7 @@ package com.example.babacirclecommunity.circle.dao;
 import com.example.babacirclecommunity.circle.entity.Circle;
 import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.entity.Haplont;
-import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
-import com.example.babacirclecommunity.circle.vo.CircleImgIdVo;
-import com.example.babacirclecommunity.circle.vo.CircleVo;
-import com.example.babacirclecommunity.circle.vo.CommunitySearchVo;
+import com.example.babacirclecommunity.circle.vo.*;
 import com.example.babacirclecommunity.home.entity.Community;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.user.vo.UserVo;
@@ -61,6 +58,16 @@ public interface CircleMapper {
     @Select("select count(b.id)from tb_community_user a " +
             "INNER JOIN tb_community b on a.community_id = b.id where a.user_id = ${userId}")
     Integer circleJoinedCount(@Param("userId") int userId);
+
+    /**
+     * 根据用户id查询常逛的圈子（3条）
+     * @param userId
+     * @return
+     */
+    @Select("select c.tag_id,c.community_name,c.posters,count(*) as num from tb_browse a left join tb_circles b on a.zq_id = b.id " +
+            "INNER JOIN tb_community c on b.tags_two = c.tag_id " +
+            "where a.u_id = ${userId} and a.type = 1 and c.is_delete = 1 GROUP BY b.tags_two order by num desc limit 3")
+    List<CircleMostViewVo> queryMostViewedCircle(@Param("userId") int userId);
 
     /**
      * 搜索自己创建的圈子
@@ -139,7 +146,9 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.type, a.forwarding_number,a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.user_id=${userId} and a.is_delete=1 order by a.create_at desc ${paging}")
+    @Select("select a.type,a.forwarding_number,a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.create_at,a.type,a.video,a.cover,a.address," +
+            "b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
+            "where a.user_id=${userId} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryHavePostedCirclePosts(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
@@ -348,6 +357,14 @@ public interface CircleMapper {
      */
     @Update("update tb_circles set is_delete = 0 where tags_two=${id}")
     int deletePosts(@Param("id") int id);
+
+    /**
+     * 删除圈子 帖子
+     * @param id 帖子id
+     * @return
+     */
+    @Update("update tb_circles set is_delete = 0 where id=${id}")
+    int deleteCircles(@Param("id") int id);
 
     /**
      * 查询官方圈子

@@ -4,7 +4,9 @@ import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
+import com.example.babacirclecommunity.my.vo.GreatDifferentVo;
 import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
+import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.user.entity.User;
 
 import java.text.ParseException;
@@ -66,10 +68,19 @@ public interface IMyService {
 
     /**
      * 根据状态查询不同模块的评论
+     * @param paging
      * @param userId 用户id
      * @return
      */
     List<CommentsDifferentVo> queryCommentsDifferentModulesBasedStatus(Paging paging, Integer userId);
+
+    /**
+     * 根据状态查询不同模块的点赞
+     * @param paging
+     * @param userId
+     * @return
+     */
+    List<GreatDifferentVo> queryGreatDifferentModulesBasedStatus(Paging paging, Integer userId);
 
     /**
      * 根据状态查询不同模块的收藏
@@ -88,4 +99,29 @@ public interface IMyService {
      * @return
      */
     List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int tagsOne, Paging paging);
+
+    /**
+     * 查询我发布的帖子
+     * @param userId
+     * @param paging
+     * @return
+     */
+    List<CircleClassificationVo> queryMyCirclePost(int userId,Paging paging);
+
+    /**
+     * 我的圈子(常逛3+我创建的)
+     * @param userId
+     * @param paging
+     * @return
+     */
+    Map<String,Object> myCircles(int userId, Paging paging);
+
+    /**
+     * 查询我发布的货源帖子
+     * @param userId
+     * @param tagId
+     * @param paging
+     * @return
+     */
+    List<ResourceClassificationVo> queryMyPostedPosts(int userId, int tagId, Paging paging);
 }

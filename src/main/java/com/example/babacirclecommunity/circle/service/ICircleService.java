@@ -164,11 +164,17 @@ public interface ICircleService {
     void addTagHaplont(int tagId,String hName );
 
     /**
-     * 删除帖子
+     * 删除圈子
      * @param id 帖子id
      * @param tagId
      */
     void deletePosts(int id,int tagId);
+
+    /**
+     * 删除帖子
+     * @param id 帖子id
+     */
+    void deleteCircles(int id);
 
     /**
      * 置顶我的圈子

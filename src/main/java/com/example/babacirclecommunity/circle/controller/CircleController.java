@@ -202,6 +202,13 @@ public class CircleController {
         iCircleService.deletePosts(id,tagId);
     }
 
+    @ApiOperation(value = "删除帖子", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/deleteCircles")
+    public void deleteCircles(int id) {
+        iCircleService.deleteCircles(id);
+    }
+
     @ApiOperation(value = "置顶我创建的圈子", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/TopPosts")

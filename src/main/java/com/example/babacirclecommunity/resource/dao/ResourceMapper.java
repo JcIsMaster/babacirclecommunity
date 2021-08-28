@@ -130,7 +130,7 @@ public interface ResourceMapper {
     int countPostNum(@Param("tid")  int tid);
 
     /**
-     * 查询我发布资源帖子
+     * 查询我发布资源帖子(图文、视频分类)
      * @param userId 用户id
      * @param type 图文or视频
      * @param paging 分页
@@ -140,6 +140,24 @@ public interface ResourceMapper {
             "INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
             "where a.u_id=${userId} and tags_one=12 and a.type = ${type} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<ResourceClassificationVo> queryHavePostedPosts(@Param("userId") int userId,@Param("type") int type,@Param("paging") String paging);
+
+    /**
+     * 查询我发布资源帖子
+     * @param userId 用户id
+     * @param tagId 分类id
+     * @param paging 分页
+     * @return
+     */
+    @Select("<script>"+
+            "select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a " +
+            "INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
+            "where a.u_id=${userId} and tags_one=12 " +
+            "<if test='tagId!=130'>" +
+            "and a.tags_two = ${tagId} " +
+            "</if>" +
+            "and a.is_delete=1 order by a.create_at desc ${paging}" +
+            "</script>")
+    List<ResourceClassificationVo> queryMyPostedPosts(@Param("userId") int userId,@Param("tagId") int tagId,@Param("paging") String paging);
 
     /**
      * 根据二级标签id查询推荐的数据
@@ -219,4 +237,12 @@ public interface ResourceMapper {
      */
     @Insert("insert into tb_resource_introduce(user_id,resource_introduce) values(${userId},#{introduce})")
     int addUserResourceIntroduce(@Param("userId") int userId,@Param("introduce") String introduce);
+
+    /**
+     * 删除（修改删除状态）货源
+     * @param id
+     * @return
+     */
+    @Update("update tb_resources set is_delete = 0 where id = ${id}")
+    int deleteResourceById(@Param("id") int id);
 }

@@ -6,6 +6,7 @@ import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
 import com.example.babacirclecommunity.learn.vo.QuestionVo;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
+import com.example.babacirclecommunity.my.vo.GreatDifferentVo;
 import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.user.entity.User;
@@ -134,8 +135,30 @@ public interface MyMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select b.id,a.comment_content,b.title as content,a.create_at,b.is_delete,IFNULL(NULL, 2) AS type_name from tb_learn_comment a INNER JOIN tb_question b on a.t_id=b.id where  a.p_id=${userId} and a.is_delete=1 and a.t_type=0 ORDER BY a.create_at desc ${paging}")
+    @Select("select b.id,a.comment_content,b.title as content,a.create_at,b.is_delete,IFNULL(NULL, 2) AS type_name from tb_learn_comment a INNER JOIN tb_question b on a.t_id=b.id where a.p_id=${userId} and a.is_delete=1 and a.t_type=0 ORDER BY a.create_at desc ${paging}")
     List<CommentsDifferentVo> queryCommentsDifferentQuestion(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 根据用户id查询点赞过的圈子帖子
+     * @param userId
+     * @param paging
+     * @return
+     */
+    @Select("select b.id,b.content,b.user_id,c.user_name,b.cover,b.type,a.create_at,b.is_delete,IFNULL(NULL, 0) AS type_name from tb_circles_give a " +
+            "INNER JOIN tb_circles b on a.zq_id=b.id inner join tb_user c on b.user_id = c.id " +
+            "where a.u_id=${userId} and a.give_cancel=1 ORDER BY a.create_at desc ${paging}")
+    List<GreatDifferentVo> queryGreatDifferentCircle(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 根据用户id查询点赞过的提问帖子
+     * @param userId
+     * @param paging
+     * @return
+     */
+    @Select("select b.id,b.title as content,b.user_id,c.user_name,a.create_at,b.is_delete,IFNULL(NULL, 2) AS type_name from tb_learn_give a " +
+            "INNER JOIN tb_question b on a.zq_id=b.id inner join tb_user c on b.user_id = c.id " +
+            "where a.u_id=${userId} and a.learn_type = 0 and a.give_cancel=1 ORDER BY a.create_at desc ${paging}")
+    List<GreatDifferentVo> queryGreatDifferentQuestion(@Param("userId") int userId, @Param("paging") String paging);
 
     /**
      * 查询我收藏的货源帖子

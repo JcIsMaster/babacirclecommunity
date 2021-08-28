@@ -128,6 +128,13 @@ public class ResourceController {
     @ResponseBody
     @PostMapping("/getPosterImage")
     public List<String> getPosterImage(String pageUrl,String id) throws Exception {
-        return  iResourceService.getPosterImage(pageUrl,id);
+        return iResourceService.getPosterImage(pageUrl,id);
+    }
+
+    @ApiOperation(value = "删除货源",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/deleteResourceById")
+    public void deleteResourceById(int id){
+        iResourceService.deleteResourceById(id);
     }
 }

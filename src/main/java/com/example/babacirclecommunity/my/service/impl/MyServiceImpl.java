@@ -3,8 +3,8 @@ package com.example.babacirclecommunity.my.service.impl;
 import com.example.babacirclecommunity.circle.dao.AttentionMapper;
 import com.example.babacirclecommunity.circle.dao.CircleGiveMapper;
 import com.example.babacirclecommunity.circle.dao.CircleMapper;
-import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
-import com.example.babacirclecommunity.circle.vo.CommentUserVo;
+import com.example.babacirclecommunity.circle.dao.CommentMapper;
+import com.example.babacirclecommunity.circle.vo.*;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
@@ -19,7 +19,9 @@ import com.example.babacirclecommunity.my.dao.MyMapper;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.service.IMyService;
 import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
+import com.example.babacirclecommunity.my.vo.GreatDifferentVo;
 import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
+import com.example.babacirclecommunity.resource.dao.ResourceMapper;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.entity.User;
@@ -55,13 +57,16 @@ public class MyServiceImpl implements IMyService {
     private AttentionMapper attentionMapper;
 
     @Autowired
-    private UserMapper userMapper;
+    private CommentMapper commentMapper;
 
     @Autowired
     private CircleMapper circleMapper;
 
     @Autowired
     private CircleGiveMapper circleGiveMapper;
+
+    @Autowired
+    private ResourceMapper resourceMapper;
 
     /**
      * 得到分页
@@ -218,6 +223,19 @@ public class MyServiceImpl implements IMyService {
     }
 
     @Override
+    public List<GreatDifferentVo> queryGreatDifferentModulesBasedStatus(Paging paging, Integer userId) {
+
+        //查询点赞过的圈子信息
+        List<GreatDifferentVo> greatDifferentVos = myMapper.queryGreatDifferentCircle(userId, getPaging(paging));
+
+        //查询点赞过的提问信息
+        List<GreatDifferentVo> greatDifferentVos1 = myMapper.queryGreatDifferentQuestion(userId, getPaging(paging));
+
+        //将两个集合合并为一个集合响应给前端
+        return Stream.of(greatDifferentVos, greatDifferentVos1).flatMap(Collection::stream).collect(Collectors.toList());
+    }
+
+    @Override
     public Object queryFavoritesDifferentModulesAccordingStatus(Paging paging, Integer status, Integer userId) {
 
         //货源
@@ -294,6 +312,57 @@ public class MyServiceImpl implements IMyService {
             return circles;
         }
         return null;
+    }
+
+    @Override
+    public List<CircleClassificationVo> queryMyCirclePost(int userId, Paging paging) {
+
+        List<CircleClassificationVo> circles = circleMapper.queryHavePostedCirclePosts(userId,getPaging(paging));
+        for (int i = 0; i < circles.size(); i++) {
+            //得到图片组
+            String[] strings = circleMapper.selectImgByPostId(circles.get(i).getId());
+            circles.get(i).setImg(strings);
+
+            //得到点赞数量
+            Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+            circles.get(i).setGiveNumber(integer1);
+
+            //查询是否对帖子点了赞   0没有 1有
+            Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+            if (integer > 0) {
+                circles.get(i).setWhetherGive(1);
+            }
+
+            //得到帖子评论数量
+            Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+            circles.get(i).setNumberPosts(integer2);
+        }
+        return circles;
+    }
+
+    @Override
+    public Map<String, Object> myCircles(int userId, Paging paging) {
+        //创建的圈子
+        Map<String, Object> map = new HashMap<>();
+        //查询我创建的圈子
+        List<CircleVo> createCircleVos = circleMapper.myCircleAndCircleJoined(userId, getPaging(paging));
+        for (CircleVo createCircleVo : createCircleVos) {
+            //根据圈子对应的标签id查询封面和id
+            List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(createCircleVo.getTagId());
+            createCircleVo.setCircleVoList(circleVos1);
+            createCircleVo.setMemberCount(circleMapper.countCircleJoined(createCircleVo.getId()));
+        }
+        //查询我常逛的三个圈子
+        List<CircleMostViewVo> circleMostViewVos = circleMapper.queryMostViewedCircle(userId);
+        map.put("circleMostView",circleMostViewVos);
+        map.put("myCreateCircle",createCircleVos);
+        return map;
+    }
+
+    @Override
+    public List<ResourceClassificationVo> queryMyPostedPosts(int userId,int tagId,Paging paging) {
+        //查询我发布的货源
+        return resourceMapper.queryMyPostedPosts(userId,tagId,getPaging(paging));
     }
 
 

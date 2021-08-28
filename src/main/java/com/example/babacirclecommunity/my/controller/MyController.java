@@ -8,7 +8,9 @@ import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.my.entity.ComplaintsSuggestions;
 import com.example.babacirclecommunity.my.service.IMyService;
 import com.example.babacirclecommunity.my.vo.CommentsDifferentVo;
+import com.example.babacirclecommunity.my.vo.GreatDifferentVo;
 import com.example.babacirclecommunity.my.vo.PeopleCareAboutVo;
+import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.user.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -106,10 +108,20 @@ public class MyController {
     @ResponseBody
     @PostMapping("/queryCommentsDifferentModulesBasedStatus")
     public List<CommentsDifferentVo> queryCommentsDifferentModulesBasedStatus(Paging paging,Integer userId){
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iMyService.queryCommentsDifferentModulesBasedStatus(paging, userId);
+    }
 
-        List<CommentsDifferentVo> commentsDifferentVos = iMyService.queryCommentsDifferentModulesBasedStatus(paging, userId);
-
-        return commentsDifferentVos;
+    @ApiOperation(value = "根据状态查询不同模块的点赞", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryGreatDifferentModulesBasedStatus")
+    public List<GreatDifferentVo> queryGreatDifferentModulesBasedStatus(Paging paging, Integer userId){
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iMyService.queryGreatDifferentModulesBasedStatus(paging, userId);
     }
 
 
@@ -117,6 +129,9 @@ public class MyController {
     @ResponseBody
     @PostMapping("/queryFavoritesDifferentModulesAccordingStatus")
     public Object queryFavoritesDifferentModulesAccordingStatus(Paging paging,Integer status,Integer userId){
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
         return iMyService.queryFavoritesDifferentModulesAccordingStatus(paging,status,userId);
     }
 
@@ -130,7 +145,34 @@ public class MyController {
         return iMyService.queryCheckPostsBeenReadingPastMonth(userId,tagsOne,paging);
     }
 
+    @ApiOperation(value = "查询我发布的帖子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryMyCirclePost")
+    public List<CircleClassificationVo> queryMyCirclePost(int userId,Paging paging){
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iMyService.queryMyCirclePost(userId,paging);
+    }
 
+    @ApiOperation(value = "我的圈子(常逛3+我创建的)",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/myCircles")
+    public Map<String,Object> myCircles(int userId, Paging paging)  {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iMyService.myCircles(userId,paging);
+    }
 
+    @ApiOperation(value = "查询我发布的货源帖子", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryMyPostedPosts")
+    public List<ResourceClassificationVo> queryMyPostedPosts(int userId, int tagId, Paging paging) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iMyService.queryMyPostedPosts(userId,tagId,paging);
+    }
 
 }

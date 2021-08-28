@@ -22,7 +22,6 @@ public class ComplaintsSuggestions {
      */
     private int userId;
 
-
     /**
      * 创建时间
      */

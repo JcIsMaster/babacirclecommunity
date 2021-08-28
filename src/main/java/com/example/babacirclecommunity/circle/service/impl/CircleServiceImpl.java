@@ -751,6 +751,14 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
+    public void deleteCircles(int id) {
+        int i = circleMapper.deleteCircles(id);
+        if(i <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"删除圈子帖子失败");
+        }
+    }
+
+    @Override
     public void TopPosts(int id,int userId) {
         //先取消所有用户创建圈子的置顶
         int i = communityMapper.cancelTopCircle(userId);
