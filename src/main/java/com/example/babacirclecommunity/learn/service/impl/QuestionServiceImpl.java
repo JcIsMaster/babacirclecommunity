@@ -1,5 +1,7 @@
 package com.example.babacirclecommunity.learn.service.impl;
 
+import com.example.babacirclecommunity.circle.dao.CircleMapper;
+import com.example.babacirclecommunity.circle.entity.Circle;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.*;
@@ -33,6 +35,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +66,7 @@ public class QuestionServiceImpl implements IQuestionService {
     private InformMapper informMapper;
 
     @Autowired
-    private LearnCommentMapper learnCommentMapper;
+    private CircleMapper circleMapper;
 
     @Override
     public List<QuestionTagVo> queryQuestionList(int userId,int orderRule, Integer tagId,Integer planClassId, String content, Paging paging) {
@@ -80,6 +83,12 @@ public class QuestionServiceImpl implements IQuestionService {
 
         List<QuestionTagVo> questionTagVos = questionMapper.queryQuestionList(content, tagId, planClassId, sql);
         for (QuestionTagVo vo : questionTagVos) {
+            if(vo.getCircleId() != 0){
+                //得到图片组
+                String[] strings = circleMapper.selectImgByPostId(vo.getCircleId());
+                vo.setImg(strings);
+            }
+
             //我是否对该帖子点过赞
             if (userId == 0){
                 vo.setWhetherGive(0);
@@ -98,7 +107,54 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public ResultUtil addQuestion(Question question) {
+    public ResultUtil addQuestion(Question question,String imgUrl) throws Exception{
+        //内容检测
+        String identifyTextContent = ConstantUtil.identifyText(question.getDescription(), ConstantUtil.getToken());
+        if ("87014".equals(identifyTextContent)) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR, "内容违规");
+        }
+
+        if (question.getType() != 0){
+            //同步到圈子
+            Circle circle = new Circle();
+            circle.setContent(question.getDescription());
+            circle.setTagsTwo(question.getTagsTwo());
+            circle.setUserId(question.getUserId());
+            circle.setCreateAt(System.currentTimeMillis() / 1000 + "");
+            circle.setHaplontType(question.getHaplontId());
+            //如果是视频帖
+            if (question.getType() == 2){
+                circle.setType(1);
+                String videoCover = FfmpegUtil.getVideoCover(circle.getVideo());
+                circle.setCover(videoCover);
+                circle.setVideo(question.getVideo());
+            } else {
+                circle.setType(0);
+                circle.setCover(imgUrl.split(",")[0]);
+            }
+            //添加圈子
+            int k = circleMapper.addCirclePost(circle);
+            if (k <= 0) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+
+            //如果是图文贴
+            if (question.getType() == 1) {
+                String[] split = imgUrl.split(",");
+                if (split.length > 9) {
+                    throw new ApplicationException(CodeType.SERVICE_ERROR, "最多只能上传9张图片！");
+                }
+
+                int addImg = circleMapper.addImg(circle.getId(), split, System.currentTimeMillis() / 1000 + "", 1);
+                if (addImg <= 0) {
+                    throw new ApplicationException(CodeType.SERVICE_ERROR);
+                }
+            }
+            //设置提问同步的圈子帖id
+            question.setCircleId(circle.getId());
+        }
+
+        //新增提问
         question.setCreateAt(System.currentTimeMillis() / 1000 + "");
         int i = questionMapper.addQuestion(question);
         if (i <= 0){
@@ -122,6 +178,12 @@ public class QuestionServiceImpl implements IQuestionService {
         } else {
             questionVo.setWhetherGive(1);
         }
+        //得到图片组
+        if (questionVo.getCircleId() != 0){
+            String[] strings = circleMapper.selectImgByPostId(questionVo.getCircleId());
+            questionVo.setImg(strings);
+        }
+
         return questionVo;
     }
 

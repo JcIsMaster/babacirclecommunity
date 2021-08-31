@@ -29,7 +29,7 @@ public interface IPersonalCenterService {
      * @param paging
      * @return
      */
-    List<CircleClassificationVo> queryPersonalCircle(int userId, int otherId,int type, Paging paging);
+    Object queryPersonalCircle(int userId, int otherId,int type, Paging paging);
 
     /**
      * 根据id查询创建的圈子

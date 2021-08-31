@@ -24,8 +24,9 @@ public interface QuestionMapper {
      * @return
      */
     @Select("<script>"+
-            "select a.id,a.user_id,c.user_name,c.avatar,a.title,a.description,a.plan_class_id,a.favour_num,a.comment_num,a.haplont_id,a.tags_two,b.tag_name,a.create_at from " +
-            "tb_question a LEFT JOIN tb_tags b on a.tags_two = b.id left join tb_user c on a.user_id = c.id where " +
+            "select a.id,a.user_id,c.user_name,c.avatar,a.title,a.description,a.plan_class_id,a.circle_id,a.type,a.cover,a.video," +
+            "a.favour_num,a.comment_num,a.haplont_id,a.tags_two,b.tag_name,a.create_at " +
+            "from tb_question a LEFT JOIN tb_tags b on a.tags_two = b.id left join tb_user c on a.user_id = c.id where " +
             "<if test='tagId != null and tagId != 125'> a.tags_two = ${tagId} and </if>"+
             "<if test='planClassId != null'> a.plan_class_id = ${planClassId} and </if>"+
             "<if test='content != null'>a.title LIKE CONCAT('%',#{content},'%') or a.description LIKE CONCAT('%',#{content},'%') and </if>"+
@@ -58,7 +59,9 @@ public interface QuestionMapper {
      * @param question
      * @return
      */
-    @Insert("insert into tb_question(user_id,title,description,tags_two,haplont_id,plan_class_id,create_at) value(${question.userId},#{question.title},#{question.description},${question.tagsTwo},${question.haplontId},${question.planClassId},#{question.createAt})")
+    @Insert("insert into tb_question(user_id,title,description,tags_two,haplont_id,plan_class_id,circle_id,type,cover,video,create_at) " +
+            "value(${question.userId},#{question.title},#{question.description},${question.tagsTwo},${question.haplontId},${question.planClassId}," +
+            "${question.circleId},${question.type},#{question.cover},#{question.video},#{question.createAt})")
     @Options(useGeneratedKeys=true, keyProperty="question.id",keyColumn="id")
     int addQuestion(@Param("question")Question question);
 
@@ -67,8 +70,9 @@ public interface QuestionMapper {
      * @param id
      * @return
      */
-    @Select("select a.id,a.user_id,b.user_name,b.avatar,a.title,a.description,a.favour_num,a.comment_num,c.community_name,a.create_at from tb_question a " +
-            "left join tb_user b on a.user_id = b.id left join tb_community c on a.tags_two = c.tag_id where a.id = ${id} and a.is_delete = 0")
+    @Select("select a.id,a.user_id,b.user_name,b.avatar,a.title,a.description,a.circle_id,a.type,a.cover,a.video,a.favour_num,a.comment_num," +
+            "c.community_name,a.create_at from tb_question a left join tb_user b on a.user_id = b.id left join tb_community c " +
+            "on a.tags_two = c.tag_id where a.id = ${id} and a.is_delete = 0")
     QuestionVo queryQuestionById(@Param("id") int id);
 
     /**

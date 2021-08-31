@@ -25,7 +25,7 @@ public interface UserMapper {
      * @param userId 当前登录id
      * @return
      */
-    @Select("select id,user_name,introduce,picture,avatar from tb_user where id=${userId}")
+    @Select("select id,user_name,user_sex,curr_province,city,introduce,avatar,birthday from tb_user where id=${userId}")
     PersonalCenterUserVo queryUserById(@Param("userId") int userId);
 
     /**
@@ -68,7 +68,7 @@ public interface UserMapper {
      * @param openId
      * @return
      */
-    @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce,a.curr_province,a.city,a.county,a.open_id,a.is_delete,a.picture,b.can_withdraw_gold_coins,b.may_not_withdraw_gold_coins " +
+    @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce,a.birthday,a.curr_province,a.city,a.county,a.open_id,a.is_delete,a.picture,b.can_withdraw_gold_coins,b.may_not_withdraw_gold_coins " +
             "from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where open_id=#{openId}")
     User selectUserByOpenId(@Param("openId") String openId);
 

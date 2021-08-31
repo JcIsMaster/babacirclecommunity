@@ -30,9 +30,44 @@ public class PersonalCenterUserVo {
     private String introduce;
 
     /**
-     * 背景图
+     * 用户性别
      */
-    private String picture;
+    private int userSex;
+
+    /**
+     * 生日
+     */
+    private String birthday;
+
+    /**
+     * 用户年龄
+     */
+    private String age;
+
+    /**
+     * 所在省
+     */
+    private String currProvince;
+
+    /**
+     * 所在市
+     */
+    private String city;
+
+    /**
+     * 所在县
+     */
+    private String county;
+
+    /**
+     * 用户粉丝数
+     */
+    private int fansNum;
+
+    /**
+     * 用户关注数
+     */
+    private int attentionNum;
 
 
 }

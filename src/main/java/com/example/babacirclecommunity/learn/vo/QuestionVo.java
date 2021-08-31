@@ -52,4 +52,24 @@ public class QuestionVo {
      * 看贴人对该帖子的点赞状态 0:未点赞； 1:已点赞
      */
     private int whetherGive;
+    /**
+     * 同步圈子关联id
+     */
+    private int circleId;
+    /**
+     * 图片地址
+     */
+    private String[] img;
+    /**
+     * 类型（1 图文  2视频  0未同步）
+     */
+    private int type;
+    /**
+     * 封面
+     */
+    private String cover;
+    /**
+     * 视频
+     */
+    private String video;
 }

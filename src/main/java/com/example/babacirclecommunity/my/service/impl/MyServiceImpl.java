@@ -362,7 +362,7 @@ public class MyServiceImpl implements IMyService {
     @Override
     public List<ResourceClassificationVo> queryMyPostedPosts(int userId,int tagId,Paging paging) {
         //查询我发布的货源
-        return resourceMapper.queryMyPostedPosts(userId,tagId,getPaging(paging));
+        return resourceMapper.queryMyPostedPosts(userId,12,tagId,getPaging(paging));
     }
 
 

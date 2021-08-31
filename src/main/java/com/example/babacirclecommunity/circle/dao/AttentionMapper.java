@@ -43,7 +43,7 @@ public interface AttentionMapper {
      * @param bgId 被关注人id
      * @return
      */
-    @Update("Update tb_user_attention set is_delete=${isDelete}  where gu_id=${guId} and bg_id=${bgId} ")
+    @Update("Update tb_user_attention set is_delete=${isDelete} where gu_id=${guId} and bg_id=${bgId} ")
     int updatePostingFollow(@Param("isDelete") int isDelete,@Param("guId") int guId,@Param("bgId") int bgId);
 
     /**
@@ -68,7 +68,7 @@ public interface AttentionMapper {
      * @param userId 用户id
      * @return
      */
-    @Select("select  COALESCE(count(*),0) from tb_circles a INNER JOIN tb_user d on a.user_id=d.id INNER JOIN tb_user_attention b on a.user_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 and a.is_delete=1")
+    @Select("select COALESCE(count(*),0) from tb_circles a INNER JOIN tb_user d on a.user_id=d.id INNER JOIN tb_user_attention b on a.user_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 and a.is_delete=1")
     int countAttentionCircle(@Param("userId") int userId);
 
 }

@@ -45,7 +45,6 @@ public class Circle {
      */
     private int userId;
 
-
     /**
      * 标题
      */

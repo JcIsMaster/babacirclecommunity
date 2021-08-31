@@ -55,8 +55,8 @@ public class QuestionController {
     @ApiOperation(value = "发布提问帖",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addQuestion")
-    public ResultUtil addQuestion(Question question) throws Exception{
-        return iQuestionService.addQuestion(question);
+    public ResultUtil addQuestion(Question question,String imgUrl) throws Exception{
+        return iQuestionService.addQuestion(question,imgUrl);
     }
 
     /**

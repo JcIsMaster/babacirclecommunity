@@ -142,8 +142,9 @@ public interface ResourceMapper {
     List<ResourceClassificationVo> queryHavePostedPosts(@Param("userId") int userId,@Param("type") int type,@Param("paging") String paging);
 
     /**
-     * 查询我发布资源帖子
+     * 查询我发布资源/合作帖子
      * @param userId 用户id
+     * @param tagsOne 12货源 13合作
      * @param tagId 分类id
      * @param paging 分页
      * @return
@@ -151,13 +152,22 @@ public interface ResourceMapper {
     @Select("<script>"+
             "select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a " +
             "INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
-            "where a.u_id=${userId} and tags_one=12 " +
+            "where a.u_id=${userId} and tags_one=${tagsOne} " +
             "<if test='tagId!=130'>" +
             "and a.tags_two = ${tagId} " +
             "</if>" +
             "and a.is_delete=1 order by a.create_at desc ${paging}" +
             "</script>")
-    List<ResourceClassificationVo> queryMyPostedPosts(@Param("userId") int userId,@Param("tagId") int tagId,@Param("paging") String paging);
+    List<ResourceClassificationVo> queryMyPostedPosts(@Param("userId") int userId,@Param("tagsOne") int tagsOne,@Param("tagId") int tagId,@Param("paging") String paging);
+
+    /**
+     * 查询我发布资源/合作帖子数量
+     * @param userId 用户id
+     * @param tagId 分类id
+     * @return
+     */
+    @Select("select count(*) from tb_resources where u_id=${userId} and tags_one=${tagId} and is_delete=1")
+    int queryMyPostedPostsCount(@Param("userId") int userId,@Param("tagId") int tagId);
 
     /**
      * 根据二级标签id查询推荐的数据

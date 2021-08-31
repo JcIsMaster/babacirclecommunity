@@ -43,6 +43,22 @@ public class Question {
      */
     private String description;
     /**
+     * 关联的圈子id（0为未关联）
+     */
+    private int circleId;
+    /**
+     * 类型（1 图文  2视频  0未同步）
+     */
+    private int type;
+    /**
+     * 封面
+     */
+    private String cover;
+    /**
+     * 视频
+     */
+    private String video;
+    /**
      * 删除状态0:有效；1:无效； 默认0
      */
     private int isDelete;

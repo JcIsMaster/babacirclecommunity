@@ -34,10 +34,10 @@ public class PersonalController {
         return iPersonalCenterService.queryPersonalCenter(userId,otherId);
     }
 
-    @ApiOperation(value = "查询个人中心里圈子相关的动态接口",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "查询个人中心里相关的动态接口",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryPersonalCircle")
-    public List<CircleClassificationVo> queryPersonalCircle(int userId, int otherId,int type, Paging paging){
+    public Object queryPersonalCircle(int userId, int otherId,int type, Paging paging){
         return iPersonalCenterService.queryPersonalCircle(userId,otherId,type,paging);
     }
 

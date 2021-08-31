@@ -24,27 +24,17 @@ public class PersonalVo {
     private int whetherAttention;
 
     /**
-     * 创建的圈子
-     */
-    private List<CircleVo> circleVos;
-
-    /**
-     * 加入的圈子
-     */
-    private List<CircleVo> joinedCircleVos;
-
-    /**
      * 用户动态帖数量
      */
     private int postedCircleNum;
 
     /**
-     * 用户点赞帖数量
+     * 用户合作帖数量
      */
-    private int greatCircleNum;
+    private int collaborateNum;
 
     /**
-     * 用户关注帖数量
+     * 用户货源帖数量
      */
-    private int attentionNum;
+    private int resourceNum;
 }

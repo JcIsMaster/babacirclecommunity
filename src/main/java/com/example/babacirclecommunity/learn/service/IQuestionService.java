@@ -7,6 +7,7 @@ import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
 import com.example.babacirclecommunity.learn.vo.QuestionVo;
 import com.example.babacirclecommunity.personalCenter.vo.QuestionPersonalVo;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ public interface IQuestionService {
 
     /**
      * 查询提问信息
+     * @param userId 用户id
      * @param orderRule 排序
      * @param tagId 标签id
      * @param content 搜索内容
@@ -28,9 +30,11 @@ public interface IQuestionService {
     /**
      * 发布提问帖
      * @param question
+     * @param imgUrl
      * @return
+     * @throws Exception
      */
-    ResultUtil addQuestion(Question question);
+    ResultUtil addQuestion(Question question,String imgUrl) throws Exception;
 
     /**
      * 根据id查询提问帖详情
