@@ -17,19 +17,17 @@ public interface PublicClassMapper {
 
     /**
      * 查询公开课列表
-     * @param content
-     * @param tagId
      * @param sql
      * @return
      */
     @Select("<script>"+
-            "select a.id,a.title,a.tags_two,a.cover_img,a.price,a.buyer_num,b.tag_name from " +
+            "select a.id,a.title,a.tags_two,a.cover_img,a.price,a.buyer_num,a.description,b.tag_name from " +
             "tb_public_class a LEFT JOIN tb_tags b on a.tags_two = b.id where " +
-            "<if test='tagId != null and tagId != 125'> a.tags_two = ${tagId} and </if>"+
-            "<if test='content != null'>a.title LIKE CONCAT('%',#{content},'%') and </if>"+
+//            "<if test='tagId != null and tagId != 125'> a.tags_two = ${tagId} and </if>"+
+//            "<if test='content != null'>a.title LIKE CONCAT('%',#{content},'%') and </if>"+
             "a.is_delete = 1 ${sql}"+
             "</script>")
-    List<PublicClassTagVo> queryPublicClassList(@Param("content") String content,@Param("tagId") Integer tagId,@Param("sql") String sql);
+    List<PublicClassTagVo> queryPublicClassList(@Param("sql") String sql);
 
     /**
      * 根据userId查询公开课列表
@@ -46,16 +44,8 @@ public interface PublicClassMapper {
      * @param id
      * @return
      */
-    @Select("select * from tb_public_class where id = ${id} and is_delete = 1")
-    PublicClassVo queryPublicClassById(@Param("id") int id);
-
-    /**
-     * 根据id查询公开课详情
-     * @param id
-     * @return
-     */
-    @Select("select a.title,a.cover_img,b.user_name as uName,b.avatar as uAvatar from tb_public_class a inner join tb_user b on a.u_id=b.id where a.id = #{id} and a.is_delete = 1")
-    PublicClassVo queryPublicClassPosters(@Param("id") String id);
+    @Select("select a.*,b.user_name as uName,b.avatar as uAvatar,b.introduce from tb_public_class a inner join tb_user b on a.u_id=b.id where a.id = #{id} and a.is_delete = 1")
+    PublicClassVo queryPublicClassPosters(@Param("id") int id);
 
     /**
      * 根据id查询公开课发帖人
@@ -106,8 +96,8 @@ public interface PublicClassMapper {
      * @param paging
      * @return
      */
-    @Select("select a.id,a.title,a.tags_two,a.cover_img,a.price,a.buyer_num,b.tag_name from " +
+    @Select("select a.id,a.title,a.tags_two,a.cover_img,a.price,a.buyer_num,a.description,b.tag_name,a.is_delete from " +
             "tb_public_class a LEFT JOIN tb_tags b on a.tags_two = b.id INNER JOIN tb_class_order c on a.id = c.t_id where " +
-            "c.u_id = ${userId} and a.is_delete = 1 and c.is_delete = 1 order by c.create_at desc ${paging}")
+            "c.u_id = ${userId} and c.is_delete = 1 order by c.create_at desc ${paging}")
     List<PublicClassTagVo> queryClassByUserId(@Param("userId") int userId,@Param("paging") String paging);
 }

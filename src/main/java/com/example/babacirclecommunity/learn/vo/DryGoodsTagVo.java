@@ -15,10 +15,6 @@ public class DryGoodsTagVo {
      */
     private int uId;
     /**
-     * 发帖人名称
-     */
-    private String uName;
-    /**
      * 标题
      */
     private String title;
@@ -76,6 +72,6 @@ public class DryGoodsTagVo {
     private int whetherGive;
     /**
      * 看贴人对该帖子的收藏状态 0:未收藏； 1:已收藏
+     * private int whetherCollect;
      */
-    private int whetherCollect;
 }

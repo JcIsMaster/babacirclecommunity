@@ -75,66 +75,31 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
     private InformMapper informMapper;
 
     @Override
-    public Object queryLearnList(int type, Paging paging, int orderRule, Integer tagId, String content) {
+    public List<DryGoodsVo> queryLearnList(Paging paging, int orderRule, Integer tagId, String content) {
 
         int page = (paging.getPage() - 1) * paging.getLimit();
         if ("undefined".equals(content) || "".equals(content) || content == null) {
             content = null;
         }
-        //提问
-        if (type == 0) {
-            String sql2 = "";
-            if (orderRule == 0) {
-                sql2 = "order by a.collect DESC ";
-            }
-            if (orderRule == 1) {
-                sql2 = "order by a.create_at DESC ";
-            }
-            if (orderRule == 2) {
-                sql2 = "order by a.favour DESC ";
-            }
-            sql2 = sql2 + "limit " + page + "," + paging.getLimit() + "";
-//            List<QuestionVo> questionVos = questionMapper.queryQuestionList(content, tagId, sql2);
-            return null;
-        }
         //干货
-        if (type == 1) {
-            String sql = "";
-            if (orderRule == 0) {
-                sql = "order by a.collect DESC ";
-            }
-            if (orderRule == 1) {
-                sql = "order by a.create_at DESC ";
-            }
-            if (orderRule == 2) {
-                sql = "order by a.favour DESC ";
-            }
-            sql = sql + "limit " + page + "," + paging.getLimit() + "";
-            List<DryGoodsVo> dryGoods = dryGoodsMapper.queryDryGoodsList(content, tagId, sql);
-            for (DryGoodsVo dryGood : dryGoods) {
-                //将时间戳转换为多少天或者多少个小时和多少年
-                String time = DateUtils.getTime(dryGood.getCreateAt());
-                dryGood.setCreateAt(time);
-            }
-            return dryGoods;
+        String sql = "";
+        if (orderRule == 0) {
+            sql = "order by a.collect DESC ";
         }
-        //公开课
-        if (type == 2) {
-            String sql3 = "";
-            if (orderRule == 0) {
-                sql3 = "order by a.collect DESC ";
-            }
-            if (orderRule == 1) {
-                sql3 = "order by a.create_at DESC ";
-            }
-            if (orderRule == 2) {
-                sql3 = "order by a.buyer_num DESC ";
-            }
-            sql3 = sql3 + "limit " + page + "," + paging.getLimit() + "";
-            List<PublicClassTagVo> publicClassTagVos = publicClassMapper.queryPublicClassList(content, tagId, sql3);
-            return publicClassTagVos;
+        if (orderRule == 1) {
+            sql = "order by a.create_at DESC ";
         }
-        return null;
+        if (orderRule == 2) {
+            sql = "order by a.favour DESC ";
+        }
+        sql = sql + "limit " + page + "," + paging.getLimit();
+        List<DryGoodsVo> dryGoods = dryGoodsMapper.queryDryGoodsList(content, tagId, sql);
+        for (DryGoodsVo dryGood : dryGoods) {
+            //将时间戳转换为多少天或者多少个小时和多少年
+            String time = DateUtils.getTime(dryGood.getCreateAt());
+            dryGood.setCreateAt(time);
+        }
+        return dryGoods;
     }
 
     @Override
@@ -147,15 +112,15 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
         //Integer collectCount = dryGoodsCollectMapper.selectCollectNumber(1,id);
         //goodsTagVo.setCollect(collectCount);
         //获取发帖人名称
-        String uName = userMapper.selectUserById(goodsTagVo.getUId()).getUserName();
-        if (uName == null) {
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-        goodsTagVo.setUName(uName);
+//        String uName = userMapper.selectUserById(goodsTagVo.getUId()).getUserName();
+//        if (uName == null) {
+//            throw new ApplicationException(CodeType.SERVICE_ERROR);
+//        }
+//        goodsTagVo.setUName(uName);
         //如果userId为0，用户处于未登录状态，状态设为未点赞
         if (userId == 0) {
             goodsTagVo.setWhetherGive(0);
-            goodsTagVo.setWhetherCollect(0);
+//            goodsTagVo.setWhetherCollect(0);
             return goodsTagVo;
         }
         //我是否对该帖子点过赞
@@ -166,12 +131,12 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
             goodsTagVo.setWhetherGive(1);
         }
         //我是否对该帖子收过藏
-        Integer collectStatus = dryGoodsCollectMapper.whetherCollect(1, userId, goodsTagVo.getId());
-        if (collectStatus == 0) {
-            goodsTagVo.setWhetherCollect(0);
-        } else {
-            goodsTagVo.setWhetherCollect(1);
-        }
+//        Integer collectStatus = dryGoodsCollectMapper.whetherCollect(1, userId, goodsTagVo.getId());
+//        if (collectStatus == 0) {
+//            goodsTagVo.setWhetherCollect(0);
+//        } else {
+//            goodsTagVo.setWhetherCollect(1);
+//        }
         return goodsTagVo;
     }
 
@@ -213,7 +178,7 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
                 //添加评论通知
                 int i1 = informMapper.addCommentInform(inform);
                 if(i1<=0){
-                    throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"干货评论通知失败");
                 }
 
                 //发送消息通知

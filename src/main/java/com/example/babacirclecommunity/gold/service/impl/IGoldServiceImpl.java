@@ -169,23 +169,34 @@ public class IGoldServiceImpl implements IGoldService {
     }
 
     @Override
-    public Map<String,Object> queryGoldCoinChange(Integer userId,String createAt, Paging paging) {
+    public Map<String,Object> queryGoldCoinChange(Integer userId, Paging paging) {
         Integer page = (paging.getPage() - 1) * paging.getLimit();
         String sql = "limit " + page + "," + paging.getLimit() + "";
 
         Map<String,Object> map=new HashMap<>(3);
 
         //查询所有消费记录
-        List<GoldCoinChange> goldCoinChanges = goldMapper.queryGoldCoinChange(userId,createAt, sql);
+        List<GoldCoinChange> goldCoinChanges = goldMapper.queryGoldCoinChange(userId,sql);
 
-        //支出
-        List<GoldCoinChange> collect = goldCoinChanges.stream().filter(u -> u.getExpenditureOrIncome() == 0).collect(Collectors.toList());
+        int yesterdayIncomeGold = 0;
+        //昨日收益
+        List<GoldCoinChange> yesterdayIncome = goldMapper.queryGoldYesterdayIncome(userId);
+        if (yesterdayIncome != null){
+            for (GoldCoinChange coinChange : yesterdayIncome) {
+                if (coinChange.getExpenditureOrIncome() == 0){
+                    yesterdayIncomeGold = yesterdayIncomeGold - coinChange.getPositiveNegativeGoldCoins();
+                }
+                else if (coinChange.getExpenditureOrIncome() == 1) {
+                    yesterdayIncomeGold = yesterdayIncomeGold + coinChange.getPositiveNegativeGoldCoins();
+                }
+            }
+        }
 
         //收入
-        List<GoldCoinChange> collect1 = goldCoinChanges.stream().filter(u -> u.getExpenditureOrIncome() == 1).collect(Collectors.toList());
+//        System.out.println("收入---:" + yesterdayIncome.stream().filter(u -> u.getExpenditureOrIncome() == 1).collect(Collectors.summarizingInt(GoldCoinChange::getPositiveNegativeGoldCoins)).getSum());
+//        System.out.println("支出---:" + yesterdayIncome.stream().filter(u -> u.getExpenditureOrIncome() == 0).collect(Collectors.summarizingInt(GoldCoinChange::getPositiveNegativeGoldCoins)).getSum());
 
-        map.put("expend",collect.stream().collect(Collectors.summarizingInt(GoldCoinChange::getPositiveNegativeGoldCoins)).getSum());
-        map.put("income",collect1.stream().collect(Collectors.summarizingInt(GoldCoinChange::getPositiveNegativeGoldCoins)).getSum());
+        map.put("income",yesterdayIncomeGold);
         map.put("goldCoinChanges",goldCoinChanges);
 
         return map;

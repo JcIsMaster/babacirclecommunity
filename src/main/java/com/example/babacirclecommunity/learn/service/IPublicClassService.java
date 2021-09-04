@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.ClassOrder;
 import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
+import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
 import com.example.babacirclecommunity.personalCenter.vo.ClassPersonalVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,6 +16,13 @@ import java.util.List;
  * @date 2021/5/6 9:45
  */
 public interface IPublicClassService {
+
+    /**
+     * 查询公开课信息
+     * @param paging
+     * @return
+     */
+    List<PublicClassTagVo> queryPublicClassList(Paging paging);
 
     /**
      * 根据id查询公开课详情
@@ -54,7 +62,7 @@ public interface IPublicClassService {
      * @param pageUrl 二维码指向的地址
      * @return
      */
-    List<String> getPublicClass(String id, String pageUrl);
+    List<String> getPublicClass(int id, String pageUrl);
 
     /**
      * 查询用户购买的公开课课程

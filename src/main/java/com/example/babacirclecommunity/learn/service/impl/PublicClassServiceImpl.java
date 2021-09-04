@@ -17,6 +17,7 @@ import com.example.babacirclecommunity.learn.service.IPublicClassService;
 import com.example.babacirclecommunity.learn.vo.DryGoodsPostersVo;
 import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
+import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
 import com.example.babacirclecommunity.personalCenter.vo.ClassPersonalVo;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.entity.User;
@@ -65,32 +66,26 @@ public class PublicClassServiceImpl implements IPublicClassService {
     private OrderMapper orderMapper;
 
     @Override
+    public List<PublicClassTagVo> queryPublicClassList(Paging paging) {
+        int page = (paging.getPage() - 1) * paging.getLimit();
+        String sql = "limit " + page + "," + paging.getLimit();
+        return publicClassMapper.queryPublicClassList(sql);
+    }
+
+    @Override
     public PublicClassVo queryPublicClassById(int id, int userId) {
-        PublicClassVo publicClassVo = publicClassMapper.queryPublicClassById(id);
-        //获取发帖人名称,头像,介绍
-        User user = userMapper.selectUserById(publicClassVo.getUId());
-        if (user.getUserName() == null || user.getAvatar() == null) {
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-        publicClassVo.setUName(user.getUserName());
-        publicClassVo.setUAvatar(user.getAvatar());
-        publicClassVo.setIntroduce(user.getIntroduce());
+        PublicClassVo publicClassVo = publicClassMapper.queryPublicClassPosters(id);
         //课程列表
 //        List<ClassList> cs = JSONArray.parseArray(publicClassVo.getClassList(), ClassList.class);
 //        publicClassVo.setClassLists(cs);
-        //如果userId为0，用户处于未登录状态，状态设为未收藏
+        //如果userId为0，用户处于未登录状态，状态设为未购买
         if (userId == 0) {
-            publicClassVo.setWhetherCollect(0);
             publicClassVo.setBuyerStatus(0);
             return publicClassVo;
         }
         //我是否对该帖子收过藏
-        Integer collectStatus = dryGoodsCollectMapper.whetherCollect(2, userId, publicClassVo.getId());
-        if (collectStatus == 0) {
-            publicClassVo.setWhetherCollect(0);
-        } else {
-            publicClassVo.setWhetherCollect(1);
-        }
+        //Integer collectStatus = dryGoodsCollectMapper.whetherCollect(2, userId, publicClassVo.getId());
+
         //我是否购买过该课程
         int buyerStatus = publicClassMapper.queryBuyerStatus(id, userId);
         if (buyerStatus == 0) {
@@ -272,7 +267,7 @@ public class PublicClassServiceImpl implements IPublicClassService {
     }
 
     @Override
-    public List<String> getPublicClass(String id, String pageUrl) {
+    public List<String> getPublicClass(int id, String pageUrl) {
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -362,7 +357,7 @@ public class PublicClassServiceImpl implements IPublicClassService {
             return null;
         }
         Integer page = (paging.getPage() - 1) * paging.getLimit();
-        String pag = "limit " + page + "," + paging.getLimit() + "";
+        String pag = "limit " + page + "," + paging.getLimit();
         return publicClassMapper.queryClassByUserId(userId,pag);
     }
 }

@@ -40,6 +40,14 @@ public class PublicClass {
      */
     private String classList;
     /**
+     * 课程详情介绍
+     */
+    private String description;
+    /**
+     * 免费观看时长（默认为0）
+     */
+    private int freeTime;
+    /**
      * 公开课价格 0为免费内容
      */
     private int price;

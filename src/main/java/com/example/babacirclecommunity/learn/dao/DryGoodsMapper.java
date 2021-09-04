@@ -25,9 +25,8 @@ public interface DryGoodsMapper {
      * @return
      */
     @Select("<script>"+
-            "select a.id,a.title,a.description,a.cover_img,a.tags_two,a.create_at,b.tag_name,a.u_id,c.user_name,c.avatar from tb_dry_goods a " +
-            "INNER JOIN tb_tags b on a.tags_two = b.id " +
-            "INNER JOIN tb_user c on a.u_id = c.id where " +
+            "select a.id,a.title,a.description,a.cover_img,a.tags_two,a.create_at,b.tag_name,a.u_id from tb_dry_goods a " +
+            "INNER JOIN tb_tags b on a.tags_two = b.id where " +
             "<if test='tagId != null and tagId != 125'> a.tags_two = ${tagId} and </if>"+
             "<if test='content != null'>a.title LIKE CONCAT('%',#{content},'%') or a.description LIKE CONCAT('%',#{content},'%') and </if>"+
             "a.is_delete = 1 ${sql}" +

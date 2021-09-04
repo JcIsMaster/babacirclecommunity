@@ -190,8 +190,8 @@ public interface MyMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.id,a.title,d.user_name,d.avatar,a.cover_img,c.create_at,a.description,a.u_id" +
-            " from tb_dry_goods a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_learn_collect c on a.id=c.zq_id " +
+    @Select("select a.id,a.title,a.cover_img,c.create_at,a.description,a.u_id" +
+            " from tb_dry_goods a INNER JOIN tb_learn_collect c on a.id=c.zq_id " +
             " where c.u_id=${userId} and a.is_delete=1 and c.give_cancel=1 and c.learn_type=1 order by c.create_at desc ${paging}")
     List<DryGoodsVo> queryCollectDry(@Param("userId") int userId,@Param("paging") String paging);
 

@@ -8,6 +8,7 @@ import com.example.babacirclecommunity.learn.entity.DryGoods;
 import com.example.babacirclecommunity.learn.entity.LearnPostExceptional;
 import com.example.babacirclecommunity.learn.service.IDryGoodsService;
 import com.example.babacirclecommunity.learn.vo.DryGoodsTagVo;
+import com.example.babacirclecommunity.learn.vo.DryGoodsVo;
 import com.example.babacirclecommunity.personalCenter.vo.DryGoodsPersonalVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,11 +41,11 @@ public class DryGoodsController {
     @ApiOperation(value = "根据状态查询学习信息",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryLearnList")
-    public Object queryLearnList(int type, Paging paging, int orderRule,Integer tagId,String content){
+    public List<DryGoodsVo> queryLearnList(Paging paging, int orderRule, Integer tagId, String content){
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
         }
-        return iDryGoodsService.queryLearnList(type,paging,orderRule,tagId,content);
+        return iDryGoodsService.queryLearnList(paging,orderRule,tagId,content);
     }
 
     /**

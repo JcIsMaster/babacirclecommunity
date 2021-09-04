@@ -83,11 +83,11 @@ public class GoldController {
     @ApiOperation(value = "查询金币变化数据",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryGoldCoinChange")
-    public Map<String,Object> queryGoldCoinChange(Integer userId, String createAt, Paging paging) {
+    public Map<String,Object> queryGoldCoinChange(Integer userId, Paging paging) {
         if(paging.getPage()==0 || userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0传1");
         }
-        return iGoldService.queryGoldCoinChange(userId,createAt,paging);
+        return iGoldService.queryGoldCoinChange(userId,paging);
     }
 
     /**

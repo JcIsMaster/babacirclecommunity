@@ -67,7 +67,7 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public Object selectAllSearch(int strata, String postingName, int userId, Paging paging) {
-        if (postingName.equals("undefined")) {
+        if (postingName.equals("undefined") || postingName == null) {
             return null;
         }
 
@@ -104,8 +104,8 @@ public class HomeServiceImpl implements IHomeService {
                 circles.get(i).setImg(strings);
 
                 //得到点过赞人的头像
-                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
-                circles.get(i).setGiveAvatar(strings1);
+//                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+//                circles.get(i).setGiveAvatar(strings1);
 
                 //得到点赞数量
                 Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
@@ -144,7 +144,7 @@ public class HomeServiceImpl implements IHomeService {
 
         Map<String, Object> map = new HashMap<>(15);
 
-        List<TagVo> tagVoList = new ArrayList<>();
+//        List<TagVo> tagVoList = new ArrayList<>();
 
         //根据用户id查询历史记录
         List<SearchHistory> searchHistories = searchRecordMapper.selectSearchRecordByUserId(userId);

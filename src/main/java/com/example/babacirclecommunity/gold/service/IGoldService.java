@@ -45,11 +45,10 @@ public interface IGoldService {
     /**
      * 查询金币变化数据
      * @param userId 用户id
-     * @param createAt 选择查询的时间
      * @param paging 分页
      * @return
      */
-    Map<String,Object> queryGoldCoinChange(Integer userId, String createAt, Paging paging);
+    Map<String,Object> queryGoldCoinChange(Integer userId, Paging paging);
 
     /**
      *查询签到

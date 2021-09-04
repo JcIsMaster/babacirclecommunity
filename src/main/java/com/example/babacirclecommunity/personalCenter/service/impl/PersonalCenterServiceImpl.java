@@ -65,7 +65,7 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         //获取当前年份
         int year = Calendar.getInstance().get(Calendar.YEAR);
         //设置用户年龄
-        if(personalCenterUserVo.getBirthday() != null && !personalCenterUserVo.getBirthday().equals("")){
+        if(personalCenterUserVo.getBirthday() != null && !personalCenterUserVo.getBirthday().equals("") && !personalCenterUserVo.getBirthday().equals("null")){
             personalCenterUserVo.setAge(String.valueOf(year - Integer.parseInt(personalCenterUserVo.getBirthday().substring(0,4))));
         }
         else {

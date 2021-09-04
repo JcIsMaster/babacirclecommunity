@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.learn.entity.DryGoods;
 import com.example.babacirclecommunity.learn.entity.LearnPostExceptional;
 import com.example.babacirclecommunity.learn.vo.DryGoodsTagVo;
+import com.example.babacirclecommunity.learn.vo.DryGoodsVo;
 import com.example.babacirclecommunity.personalCenter.vo.DryGoodsPersonalVo;
 
 import java.util.List;
@@ -17,14 +18,13 @@ public interface IDryGoodsService {
 
     /**
      * 根据状态查询学习信息
-     * @param type 0:提问; 1:干货; 2:公开课
      * @param paging 分页
      * @param orderRule 排序规则 0:推荐  1:最新  2:最热
      * @param tagId 标签id
      * @param content 搜索内容
      * @return
      */
-    Object queryLearnList(int type, Paging paging, int orderRule,Integer tagId,String content);
+    List<DryGoodsVo> queryLearnList(Paging paging, int orderRule, Integer tagId, String content);
 
     /**
      * 根据id查询干货详情

@@ -58,14 +58,6 @@ public interface GoldMapper {
     int addPostExceptional(@Param("postExceptional") PostExceptional postExceptional);
 
     /**
-     * 根据用户id查询金币的的数量
-     * @param userId 用户id
-     * @return
-     */
-    @Select("select gold_number from tb_user_sign_in where user_id=${userId}")
-    List<Integer> queryUserSignInByUserId(@Param("userId") Integer userId);
-
-    /**
      * 初始化 签到数据
      * @param testLists
      * @param userId
@@ -92,13 +84,21 @@ public interface GoldMapper {
     /**
      * 查询金币变化数据
      * @param userId 用户id
-     * @param createAt 选择查询的时间
      * @param sql 分页
      * @param expenditureOrIncome 0支出 1收入
      * @return
      */
-    @Select("select source_gold_coin,positive_negative_gold_coins,create_at,source_gold_coin_type,expenditure_or_income from tb_gold_coin_change where user_id=${userId} and FROM_UNIXTIME(create_at,'%Y-%m')=#{createAt} ${sql}")
-    List<GoldCoinChange> queryGoldCoinChange(@Param("userId") Integer userId,@Param("createAt") String createAt, @Param("sql") String sql);
+    @Select("select user_id,source_gold_coin,positive_negative_gold_coins,create_at,source_gold_coin_type,expenditure_or_income from tb_gold_coin_change " +
+            "where user_id=${userId} order by create_at desc ${sql}")
+    List<GoldCoinChange> queryGoldCoinChange(@Param("userId") Integer userId,@Param("sql") String sql);
+
+    /**
+     * 查询金币昨日收益
+     * @param userId 用户id
+     * @return
+     */
+    @Select("select * from tb_gold_coin_change where user_id=${userId} and FROM_UNIXTIME(create_at,'%Y-%m-%d') = DATE_SUB(curdate(),INTERVAL 1 DAY)")
+    List<GoldCoinChange> queryGoldYesterdayIncome(@Param("userId") Integer userId);
 
     /**
      * 查询当前签到天数
@@ -130,7 +130,7 @@ public interface GoldMapper {
      * @param userId
      * @return
      */
-    @Select("select count(positive_negative_gold_coins) from tb_gold_coin_change where user_id = ${userId} and expenditure_or_income = 1 " +
+    @Select("select IFNULL(sum(positive_negative_gold_coins),0) from tb_gold_coin_change where user_id = ${userId} and expenditure_or_income = 1 " +
             "and FROM_UNIXTIME(create_at,\"%Y-%m-%d\") = DATE_FORMAT(NOW(),\"%Y-%m-%d\")")
     int queryGoldTodayIncome(@Param("userId") int userId);
 

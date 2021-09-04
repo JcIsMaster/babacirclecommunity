@@ -55,13 +55,17 @@ public class PublicClassVo {
     private String classList;
     private List<ClassList> classLists;
     /**
+     * 课程详情介绍
+     */
+    private String description;
+    /**
+     * 免费观看时长（默认为0）
+     */
+    private int freeTime;
+    /**
      * 公开课价格 0为免费内容
      */
     private int price;
-    /**
-     * 收藏数量
-     */
-    private int collect;
     /**
      * 公开课购买人数
      */
@@ -74,10 +78,6 @@ public class PublicClassVo {
      * 删除状态1:有效；0:无效； 默认1
      */
     private int isDelete;
-    /**
-     * 看贴人对该帖子的收藏状态 0:未收藏； 1:已收藏
-     */
-    private int whetherCollect;
     /**
      * 看贴人对该课程的购买状态 0:未购买； 1:已购买
      */

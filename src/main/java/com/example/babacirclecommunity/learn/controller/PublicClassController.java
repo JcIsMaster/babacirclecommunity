@@ -8,6 +8,7 @@ import com.example.babacirclecommunity.learn.entity.ClassOrder;
 import com.example.babacirclecommunity.learn.service.IPublicClassService;
 import com.example.babacirclecommunity.learn.vo.PublicClassTagVo;
 import com.example.babacirclecommunity.learn.vo.PublicClassVo;
+import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
 import com.example.babacirclecommunity.personalCenter.vo.ClassPersonalVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +32,20 @@ public class PublicClassController {
 
     @Autowired
     private IPublicClassService iPublicClassService;
+
+    /**
+     * 查询公开课信息
+     * @return
+     */
+    @ApiOperation(value = "查询公开课信息",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryPublicClassList")
+    public List<PublicClassTagVo> queryPublicClassList(Paging paging){
+        if(paging.getPage()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
+        }
+        return iPublicClassService.queryPublicClassList(paging);
+    }
 
     /**
      * 根据id查询公开课详情
@@ -99,7 +114,7 @@ public class PublicClassController {
     @ApiOperation(value = "得到公开课海报",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/getPublicClass")
-    public List<String> getPublicClass(String id, String pageUrl){
+    public List<String> getPublicClass(int id, String pageUrl){
         return iPublicClassService.getPublicClass(id,pageUrl);
     }
 

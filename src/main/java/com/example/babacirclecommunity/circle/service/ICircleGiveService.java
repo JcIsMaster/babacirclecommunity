@@ -24,6 +24,7 @@ public interface ICircleGiveService {
      * 点赞
      * @param id 帖子id
      * @param userId 用户id
+     * @param thumbUpId
      * @return
      */
     int givePost(int id,int userId,int thumbUpId);

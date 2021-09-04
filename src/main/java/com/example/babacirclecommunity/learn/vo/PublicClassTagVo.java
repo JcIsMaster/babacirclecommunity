@@ -31,7 +31,15 @@ public class PublicClassTagVo {
      */
     private int price;
     /**
+     * 课程详情介绍
+     */
+    private String description;
+    /**
      * 公开课购买人数
      */
     private int buyerNum;
+    /**
+     * 课程是否删除
+     */
+    private int isDelete;
 }

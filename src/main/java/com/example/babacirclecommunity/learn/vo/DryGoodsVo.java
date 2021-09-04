@@ -38,12 +38,4 @@ public class DryGoodsVo {
      * 发帖人id
      */
     private int uId;
-    /**
-     * 发帖人姓名
-     */
-    private String userName;
-    /**
-     * 发帖人头像
-     */
-    private String avatar;
 }
