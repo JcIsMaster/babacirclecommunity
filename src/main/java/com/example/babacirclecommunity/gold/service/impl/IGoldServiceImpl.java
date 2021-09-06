@@ -68,18 +68,32 @@ public class IGoldServiceImpl implements IGoldService {
             //帖子打赏
             int i1 = goldMapper.addPostExceptional(postExceptional);
             if (i1 <= 0) {
-                throw new ApplicationException(CodeType.SERVICE_ERROR, "打赏失败");
+                throw new ApplicationException(CodeType.SERVICE_ERROR, "添加打赏记录失败");
             }
 
-            //添加金币变化数据
+            //添加打赏人金币变化数据
             GoldCoinChange goldCoinChange = new GoldCoinChange();
             goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
-            goldCoinChange.setUserId(rewardedUserId);
-            goldCoinChange.setSourceGoldCoin("打赏");
+            goldCoinChange.setUserId(postExceptional.getUId());
+            goldCoinChange.setSourceGoldCoin("打赏支出");
+            goldCoinChange.setSourceGoldCoinType(2);
+            goldCoinChange.setExpenditureOrIncome(0);
             goldCoinChange.setPositiveNegativeGoldCoins(postExceptional.getAmountGoldCoins());
             int i3 = orderMapper.addGoldCoinChange(goldCoinChange);
             if (i3 <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR, "打赏失败");
+            }
+            //添加被打赏人金币变化数据
+            GoldCoinChange goldCoinChange2 = new GoldCoinChange();
+            goldCoinChange2.setCreateAt(System.currentTimeMillis() / 1000 + "");
+            goldCoinChange2.setUserId(rewardedUserId);
+            goldCoinChange2.setSourceGoldCoin("被打赏收入");
+            goldCoinChange2.setSourceGoldCoinType(2);
+            goldCoinChange2.setExpenditureOrIncome(1);
+            goldCoinChange2.setPositiveNegativeGoldCoins(postExceptional.getAmountGoldCoins());
+            int i4 = orderMapper.addGoldCoinChange(goldCoinChange2);
+            if (i4 <= 0) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR, "被打赏失败");
             }
 
             return ResultUtil.success(i1, "成功", 200);
@@ -100,18 +114,33 @@ public class IGoldServiceImpl implements IGoldService {
         //打赏
         int i1 = goldMapper.addPostExceptional(postExceptional);
         if (i1 <= 0) {
-            throw new ApplicationException(CodeType.SERVICE_ERROR, "打赏失败");
+            throw new ApplicationException(CodeType.SERVICE_ERROR, "添加打赏记录失败");
         }
 
-        //添加金币变化数据
+        //添加打赏人金币变化数据
         GoldCoinChange goldCoinChange = new GoldCoinChange();
         goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
-        goldCoinChange.setUserId(rewardedUserId);
-        goldCoinChange.setSourceGoldCoin("打赏");
+        goldCoinChange.setUserId(postExceptional.getUId());
+        goldCoinChange.setSourceGoldCoin("打赏支出");
+        goldCoinChange.setSourceGoldCoinType(2);
+        goldCoinChange.setExpenditureOrIncome(0);
         goldCoinChange.setPositiveNegativeGoldCoins(postExceptional.getAmountGoldCoins());
         int i3 = orderMapper.addGoldCoinChange(goldCoinChange);
         if (i3 <= 0) {
-            throw new ApplicationException(CodeType.SERVICE_ERROR, "金币充值失败");
+            throw new ApplicationException(CodeType.SERVICE_ERROR, "打赏失败");
+        }
+
+        //添加被打赏人金币变化数据
+        GoldCoinChange goldCoinChange2 = new GoldCoinChange();
+        goldCoinChange2.setCreateAt(System.currentTimeMillis() / 1000 + "");
+        goldCoinChange2.setUserId(rewardedUserId);
+        goldCoinChange2.setSourceGoldCoin("被打赏收入");
+        goldCoinChange2.setSourceGoldCoinType(2);
+        goldCoinChange2.setExpenditureOrIncome(1);
+        goldCoinChange2.setPositiveNegativeGoldCoins(postExceptional.getAmountGoldCoins());
+        int i4 = orderMapper.addGoldCoinChange(goldCoinChange2);
+        if (i4 <= 0) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR, "被打赏失败");
         }
 
         return ResultUtil.success(i1, "成功", 200);
