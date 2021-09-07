@@ -174,7 +174,14 @@ public class MakingPlanServiceImpl implements IMakingPlanService {
         //总学习时长
         int allTime = makingPlanMapper.queryAllLearningTime(userId);
         //今日课程及继续播放进度
-        PlanClassTodayVo planClassTodayVo = makingPlanMapper.queryTodayClass(userId);
+        PlanClassTodayVo planClassTodayVo = null;
+        UserPlanVo userPlanVo = makingPlanMapper.queryUserPlan(userId); //查找用户计划
+        if (userPlanVo.getCompleteSchedule() != 1){
+            planClassTodayVo = makingPlanMapper.queryTodayClass(userId);
+        }
+        else {
+            planClassTodayVo = makingPlanMapper.queryTodayClassOne(userId);
+        }
         PlanClassRecord classRecord = makingPlanMapper.queryTodayClassRecord(userId, planClassTodayVo.getId());
         if (classRecord != null){
             planClassTodayVo.setRecentlyPlayedVideoId(classRecord.getVideoId());

@@ -89,6 +89,9 @@ public class MakingPlanController {
     @ResponseBody
     @PostMapping("/queryMyStudies")
     public Object queryMyStudies(int userId){
+        if (userId == 0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
         return iMakingPlanService.queryMyStudies(userId);
     }
 

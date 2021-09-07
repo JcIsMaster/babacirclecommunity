@@ -70,7 +70,7 @@ public class CommentServiceImpl implements ICommentService {
         }
 
         //评论人id不等于被评论人id时添加和发送消息
-        if(comment.getPId()!=comment.getBId()){
+        if(comment.getPId() != comment.getBId()){
             //通知对象
             Inform inform=new Inform();
             inform.setContent(comment.getCommentContent());
