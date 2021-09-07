@@ -61,13 +61,12 @@ public interface IQuestionService {
     int giveCollect(int id,int userId);
 
     /**
-     * 查询提问人个人中心
+     * 根据用户id查询我的回答列表
      * @param userId
-     * @param otherId
      * @param paging
      * @return
      */
-    QuestionPersonalVo queryQuestionPersonal(int userId,int otherId,Paging paging);
+    List<QuestionPersonalVo> queryMyAskList(int userId,Paging paging);
 
     /**
      * 得到提问海报

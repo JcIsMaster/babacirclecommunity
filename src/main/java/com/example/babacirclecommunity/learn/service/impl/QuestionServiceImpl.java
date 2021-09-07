@@ -280,28 +280,25 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
-    public QuestionPersonalVo queryQuestionPersonal(int userId, int otherId, Paging paging) {
+    public List<QuestionPersonalVo> queryMyAskList(int userId,Paging paging) {
 
         Integer page = (paging.getPage() - 1) * paging.getLimit();
-        String pag = "limit " + page + "," + paging.getLimit() + "";
+        String pag = "limit " + page + "," + paging.getLimit();
 
-        QuestionPersonalVo questionPersonalVo = new QuestionPersonalVo();
-        //查询用户基本信息
-        PersonalCenterUserVo personalCenterUserVo = userMapper.queryUserById(otherId);
-        questionPersonalVo.setPersonalCenterUserVo(personalCenterUserVo);
-        //查询用户发的提问帖子
-        List<QuestionVo> questionVos = questionMapper.queryQuestionListByUser(otherId, pag);
-        questionPersonalVo.setQuestionVos(questionVos);
-        if (userId == 0) {
-            questionPersonalVo.setIsMe(0);
-            return questionPersonalVo;
+        List<QuestionPersonalVo> questionPersonalVos = questionMapper.queryMyAskList(userId, pag);
+
+        for (QuestionPersonalVo vo : questionPersonalVos) {
+            //我是否对该帖子点过赞
+            Integer giveStatus = dryGoodsGiveMapper.whetherGive(0, userId, vo.getTId());
+            if (giveStatus == 0) {
+                vo.setWhetherGive(0);
+            } else {
+                vo.setWhetherGive(1);
+            }
+
         }
-        if (userId == otherId) {
-            questionPersonalVo.setIsMe(1);
-            return questionPersonalVo;
-        }
-        questionPersonalVo.setIsMe(0);
-        return questionPersonalVo;
+
+        return questionPersonalVos;
     }
 
     @Override

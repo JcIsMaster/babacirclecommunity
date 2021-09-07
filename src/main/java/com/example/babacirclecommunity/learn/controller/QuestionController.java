@@ -109,16 +109,18 @@ public class QuestionController {
     }
 
     /**
-     * 查询提问人个人中心
+     * 根据用户id查询我的回答列表
      * @param userId
-     * @param otherId
      * @return
      */
-    @ApiOperation(value = "查询提问人个人中心",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "根据用户id查询我的回答列表",notes = "成功返回数据 反则为空")
     @ResponseBody
-    @PostMapping("/queryQuestionPersonal")
-    public QuestionPersonalVo queryQuestionPersonal(int userId, int otherId, Paging paging){
-        return iQuestionService.queryQuestionPersonal(userId,otherId,paging);
+    @PostMapping("/queryMyAskList")
+    public List<QuestionPersonalVo> queryMyAskList(int userId,Paging paging){
+        if (userId == 0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"未登录");
+        }
+        return iQuestionService.queryMyAskList(userId,paging);
     }
 
     /**

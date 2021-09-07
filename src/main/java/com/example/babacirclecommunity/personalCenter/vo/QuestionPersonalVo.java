@@ -14,17 +14,62 @@ import java.util.List;
 public class QuestionPersonalVo {
 
     /**
-     * 用户信息
+     * 评论内容
      */
-    private PersonalCenterUserVo personalCenterUserVo;
+    private String commentContent;
 
     /**
-     * 查看人是否为自己
+     * 评论时间
      */
-    private int isMe;
+    private String createAt;
 
     /**
-     * 用户的提问帖
+     * 问题id
      */
-    private List<QuestionVo> questionVos;
+    private int tId;
+
+    /**
+     * 问题title
+     */
+    private String title;
+
+    /**
+     * 问题描述
+     */
+    private String description;
+
+    /**
+     * 提问人id
+     */
+    private int userId;
+
+    /**
+     * 提问人名字
+     */
+    private String userName;
+
+    /**
+     * 提问人头像
+     */
+    private String avatar;
+
+    /**
+     * 问题是否删除 0.已删除 1.未删除
+     */
+    private int isDelete;
+
+    /**
+     * 点赞数量
+     */
+    private int favourNum;
+
+    /**
+     * 评论数量
+     */
+    private int commentNum;
+
+    /**
+     * 是否点赞
+     */
+    private int whetherGive;
 }

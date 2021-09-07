@@ -2,10 +2,7 @@ package com.example.babacirclecommunity.learn.service.impl;
 
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
-import com.example.babacirclecommunity.common.utils.ConstantUtil;
-import com.example.babacirclecommunity.common.utils.GoEasyConfig;
-import com.example.babacirclecommunity.common.utils.Paging;
-import com.example.babacirclecommunity.common.utils.ResultUtil;
+import com.example.babacirclecommunity.common.utils.*;
 import com.example.babacirclecommunity.inform.dao.InformMapper;
 import com.example.babacirclecommunity.inform.entity.Inform;
 import com.example.babacirclecommunity.learn.dao.LearnCommentMapper;
@@ -184,6 +181,8 @@ public class CommentLearnServiceImpl implements ICommentLearnService {
                     s.setCommentGiveStatus(1);
                 }
             }
+            //将时间戳转换为多少天或者多少个小时和多少年
+            s.setCreateAt(DateUtils.getTime(s.getCreateAt()));
         }
         return ResultUtil.success(commentVos,commentNum);
     }

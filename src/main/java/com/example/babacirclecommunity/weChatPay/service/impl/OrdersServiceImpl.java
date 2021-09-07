@@ -236,7 +236,7 @@ public class OrdersServiceImpl implements IOrdersService {
                 int integer = Integer.parseInt(s);
 
                 //得到算过后得到的金币数量
-                int gold = integer * 100;
+                int gold = integer * 10;
 
                 //修改订单状态为 已支付
                 int i = orderMapper.updateOrderStatus(1, outTradeNo);

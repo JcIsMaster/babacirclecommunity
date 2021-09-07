@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.learn.dao;
 import com.example.babacirclecommunity.learn.entity.Question;
 import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
 import com.example.babacirclecommunity.learn.vo.QuestionVo;
+import com.example.babacirclecommunity.personalCenter.vo.QuestionPersonalVo;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -109,4 +110,15 @@ public interface QuestionMapper {
      */
     @Update("update tb_question set comment_num = comment_num ${math} 1 where id = ${id}")
     int updateQuestionComment(@Param("id") int id,@Param("math") String math);
+
+    /**
+     * 根据用户id查询我的回答列表
+     * @param userId
+     * @param sql
+     * @return
+     */
+    @Select("select a.comment_content,a.create_at,a.t_id,b.title,b.description,b.user_id,c.user_name,c.avatar,b.is_delete," +
+            "b.favour_num,b.comment_num from tb_learn_comment a left join tb_question b on a.t_id = b.id left join tb_user c on b.user_id = c.id " +
+            "where a.p_id = ${userId} and a.t_type = 0 and a.is_delete = 1 order by a.create_at desc ${sql}")
+    List<QuestionPersonalVo> queryMyAskList(@Param("userId") int userId,@Param("sql") String sql);
 }
