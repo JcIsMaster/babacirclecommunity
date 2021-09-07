@@ -93,7 +93,7 @@ public class UserServiceImpl implements IUserService {
             user1.setUserSex(sex);
             user1.setCreateAt(System.currentTimeMillis()/1000+"");
             user1.setCanWithdrawGoldCoins(0);
-            user.setTodayIncome(0);
+            user1.setTodayIncome(0);
             user1.setMayNotWithdrawGoldCoins(0);
             user1.setSumGoldNumber(0);
             int i1 = userMapper.selectMaxId()+1;

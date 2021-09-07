@@ -50,7 +50,7 @@ public interface InformMapper {
      */
     @Select("select a.read_unread,a.id,a.content,a.create_at,a.t_id,b.id as userId,b.user_name,b.avatar,c.title,a.one_type,c.is_delete " +
             "from tb_inform a INNER JOIN tb_dry_goods c on a.t_id=c.id INNER JOIN tb_user b on a.notifier_id=b.id " +
-            "where a.is_delete=1 and a.inform_type=${type} and a.notified_party_id=${userId}  and a.one_type=2  order by a.create_at desc ${paging}")
+            "where a.is_delete=1 and a.inform_type=${type} and a.notified_party_id=${userId}  and a.one_type=2 order by a.create_at desc ${paging}")
     List<InformUserVo> queryCommentsNoticeDryGoods(@Param("userId") int userId, @Param("type") int type, @Param("paging") String paging);
 
 
