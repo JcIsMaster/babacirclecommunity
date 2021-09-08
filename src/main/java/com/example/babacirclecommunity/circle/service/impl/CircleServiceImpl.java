@@ -671,7 +671,7 @@ public class CircleServiceImpl implements ICircleService {
 //                redisTemplate.opsForList().rightPushAll("JoinedCircles::" + userId, joinedCircleVos);
 //            }
 
-            map.put("joinedCircle",joinedCircleVos);
+            map.put("joinedCircle",joinedCircleVos.stream().filter(j -> j.getUserId() != userId).collect(Collectors.toList()));
 //        }
         return map;
     }

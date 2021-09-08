@@ -55,8 +55,8 @@ public interface CircleMapper {
      * @param userId
      * @return
      */
-    @Select("select count(b.id)from tb_community_user a " +
-            "INNER JOIN tb_community b on a.community_id = b.id where a.user_id = ${userId}")
+    @Select("select count(b.id) from tb_community_user a " +
+            "INNER JOIN tb_community b on a.community_id = b.id where a.user_id = ${userId} and b.user_id != ${userId}")
     Integer circleJoinedCount(@Param("userId") int userId);
 
     /**
@@ -96,7 +96,7 @@ public interface CircleMapper {
      * @param communityName 内容
      * @return
      */
-    @Select("select id,posters,tag_id,community_name,whether_official from tb_community where whether_public=1 and community_name like CONCAT('%',#{communityName},'%')")
+    @Select("select id,posters,tag_id,community_name,whether_official from tb_community where whether_public=1 and community_name like CONCAT('%',#{communityName},'%') and is_delete = 1")
     List<CommunitySearchVo> queryCirclesByName(@Param("communityName") String communityName);
 
     /**

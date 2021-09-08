@@ -147,7 +147,7 @@ public class CollaborateServiceImpl implements ICollaborateService {
         //获取当前年份
         int year = Calendar.getInstance().get(Calendar.YEAR);
         //设置用户年龄
-        if(userPersonalVo.getBirthday() != null){
+        if(userPersonalVo.getBirthday() != null && !userPersonalVo.getBirthday().equals("") && !userPersonalVo.getBirthday().equals("null")){
             userPersonalVo.setAge(String.valueOf(year - Integer.parseInt(userPersonalVo.getBirthday().substring(0,4))));
         }
         else {
