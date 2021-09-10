@@ -108,4 +108,11 @@ public class MakingPlanController {
     public ResultUtil planClassSingIn(int userId,int planId){
         return iMakingPlanService.planClassSingIn(userId,planId);
     }
+
+    @ApiOperation(value = "用户重新预设计划",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/userPlanReset")
+    public UserPlanVo userPlanReset(int userId,String planOptions){
+        return iMakingPlanService.userPlanReset(userId,planOptions);
+    }
 }

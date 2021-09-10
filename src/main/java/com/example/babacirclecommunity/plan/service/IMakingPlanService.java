@@ -88,4 +88,12 @@ public interface IMakingPlanService {
      * @return
      */
     ResultUtil planClassSingIn(int userId, int planId);
+
+    /**
+     * 用户重新预设计划
+     * @param userId
+     * @param planOptions
+     * @return
+     */
+    UserPlanVo userPlanReset(int userId,String planOptions);
 }

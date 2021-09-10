@@ -142,6 +142,9 @@ public class UserServiceImpl implements IUserService {
         //得到可用金币和不可用金币和
         int i = user.getMayNotWithdrawGoldCoins() + user.getCanWithdrawGoldCoins();
         user.setSumGoldNumber(i);
+        //算出今日金币收益
+        int todayIncome = goldMapper.queryGoldTodayIncome(user.getId());
+        user.setTodayIncome(todayIncome);
         return user;
     }
 

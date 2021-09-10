@@ -254,6 +254,10 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public int deleteComment(int id) {
-        return commentMapper.deleteComment(id);
+        int i = commentMapper.deleteComment(id);
+        if (i < 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"删除评论失败");
+        }
+        return i;
     }
 }

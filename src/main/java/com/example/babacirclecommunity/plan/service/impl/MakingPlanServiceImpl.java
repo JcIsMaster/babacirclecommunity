@@ -271,4 +271,40 @@ public class MakingPlanServiceImpl implements IMakingPlanService {
 
         return ResultUtil.error("尚未完成今日课程");
     }
+
+    @Override
+    public UserPlanVo userPlanReset(int userId,String planOptions) {
+
+        //根据目标参数找到需要的计划id和计划的开始时间
+        Plan plan = makingPlanMapper.queryPlanByOptions(planOptions);
+        if(plan == null){
+            throw new ApplicationException(CodeType.RESOURCES_NOT_FIND);
+        }
+        //修改用户计划数据
+        UserPlan userPlan = new UserPlan();
+        userPlan.setUserId(userId);
+        userPlan.setPlanId(plan.getId());
+        userPlan.setCreateAt(System.currentTimeMillis() / 1000 + "");
+        userPlan.setUpdateTime(System.currentTimeMillis() / 1000 + "");
+        int i = makingPlanMapper.resetUserPlan(userPlan);
+        if (i <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"计划重新预设失败");
+        }
+        //清楚用户原有计划的学习（观看）记录 (待定)
+
+        //返回用户计划详情（签到记录以及课程学习列表）
+        UserPlanVo userPlanVo = new UserPlanVo();
+        userPlanVo.setPlanId(userPlan.getPlanId());
+        userPlanVo.setUserId(userId);
+        //今日课程及继续播放进度
+        PlanClassTodayVo planClassTodayVo = makingPlanMapper.queryTodayClassOne(userId);
+        planClassTodayVo.setRecentlyPlayedVideoId(0);
+        planClassTodayVo.setRecentlyPlayedVideoTime(0.00);
+        planClassTodayVo.setRecentlyPlayedVideoProgress(0);
+        userPlanVo.setTodayCourse(planClassTodayVo);
+        //课程预告
+        userPlanVo.setNoticeCourse(makingPlanMapper.queryClassLearnList(userPlan.getPlanId(),1));
+
+        return userPlanVo;
+    }
 }

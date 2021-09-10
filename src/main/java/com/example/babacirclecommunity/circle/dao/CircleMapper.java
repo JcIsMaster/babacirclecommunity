@@ -176,7 +176,7 @@ public interface CircleMapper {
             ",d.user_sex,a.video,a.cover,a.browse,a.address,a.create_at,c.tag_name,c.id as tagId,ifnull(d.giveNumber,0) as giveNumber " +
             ",ifnull(e.uu,0) as numberPosts from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from " +
             "tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id LEFT JOIN (select COALESCE(count(*),0) as uu,t_id " +
-            "from tb_comment GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user d on a.user_id=d.id INNER JOIN " +
+            "from tb_comment where is_delete = 1 GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user d on a.user_id=d.id INNER JOIN " +
             "tb_user_attention b on a.user_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 " +
             "and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryAttentionPerson(@Param("userId") int userId,@Param("paging") String paging);
@@ -216,7 +216,7 @@ public interface CircleMapper {
     @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId," +
             "c.avatar,c.id as uId,c.user_name,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
             "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
-            "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id " +
+            "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment where is_delete = 1 GROUP BY t_id) e on a.id=e.t_id " +
             "INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
             "where a.id=${id} and a.is_delete=1")
     CircleClassificationVo selectSingleCircle(@Param("id") int id);
@@ -318,7 +318,7 @@ public interface CircleMapper {
     @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId" +
             ",c.avatar,c.id as uId,c.user_name,c.user_sex,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
             "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
-            "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
+            "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment where is_delete = 1 GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
             "where a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryReferenceCircles(@Param("paging") String paging);
 

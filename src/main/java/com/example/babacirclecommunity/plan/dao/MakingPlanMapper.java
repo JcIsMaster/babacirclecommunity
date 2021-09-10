@@ -242,4 +242,14 @@ public interface MakingPlanMapper {
     @Update("update tb_user_plan set sing_in_record = #{singInRecord},complete_schedule = ${completeSchedule},update_time = #{updateTime} where " +
             "id = ${id}")
     int updateUserPlanSingInRecord(@Param("singInRecord") String singInRecord,@Param("completeSchedule") int completeSchedule,@Param("updateTime") String updateTime,@Param("id") int id);
+
+    /**
+     * 重新预设用户计划
+     * @param userPlan
+     * @return
+     */
+    @Update("update tb_user_plan set plan_id = ${userPlan.planId},sing_in_record = NULL,complete_schedule = 1," +
+            "create_at = #{userPlan.createAt},update_time = #{userPlan.updateTime} where " +
+            "user_id = ${userPlan.userId}")
+    int resetUserPlan(@Param("userPlan") UserPlan userPlan);
 }
