@@ -50,6 +50,11 @@ public class InformUserVo {
     private String title;
 
     /**
+     * 提问帖子内容
+     */
+    private String description;
+
+    /**
      * 帖子类型(0圈子，1提问，2干货)
      */
     private int oneType;

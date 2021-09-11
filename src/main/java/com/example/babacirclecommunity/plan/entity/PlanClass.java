@@ -32,6 +32,11 @@ public class PlanClass {
     private String classDesc;
 
     /**
+     * 课程介绍图
+     */
+    private String classDescImg;
+
+    /**
      * 课程海报
      */
     private String classPoster;
