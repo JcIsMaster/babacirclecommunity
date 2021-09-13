@@ -219,11 +219,17 @@ public class MakingPlanServiceImpl implements IMakingPlanService {
     public ResultUtil planClassSingIn(int userId, int planId) {
         //判断今天是否已签到
         UserPlan userPlan = makingPlanMapper.queryUserPlanSingRecord(userId, planId);
-        if (TimeUtil.getThisTime(Long.parseLong(userPlan.getUpdateTime()))){
+        if (TimeUtil.getThisTime(Long.parseLong(userPlan.getUpdateTime())) && !userPlan.getUpdateTime().equals(userPlan.getCreateAt())){
             return ResultUtil.errorMsg(250,"今天已完成签到，请明天再来");
         }
         //查询今日课程是否完成
-        PlanClassTodayVo planClassTodayVo = makingPlanMapper.queryTodayClass(userId);
+        PlanClassTodayVo planClassTodayVo = null;
+        if (userPlan.getCompleteSchedule() != 1){
+            planClassTodayVo = makingPlanMapper.queryTodayClass(userId);
+        }
+        else {
+            planClassTodayVo = makingPlanMapper.queryTodayClassOne(userId);
+        }
         Integer progress = makingPlanMapper.queryClassViewProgress(userId,planClassTodayVo.getId());
         if(progress == null){
             return ResultUtil.error("尚未完成今日课程");

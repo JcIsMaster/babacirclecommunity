@@ -32,6 +32,11 @@ public class ClassVideo {
     private String videoAddress;
 
     /**
+     * 类型0.视频  1.图文  默认0
+     */
+    private int videoType;
+
+    /**
      * 创建时间
      */
     private String createAt;

@@ -125,7 +125,7 @@ public class QuestionServiceImpl implements IQuestionService {
             //如果是视频帖
             if (question.getType() == 2){
                 circle.setType(1);
-                String videoCover = FfmpegUtil.getVideoCover(circle.getVideo());
+                String videoCover = FfmpegUtil.getVideoCover(question.getVideo());
                 circle.setCover(videoCover);
                 circle.setVideo(question.getVideo());
             } else {

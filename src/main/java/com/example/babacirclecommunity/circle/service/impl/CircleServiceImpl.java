@@ -32,10 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.security.Key;
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -78,7 +75,7 @@ public class CircleServiceImpl implements ICircleService {
 
     public String getPaging(Paging paging) {
         int page = (paging.getPage() - 1) * paging.getLimit();
-        return "limit " + page + "," + paging.getLimit() + "";
+        return "limit " + page + "," + paging.getLimit();
     }
 
 
@@ -659,20 +656,32 @@ public class CircleServiceImpl implements ICircleService {
 //            map.put("joinedCircle",range);
 //        } else {
             //查询我加入的圈子
-            List<CircleVo> joinedCircleVos = circleMapper.circleJoined(userId, getPaging(paging));
-            for (CircleVo createCircleVo : joinedCircleVos) {
-                //根据圈子对应的标签id查询封面和id
-                List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(createCircleVo.getTagId());
-                createCircleVo.setCircleVoList(circleVos1);
-                createCircleVo.setMemberCount(circleMapper.countCircleJoined(createCircleVo.getId()));
+        List<CircleVo> joinedCircleVos = circleMapper.circleJoined(userId, getPaging(paging));
+//        for (CircleVo createCircleVo : joinedCircleVos) {
+//            //根据圈子对应的标签id查询封面和id
+//            List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(createCircleVo.getTagId());
+//            createCircleVo.setCircleVoList(circleVos1);
+//            createCircleVo.setMemberCount(circleMapper.countCircleJoined(createCircleVo.getId()));
+//        }
+        Iterator<CircleVo> it = joinedCircleVos.iterator();
+        while (it.hasNext()){
+            CircleVo circleVo = it.next();
+            //根据圈子对应的标签id查询封面和id
+            List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVo.getTagId());
+            circleVo.setCircleVoList(circleVos1);
+            circleVo.setMemberCount(circleMapper.countCircleJoined(circleVo.getId()));
+            if (circleVo.getUserId() == userId){
+                it.remove();
             }
+        }
             //存入redis缓存
 //            if (joinedCircleVos.size() != 0) {
 //                redisTemplate.opsForList().rightPushAll("JoinedCircles::" + userId, joinedCircleVos);
 //            }
 
-            map.put("joinedCircle",joinedCircleVos.stream().filter(j -> j.getUserId() != userId).collect(Collectors.toList()));
-//        }
+//      joinedCircleVos.stream().filter(j -> j.getUserId() != userId).collect(Collectors.toList());
+        map.put("joinedCircle",joinedCircleVos);
+//          }
         return map;
     }
 

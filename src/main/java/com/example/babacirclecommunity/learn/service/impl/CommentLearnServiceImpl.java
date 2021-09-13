@@ -73,25 +73,28 @@ public class CommentLearnServiceImpl implements ICommentLearnService {
             }
         }
 
-        //通知对象
-        Inform inform=new Inform();
-        inform.setContent(comment.getCommentContent());
-        inform.setCreateAt(System.currentTimeMillis()/1000+"");
-        inform.setOneType(comment.getTType());
-        inform.setTId(comment.getTId());
-        inform.setInformType(0);
-        inform.setNotifiedPartyId(comment.getBId());
-        inform.setNotifierId(comment.getPId());
+        if(comment.getPId() != comment.getBId()){
+            //通知对象
+            Inform inform=new Inform();
+            inform.setContent(comment.getCommentContent());
+            inform.setCreateAt(System.currentTimeMillis()/1000+"");
+            inform.setOneType(comment.getTType());
+            inform.setTId(comment.getTId());
+            inform.setInformType(0);
+            inform.setNotifiedPartyId(comment.getBId());
+            inform.setNotifierId(comment.getPId());
 
-        //添加评论通知
-        int i1 = informMapper.addCommentInform(inform);
-        if(i1<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+            //添加评论通知
+            int i1 = informMapper.addCommentInform(inform);
+            if(i1<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
+            }
+
+            //发送消息通知
+            GoEasyConfig.goEasy("channel"+comment.getBId(),comment.getCommentContent());
+            log.info("{}","消息通知成功");
         }
 
-        //发送消息通知
-        GoEasyConfig.goEasy("channel"+comment.getBId(),comment.getCommentContent());
-        log.info("{}","消息通知成功");
         return i;
     }
 

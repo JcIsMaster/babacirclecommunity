@@ -47,7 +47,8 @@ public interface CircleMapper {
      */
     @Select("select b.user_id,b.id,b.tag_id, b.community_name, b.posters,b.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community_user a " +
             "INNER JOIN tb_community b on a.community_id=b.id LEFT JOIN (SELECT community_id,COUNT(*) AS count1 FROM " +
-            "tb_community_user GROUP BY community_id) t1 on a.community_id=t1.community_id where a.user_id=${userId} ORDER BY cnt desc ${paging}")
+            "tb_community_user GROUP BY community_id) t1 on a.community_id=t1.community_id where a.user_id=${userId} " +
+            "and b.is_delete = 1 ORDER BY cnt desc,a.create_at desc ${paging}")
     List<CircleVo> circleJoined(@Param("userId") int userId,@Param("paging") String paging);
 
     /**

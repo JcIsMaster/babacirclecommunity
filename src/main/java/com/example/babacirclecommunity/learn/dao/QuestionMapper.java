@@ -30,7 +30,7 @@ public interface QuestionMapper {
             "from tb_question a LEFT JOIN tb_tags b on a.tags_two = b.id left join tb_user c on a.user_id = c.id where " +
             "<if test='tagId != null and tagId != 125'> a.tags_two = ${tagId} and </if>"+
             "<if test='planClassId != null'> a.plan_class_id = ${planClassId} and </if>"+
-            "<if test='content != null'>a.title LIKE CONCAT('%',#{content},'%') or a.description LIKE CONCAT('%',#{content},'%') and </if>"+
+            "<if test='content != null'>a.description LIKE CONCAT('%',#{content},'%') and </if>"+
             "a.is_delete = 0 ${sql}"+
             "</script>")
     List<QuestionTagVo> queryQuestionList(@Param("content") String content,@Param("tagId") Integer tagId,@Param("planClassId") Integer planClassId,@Param("sql") String sql);
