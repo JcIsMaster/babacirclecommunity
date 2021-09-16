@@ -45,12 +45,12 @@ public class OrdersController {
     @ApiOperation(value = "微信浏览器内微信支付/公众号支付(JSAPI)",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/orders")
-    public Map<String,Object> orders(String openid,HttpServletRequest request,BigDecimal price,String body,int userId) throws Exception {
+    public Map<String,Object> orders(String openid,HttpServletRequest request,BigDecimal price,String body,int userId,int goodsNo) throws Exception {
         if("undefined".equals(openid) || "undefined".equals(price)){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
-        return iOrdersService.orders(openid,request,price,body,userId);
+        return iOrdersService.orders(openid,request,price,body,userId,goodsNo);
     }
 
     /**

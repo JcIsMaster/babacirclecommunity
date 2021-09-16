@@ -54,7 +54,7 @@ public class OrdersServiceImpl implements IOrdersService {
     private AmqpTemplate amqpTemplate;
 
     @Override
-    public Map<String, Object> orders(String openid, HttpServletRequest request, BigDecimal price, String body, int userId) throws Exception {
+    public Map<String, Object> orders(String openid, HttpServletRequest request, BigDecimal price, String body, int userId,int goodsNo) throws Exception {
         System.out.println("=================" + openid);
         // 支付金额，单位：分，这边需要转成字符串类型，否则后面的签名会失败
         String payment = "" + ((price.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_HALF_UP).intValue()));
@@ -171,7 +171,7 @@ public class OrdersServiceImpl implements IOrdersService {
             GoldCoinOrders goldCoinOrders = new GoldCoinOrders();
             goldCoinOrders.setCreateAt(System.currentTimeMillis() / 1000 + "");
             goldCoinOrders.setOrderNumber(paraMap.get("out_trade_no"));
-            goldCoinOrders.setGoodsNo(0);
+            goldCoinOrders.setGoodsNo(goodsNo);
             goldCoinOrders.setOrderStatus(0);
             //分转元
             String s = fenToYuan(payment);
@@ -252,23 +252,31 @@ public class OrdersServiceImpl implements IOrdersService {
                     throw new ApplicationException(CodeType.SERVICE_ERROR);
                 }
 
-                //修改不可提现金币数量
-                int i2 = goldMapper.updateUserGold("may_not_withdraw_gold_coins=may_not_withdraw_gold_coins+" + gold, userId);
-                if (i2 <= 0) {
-                    throw new ApplicationException(CodeType.SERVICE_ERROR, "修改金币失败");
+                //根据订单号获得订单商品类型
+                Integer goodsNo = orderMapper.queryGoodsNoByOrderNumber(outTradeNo);
+                if (goodsNo == null){
+                    throw new ApplicationException(CodeType.RESOURCES_NOT_FIND,"订单号未找到");
                 }
 
-                //添加金币变化数据
-                GoldCoinChange goldCoinChange = new GoldCoinChange();
-                goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
-                goldCoinChange.setUserId(userId);
-                goldCoinChange.setSourceGoldCoin("充值");
-                goldCoinChange.setPositiveNegativeGoldCoins(gold);
-                goldCoinChange.setSourceGoldCoinType(0);
-                goldCoinChange.setExpenditureOrIncome(1);
-                int i1 = orderMapper.addGoldCoinChange(goldCoinChange);
-                if (i1 <= 0) {
-                    throw new ApplicationException(CodeType.SERVICE_ERROR, "金币充值失败");
+                //为充值订单则修改金币并添加记录
+                if (goodsNo == 0){
+                    //修改不可提现金币数量
+                    int i2 = goldMapper.updateUserGold("may_not_withdraw_gold_coins=may_not_withdraw_gold_coins+" + gold, userId);
+                    if (i2 <= 0) {
+                        throw new ApplicationException(CodeType.SERVICE_ERROR, "修改金币失败");
+                    }
+                    //添加金币变化数据
+                    GoldCoinChange goldCoinChange = new GoldCoinChange();
+                    goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
+                    goldCoinChange.setUserId(userId);
+                    goldCoinChange.setSourceGoldCoin("充值");
+                    goldCoinChange.setPositiveNegativeGoldCoins(gold);
+                    goldCoinChange.setSourceGoldCoinType(0);
+                    goldCoinChange.setExpenditureOrIncome(1);
+                    int i1 = orderMapper.addGoldCoinChange(goldCoinChange);
+                    if (i1 <= 0) {
+                        throw new ApplicationException(CodeType.SERVICE_ERROR, "金币充值失败");
+                    }
                 }
 
                 /** 此处添加自己的业务逻辑代码end **/

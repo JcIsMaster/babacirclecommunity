@@ -21,7 +21,7 @@ public interface IOrdersService {
      * @return
      * @throws Exception
      */
-    Map<String,Object> orders(String openId, HttpServletRequest request,BigDecimal price, String body,int userId) throws Exception;
+    Map<String,Object> orders(String openId, HttpServletRequest request,BigDecimal price, String body,int userId,int goodsNo) throws Exception;
 
     /**
      * 支付成功回调

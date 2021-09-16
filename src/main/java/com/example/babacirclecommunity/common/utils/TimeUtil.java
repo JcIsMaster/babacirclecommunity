@@ -6,6 +6,10 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 
@@ -105,10 +109,16 @@ public class TimeUtil {
 	}
 
 
-
-
-
-	
+	/**
+	 * 获得某天最大时间 2020-02-19 23:59:59
+	 * @param date
+	 * @return
+	 */
+	public static long getEndOfDay(Date date) {
+		LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());;
+		LocalDateTime endOfDay = localDateTime.with(LocalTime.MAX);
+		return Date.from(endOfDay.atZone(ZoneId.systemDefault()).toInstant()).getTime() / 1000;
+	}
 	 
 	 
 

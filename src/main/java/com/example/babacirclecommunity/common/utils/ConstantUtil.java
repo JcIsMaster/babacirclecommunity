@@ -62,7 +62,7 @@ public class ConstantUtil {
 	/**
 	 * 支付成功后的服务器回调url
 	 */
-	public static final String notifyUrl = "https://www.gofatoo.com/OrdersController/weChatNotify";
+	public static final String notifyUrl = "https://www.gofatoo.com/springbootmybatis/OrdersController/weChatNotify";
 
 	/**
 	 * 交易类型

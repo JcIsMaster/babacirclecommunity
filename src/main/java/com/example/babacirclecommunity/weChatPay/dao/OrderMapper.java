@@ -2,10 +2,7 @@ package com.example.babacirclecommunity.weChatPay.dao;
 
 import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
 import com.example.babacirclecommunity.weChatPay.entity.GoldCoinOrders;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 /**
@@ -41,4 +38,12 @@ public interface OrderMapper {
     @Insert("insert into tb_gold_coin_change(user_id,source_gold_coin,positive_negative_gold_coins,create_at,source_gold_coin_type,expenditure_or_income)" +
             "values(${goldCoinChange.userId},#{goldCoinChange.sourceGoldCoin},#{goldCoinChange.positiveNegativeGoldCoins},#{goldCoinChange.createAt},${goldCoinChange.sourceGoldCoinType},${goldCoinChange.expenditureOrIncome})")
     int addGoldCoinChange(@Param("goldCoinChange") GoldCoinChange goldCoinChange);
+
+    /**
+     * 根据订单id查询订单商品类型
+     * @param orderNumber 订单id
+     * @return
+     */
+    @Select("select goods_no from tb_gold_coin_orders where order_number = #{orderNumber}")
+    Integer queryGoodsNoByOrderNumber(@Param("orderNumber") String orderNumber);
 }
