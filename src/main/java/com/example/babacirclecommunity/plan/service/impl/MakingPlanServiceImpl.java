@@ -296,7 +296,7 @@ public class MakingPlanServiceImpl implements IMakingPlanService {
         if (i <= 0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"计划重新预设失败");
         }
-        //清楚用户原有计划的学习（观看）记录 (待定)
+        //清除用户原有计划的学习（观看）记录 (待定)
 
         //返回用户计划详情（签到记录以及课程学习列表）
         UserPlanVo userPlanVo = new UserPlanVo();

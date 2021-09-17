@@ -3,11 +3,7 @@ package com.example.babacirclecommunity.activity.dao;
 import com.example.babacirclecommunity.activity.entity.Activity;
 import com.example.babacirclecommunity.activity.entity.ActivityParticipate;
 import com.example.babacirclecommunity.activity.vo.ActivityListVo;
-import com.example.babacirclecommunity.common.utils.Paging;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,14 +17,18 @@ public interface ActivityMapper {
 
     /**
      * 查询活动列表
+     * @param area
      * @param sql
      * @return
      */
-    @Select("select a.id,a.activity_title,a.activity_cover,a.sponsor_user_id,a.activity_end_time,b.user_name as sponsorUserName,b.avatar " +
+    @Select("<script>"+
+            "select a.id,a.activity_title,a.activity_cover,a.sponsor_user_id,a.activity_end_time,b.user_name as sponsorUserName,b.avatar " +
             "as sponsorUserAvatar,count(c.id) as numberOfParticipants from tb_activity a left join tb_user b on a.sponsor_user_id = b.id " +
-            "left join tb_activity_participate c on a.id = c.activity_id and c.is_delete = 0 where a.is_delete = 0 GROUP BY a.id " +
-            "ORDER BY a.activity_start_time desc ${sql}")
-    List<ActivityListVo> queryActivityList(@Param("sql") String sql);
+            "left join tb_activity_participate c on a.id = c.activity_id and c.is_delete = 0 where a.is_delete = 0 " +
+            "<if test='area != null'>and a.activity_area LIKE CONCAT('%',#{area},'%')</if>" +
+            "GROUP BY a.id ORDER BY a.activity_start_time desc ${sql}" +
+            "</script>")
+    List<ActivityListVo> queryActivityList(@Param("area") String area, @Param("sql") String sql);
 
     /**
      * 查询活动详情
@@ -63,11 +63,26 @@ public interface ActivityMapper {
      * @param activity
      * @return
      */
-    @Insert("insert into tb_activity(activity_title,activity_cover,activity_content,activity_sponsor,activity_time,activity_location," +
+    @Insert("insert into tb_activity(activity_title,activity_cover,activity_content,activity_sponsor,activity_time,activity_area,activity_location," +
             "sponsor_user_id,activity_fee,activity_fee_desc,activity_rule,activity_start_time,activity_end_time) values(#{activity.activityTitle}," +
-            "#{activity.activityCover},#{activity.activityContent},#{activity.activitySponsor},#{activity.activityTime},#{activity.activityLocation}," +
+            "#{activity.activityCover},#{activity.activityContent},#{activity.activitySponsor},#{activity.activityTime},#{activity.activityArea},#{activity.activityLocation}," +
             "${activity.sponsorUserId},${activity.activityFee},#{activity.activityFeeDesc},#{activity.activityRule},#{activity.activityStartTime}," +
             "#{activity.activityEndTime})")
     @Options(useGeneratedKeys=true, keyProperty="activity.id",keyColumn="id")
     int createActivity(@Param("activity") Activity activity);
+
+    /**
+     * 查询未截止（进行中）的活动
+     * @return
+     */
+    @Select("select * from tb_activity where is_delete = 0")
+    List<Activity> queryNotDueActivity();
+
+    /**
+     * 根据活动id截止活动报名
+     * @param id
+     * @return
+     */
+    @Update("update tb_activity set is_delete = 1 where id = ${id}")
+    int dueActivityById(@Param("id") int id);
 }

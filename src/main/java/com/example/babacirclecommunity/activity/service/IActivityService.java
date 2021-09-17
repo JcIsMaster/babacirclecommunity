@@ -4,6 +4,7 @@ import com.example.babacirclecommunity.activity.entity.Activity;
 import com.example.babacirclecommunity.activity.entity.ActivityParticipate;
 import com.example.babacirclecommunity.activity.vo.ActivityListVo;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 
 import java.text.ParseException;
 import java.util.List;
@@ -16,10 +17,11 @@ public interface IActivityService {
 
     /**
      * 查询活动列表
+     * @param area
      * @param paging
      * @return
      */
-    List<ActivityListVo> queryActivityList(Paging paging);
+    List<ActivityListVo> queryActivityList(String area,Paging paging);
 
     /**
      * 查询活动详情
@@ -39,8 +41,8 @@ public interface IActivityService {
     /**
      * 创建活动
      * @param activity
-     * @exception ParseException
+     * @throws ParseException
      * @return
      */
-    int createActivity(Activity activity) throws ParseException;
+    ResultUtil createActivity(Activity activity) throws ParseException;
 }

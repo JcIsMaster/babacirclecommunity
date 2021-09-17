@@ -40,6 +40,11 @@ public class Activity {
     private String activityTime;
 
     /**
+     * 活动地区
+     */
+    private String activityArea;
+
+    /**
      * 活动地点
      */
     private String activityLocation;

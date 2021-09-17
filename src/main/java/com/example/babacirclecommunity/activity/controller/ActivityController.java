@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.activity.entity.ActivityParticipate;
 import com.example.babacirclecommunity.activity.service.IActivityService;
 import com.example.babacirclecommunity.activity.vo.ActivityListVo;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,8 @@ public class ActivityController {
     @ApiOperation(value = "查询活动列表",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryActivityList")
-    public List<ActivityListVo> queryActivityList(Paging paging){
-        return iActivityService.queryActivityList(paging);
+    public List<ActivityListVo> queryActivityList(String area,Paging paging){
+        return iActivityService.queryActivityList(area,paging);
     }
 
     @ApiOperation(value = "查询活动详情",notes = "成功返回数据 反则为空")
@@ -52,7 +53,7 @@ public class ActivityController {
     @ApiOperation(value = "创建活动",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/createActivity")
-    public int createActivity(Activity activity) throws ParseException {
+    public ResultUtil createActivity(Activity activity) throws ParseException {
         return iActivityService.createActivity(activity);
     }
 }

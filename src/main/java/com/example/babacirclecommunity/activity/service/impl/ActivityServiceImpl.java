@@ -5,13 +5,15 @@ import com.example.babacirclecommunity.activity.entity.Activity;
 import com.example.babacirclecommunity.activity.entity.ActivityParticipate;
 import com.example.babacirclecommunity.activity.service.IActivityService;
 import com.example.babacirclecommunity.activity.vo.ActivityListVo;
+import com.example.babacirclecommunity.circle.dao.CircleMapper;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.common.utils.TimeUtil;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +33,12 @@ public class ActivityServiceImpl implements IActivityService {
     @Autowired
     private ActivityMapper activityMapper;
 
+    @Autowired
+    private CircleMapper circleMapper;
+
     @Override
-    public List<ActivityListVo> queryActivityList(Paging paging) {
-        return activityMapper.queryActivityList(getPaging(paging));
+    public List<ActivityListVo> queryActivityList(String area,Paging paging) {
+        return activityMapper.queryActivityList(area,getPaging(paging));
     }
 
     @Override
@@ -57,11 +62,20 @@ public class ActivityServiceImpl implements IActivityService {
     }
 
     @Override
-    public int createActivity(Activity activity) throws ParseException {
+    public ResultUtil createActivity(Activity activity) throws ParseException {
+        //查询是否为圈主，否则不允许创建
+        int circleCount = circleMapper.myCircleCount(activity.getSponsorUserId());
+        if (circleCount == 0){
+            ResultUtil.error("您还不是圈主");
+        }
         activity.setActivityStartTime(System.currentTimeMillis() / 1000 + "");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         activity.setActivityEndTime(String.valueOf(TimeUtil.getEndOfDay(simpleDateFormat.parse(activity.getActivityEndTime()))));
-        return activityMapper.createActivity(activity);
+        int i = activityMapper.createActivity(activity);
+        if (i <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"创建活动失败");
+        }
+        return ResultUtil.success(i);
     }
 
     /**
@@ -72,6 +86,29 @@ public class ActivityServiceImpl implements IActivityService {
     public String getPaging(Paging paging) {
         int page = (paging.getPage() - 1) * paging.getLimit();
         return "limit " + page + "," + paging.getLimit();
+    }
+
+    /**
+     * 查询到期活动进行截至操作
+     * 秒   分   时     日   月   周几
+     * 0    *    *     *   *     0-7
+     */
+    @Scheduled(cron = "5 0 0 * * ?")
+    public void activityDeadline(){
+        //查询进行中的活动
+        List<Activity> activities = activityMapper.queryNotDueActivity();
+        //获取当前时间戳
+        long currentTime = System.currentTimeMillis() / 1000;
+        for (Activity activity : activities) {
+            //如果活动报名结束时间已过，停止活动
+            if (currentTime > Long.parseLong(activity.getActivityEndTime())){
+                int i = activityMapper.dueActivityById(activity.getId());
+                if (i <= 0){
+                    log.error("活动id:" + activity.getId() + ",到期活动截止失败,时间:" + currentTime);
+                }
+            }
+        }
+        log.info("到期活动进行截至操作,时间:" + currentTime);
     }
 
 }
