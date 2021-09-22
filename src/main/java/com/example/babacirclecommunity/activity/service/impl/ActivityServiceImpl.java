@@ -78,6 +78,16 @@ public class ActivityServiceImpl implements IActivityService {
         return ResultUtil.success(i);
     }
 
+    @Override
+    public List<ActivityListVo> queryMythActivity(int userId,int type,Paging paging) {
+        return activityMapper.queryMythActivity(userId,type,getPaging(paging));
+    }
+
+    @Override
+    public List<ActivityListVo> queryMyParticipatedActivity(int userId, Paging paging) {
+        return activityMapper.queryMyParticipatedActivity(userId, getPaging(paging));
+    }
+
     /**
      * 分页获取
      * @param paging

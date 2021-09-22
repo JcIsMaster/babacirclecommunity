@@ -4,6 +4,8 @@ import com.example.babacirclecommunity.activity.entity.Activity;
 import com.example.babacirclecommunity.activity.entity.ActivityParticipate;
 import com.example.babacirclecommunity.activity.service.IActivityService;
 import com.example.babacirclecommunity.activity.vo.ActivityListVo;
+import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import io.swagger.annotations.Api;
@@ -55,5 +57,25 @@ public class ActivityController {
     @PostMapping("/createActivity")
     public ResultUtil createActivity(Activity activity) throws ParseException {
         return iActivityService.createActivity(activity);
+    }
+
+    @ApiOperation(value = "我的活动",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryMythActivity")
+    public List<ActivityListVo> queryMythActivity(int userId,int type,Paging paging) {
+        if (userId == 0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iActivityService.queryMythActivity(userId,type,paging);
+    }
+
+    @ApiOperation(value = "我参加的活动",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryMyParticipatedActivity")
+    public List<ActivityListVo> queryMyParticipatedActivity(int userId,Paging paging){
+        if (userId == 0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iActivityService.queryMyParticipatedActivity(userId,paging);
     }
 }

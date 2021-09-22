@@ -3,6 +3,7 @@ package com.example.babacirclecommunity.activity.dao;
 import com.example.babacirclecommunity.activity.entity.Activity;
 import com.example.babacirclecommunity.activity.entity.ActivityParticipate;
 import com.example.babacirclecommunity.activity.vo.ActivityListVo;
+import com.example.babacirclecommunity.common.utils.Paging;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ public interface ActivityMapper {
      * @return
      */
     @Select("<script>"+
-            "select a.id,a.activity_title,a.activity_cover,a.sponsor_user_id,a.activity_end_time,b.user_name as sponsorUserName,b.avatar " +
+            "select a.id,a.activity_title,a.activity_cover,a.activity_area,a.sponsor_user_id,a.activity_end_time,a.is_delete,b.user_name as sponsorUserName,b.avatar " +
             "as sponsorUserAvatar,count(c.id) as numberOfParticipants from tb_activity a left join tb_user b on a.sponsor_user_id = b.id " +
             "left join tb_activity_participate c on a.id = c.activity_id and c.is_delete = 0 where a.is_delete = 0 " +
             "<if test='area != null'>and a.activity_area LIKE CONCAT('%',#{area},'%')</if>" +
@@ -85,4 +86,30 @@ public interface ActivityMapper {
      */
     @Update("update tb_activity set is_delete = 1 where id = ${id}")
     int dueActivityById(@Param("id") int id);
+
+    /**
+     * 查询我的活动
+     * @param userId
+     * @param type
+     * @param sql
+     * @return
+     */
+    @Select("select a.id,a.activity_title,a.activity_cover,a.activity_area,a.sponsor_user_id,a.activity_end_time,a.is_delete,b.user_name as sponsorUserName,b.avatar " +
+            "as sponsorUserAvatar,count(c.id) as numberOfParticipants from tb_activity a left join tb_user b on a.sponsor_user_id = b.id " +
+            "left join tb_activity_participate c on a.id = c.activity_id and c.is_delete = 0 where a.is_delete = ${type} and a.sponsor_user_id = ${userId} " +
+            "GROUP BY a.id ORDER BY a.activity_start_time desc ${sql}")
+    List<ActivityListVo> queryMythActivity(@Param("userId") int userId,@Param("type") int type,@Param("sql") String sql);
+
+    /**
+     * 我参加的活动
+     * @param userId
+     * @param sql
+     * @return
+     */
+    @Select("select a.id,a.activity_title,a.activity_cover,a.activity_area,a.sponsor_user_id,a.activity_end_time,a.is_delete,b.user_name as sponsorUserName,b.avatar " +
+            "as sponsorUserAvatar,(select count(*) from tb_activity_participate where activity_id = a.id) as numberOfParticipants from tb_activity a right join " +
+            "tb_activity_participate c on a.id = c.activity_id left join tb_user b on a.sponsor_user_id = b.id " +
+            "where c.user_id = ${userId} ORDER BY a.activity_start_time desc ${sql}")
+    List<ActivityListVo> queryMyParticipatedActivity(@Param("userId") int userId,@Param("sql") String sql);
+
 }

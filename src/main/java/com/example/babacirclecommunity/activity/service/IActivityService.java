@@ -45,4 +45,21 @@ public interface IActivityService {
      * @return
      */
     ResultUtil createActivity(Activity activity) throws ParseException;
+
+    /**
+     * 我的活动
+     * @param userId
+     * @param type 0进行中 1已结束
+     * @param paging
+     * @return
+     */
+    List<ActivityListVo> queryMythActivity(int userId,int type,Paging paging);
+
+    /**
+     * 我参加的活动
+     * @param userId
+     * @param paging
+     * @return
+     */
+    List<ActivityListVo> queryMyParticipatedActivity(int userId,Paging paging);
 }

@@ -25,6 +25,11 @@ public class ActivityListVo {
     private String activityCover;
 
     /**
+     * 活动地区
+     */
+    private String activityArea;
+
+    /**
      * 活动发起人id
      */
     private int sponsorUserId;
@@ -43,6 +48,11 @@ public class ActivityListVo {
      * 活动结束时间
      */
     private String activityEndTime;
+
+    /**
+     * 活动状态 0进行中  1已结束
+     */
+    private int isDelete;
 
     /**
      * 活动参与人数
