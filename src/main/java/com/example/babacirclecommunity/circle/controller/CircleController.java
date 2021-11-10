@@ -1,6 +1,7 @@
 package com.example.babacirclecommunity.circle.controller;
 
 import com.example.babacirclecommunity.circle.entity.Circle;
+import com.example.babacirclecommunity.circle.entity.CommunityTopic;
 import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.service.ICircleService;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
@@ -10,7 +11,9 @@ import com.example.babacirclecommunity.circle.vo.CommunityVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.home.entity.Community;
+import com.example.babacirclecommunity.user.vo.UserRankVo;
 import com.example.babacirclecommunity.user.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,14 +57,21 @@ public class CircleController {
         return iCircleService.queryImagesOrVideos(type,paging,userId);
     }
 
+    @ApiOperation(value = "查询视频帖子详情",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCircleOfVideos")
+    public List<CircleClassificationVo> queryCircleOfVideos(int id,Paging paging,int userId) throws ParseException{
+        return iCircleService.queryCircleOfVideos(id,paging,userId);
+    }
+
     @ApiOperation(value = "查询单个圈子的帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/querySingleCircle")
-    public CircleClassificationVo querySingleCircle(int id,int userId) throws ParseException {
+    public CircleClassificationVo querySingleCircle(int id,int userId,Paging paging) throws ParseException {
         if(id==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  iCircleService.querySingleCircle(id, userId);
+        return  iCircleService.querySingleCircle(id, userId,paging);
     }
 
 
@@ -73,14 +83,25 @@ public class CircleController {
     }
 
 
-    @ApiOperation(value = "查询我的圈子 （圈子广场）",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "查询广场热门话题",notes = "成功返回数据 反则为空")
     @ResponseBody
-    @PostMapping("/queryCheckMyCirclesSquare")
-    public List<CircleVo> queryCheckMyCirclesSquare(int userId,String communityName, Paging paging)  {
-        if(userId==0){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR);
-        }
-        return  iCircleService.queryCheckMyCirclesSquare(userId,communityName,paging);
+    @PostMapping("/queryHotTopic")
+    public Map<String,Object> queryHotTopic(int userId)  {
+        return iCircleService.queryHotTopic(userId);
+    }
+
+    @ApiOperation(value = "查询所有话题",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryAllTopic")
+    public List<CommunityTopic> queryAllTopic() {
+        return iCircleService.queryAllTopic();
+    }
+
+    @ApiOperation(value = "根据话题查询圈子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCommunityByTopic")
+    public List<CircleVo> queryCommunityByTopic(int userId,int topicId, Paging paging) {
+        return iCircleService.queryCommunityByTopic(userId,topicId,paging);
     }
 
     @ApiOperation(value = "发现圈子(新)",notes = "成功返回数据 反则为空")
@@ -228,6 +249,20 @@ public class CircleController {
     @PostMapping("/queryHotCircleList")
     public List<CircleVo> queryHotCircleList(int userId,Paging paging){
         return iCircleService.queryHotCircleList(userId,paging);
+    }
+
+    @ApiOperation(value = "设置圈子排行榜开关/规则",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/setCircleRanking")
+    public ResultUtil setCircleRanking(int rankingSwitch, String rankingRules, int id) {
+        return iCircleService.setCircleRanking(rankingSwitch,rankingRules,id);
+    }
+
+    @ApiOperation(value = "查看圈子排行榜",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCircleRanking")
+    public List<UserRankVo> queryCircleRanking(int communityId){
+        return iCircleService.queryCircleRanking(communityId);
     }
 
 }

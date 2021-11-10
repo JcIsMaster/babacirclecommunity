@@ -1,6 +1,5 @@
 package com.example.babacirclecommunity.personalCenter.controller;
 
-import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.personalCenter.service.IPersonalCenterService;

@@ -4,6 +4,7 @@ package com.example.babacirclecommunity.circle.controller;
 import com.example.babacirclecommunity.circle.entity.Attention;
 import com.example.babacirclecommunity.circle.service.IAttentionService;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
+import com.example.babacirclecommunity.circle.vo.GuessYouLike;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
@@ -57,6 +58,13 @@ public class AttentionController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         return iAttentionService.queryPostsPeopleFollow(userId,paging);
+    }
+
+    @ApiOperation(value = "关注首页猜你喜欢",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/guessYouLike")
+    public List<GuessYouLike> guessYouLike(int userId){
+        return iAttentionService.guessYouLike(userId);
     }
 
 }

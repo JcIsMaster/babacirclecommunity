@@ -66,4 +66,19 @@ public class Community {
      * 标签id 对应tb_tags表中的id
      */
     private int tagId;
+
+    /**
+     * 圈子所属话题分类
+     */
+    private int communityType;
+
+    /**
+     * 排行榜开关（0关闭 ，1开启）默认关闭
+     */
+    private int rankingSwitch;
+
+    /**
+     * 排行榜规则
+     */
+    private String rankingRules;
 }

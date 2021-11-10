@@ -1,5 +1,6 @@
 package com.example.babacirclecommunity.circle.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.util.List;
@@ -62,7 +63,6 @@ public class CircleClassificationVo {
      */
     private String cover;
 
-
     /**
      * 标签名称
      */
@@ -88,7 +88,6 @@ public class CircleClassificationVo {
      */
     private int whetherGive=0;
 
-
     /**
      * 是否关注 （1关注 0没有关注）
      */
@@ -97,7 +96,6 @@ public class CircleClassificationVo {
     /**
      * 点赞数量
      */
-
     private int giveNumber;
 
     /**
@@ -125,5 +123,10 @@ public class CircleClassificationVo {
      */
     private int isFeatured;
 
-
+    /**
+     * 推荐的帖子
+     * 当这个字段为空时，不返回前端
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<CircleClassificationVo> recommends;
 }

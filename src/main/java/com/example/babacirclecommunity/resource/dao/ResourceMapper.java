@@ -33,14 +33,17 @@ public interface ResourceMapper {
             "<if test='tagId!=130'>" +
             " and a.tags_two=${tagId}" +
             "</if>" +
+            "<if test='orderRule==0'>" +
+            " and a.supply_or_demand = 0 " +
+            "</if>" +
             "<if test='orderRule==1'>" +
-            " order by a.create_at DESC " +
+            " and a.supply_or_demand = 0 order by a.create_at DESC " +
             "</if>" +
             "<if test='orderRule==2'>" +
-            " order by a.browse DESC" +
+            " and a.supply_or_demand = 0 order by a.browse DESC" +
             "</if>" +
             "<if test='orderRule==3'>" +
-            " order by a.collect DESC" +
+            " and a.supply_or_demand = 1 " +
             "</if>" +
             " ${paging}"+
             "</script>"})
@@ -193,7 +196,8 @@ public interface ResourceMapper {
      * @param resources
      * @return
      */
-    @Insert("insert into tb_resources(content,tags_one,tags_two,type,video,cover,create_at,u_id,title,haplont_type)values(#{resources.content},${resources.tagsOne},${resources.tagsTwo},${resources.type},#{resources.video},#{resources.cover},#{resources.createAt},${resources.uId},#{resources.title},${resources.haplontType})")
+    @Insert("insert into tb_resources(content,tags_one,tags_two,type,video,cover,create_at,u_id,title,haplont_type,supply_or_demand)values(#{resources.content},${resources.tagsOne}," +
+            "${resources.tagsTwo},${resources.type},#{resources.video},#{resources.cover},#{resources.createAt},${resources.uId},#{resources.title},${resources.haplontType},${resources.supplyOrDemand})")
     @Options(useGeneratedKeys=true, keyProperty="resources.id",keyColumn="id")
     int addResourcesPost(@Param("resources") Resources resources);
 

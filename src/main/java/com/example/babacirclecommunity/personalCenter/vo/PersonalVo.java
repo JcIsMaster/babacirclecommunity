@@ -1,6 +1,6 @@
 package com.example.babacirclecommunity.personalCenter.vo;
 
-import com.example.babacirclecommunity.circle.vo.CircleVo;
+import com.example.babacirclecommunity.sameCity.entity.ParameterJson;
 import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
 import lombok.Data;
 
@@ -17,6 +17,11 @@ public class PersonalVo {
      * 用户信息
      */
     private PersonalCenterUserVo personalCenterUserVo;
+
+    /**
+     * 是否商家
+     */
+    private ParameterJson parameterJson;
 
     /**
      * 是否关注 0未关注 1已关注 2本人不显示

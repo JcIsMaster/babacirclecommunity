@@ -1,10 +1,7 @@
 package com.example.babacirclecommunity.circle.service.impl;
 
 import com.example.babacirclecommunity.circle.dao.*;
-import com.example.babacirclecommunity.circle.entity.Browse;
-import com.example.babacirclecommunity.circle.entity.Circle;
-import com.example.babacirclecommunity.circle.entity.CommunityUser;
-import com.example.babacirclecommunity.circle.entity.Haplont;
+import com.example.babacirclecommunity.circle.entity.*;
 import com.example.babacirclecommunity.circle.service.ICircleService;
 import com.example.babacirclecommunity.circle.vo.*;
 import com.example.babacirclecommunity.common.constanct.CodeType;
@@ -15,9 +12,11 @@ import com.example.babacirclecommunity.my.dao.MyMapper;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.tags.dao.TagMapper;
 import com.example.babacirclecommunity.tags.entity.Tag;
+import com.example.babacirclecommunity.user.vo.UserRankVo;
 import com.example.babacirclecommunity.user.vo.UserVo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -153,7 +152,109 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public CircleClassificationVo querySingleCircle(int id, int userId) throws ParseException {
+    public List<CircleClassificationVo> queryCircleOfVideos(int id,Paging paging, int userId) throws ParseException {
+        //List存储数据顺序与插入数据顺序一致，存在先进先出的概念。
+        List<CircleClassificationVo> classificationVoList = new ArrayList<>();
+        //查询单个圈子
+        CircleClassificationVo circleClassificationVo = circleMapper.selectSingleCircle(id);
+        if (circleClassificationVo == null) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR, "该帖子不存在");
+        }
+        //等于0在用户没有到登录的情况下 直接设置没有点赞
+        if (userId == 0) {
+            circleClassificationVo.setWhetherGive(0);
+        } else {
+            //查看我是否关注了此人
+            int i1 = attentionMapper.queryWhetherAttention(userId, circleClassificationVo.getUId());
+            if (i1 > 0) {
+                circleClassificationVo.setWhetherAttention(1);
+            }
+
+            //查询是否对帖子点了赞   0没有 1有
+            Integer integer = circleGiveMapper.whetherGive(userId, circleClassificationVo.getId());
+            if (integer == 0) {
+                circleClassificationVo.setWhetherGive(0);
+            } else {
+                circleClassificationVo.setWhetherGive(1);
+            }
+        }
+
+        //将时间戳转换为多少天或者多少个小时和多少年
+        String time = DateUtils.getTime(circleClassificationVo.getCreateAt());
+        circleClassificationVo.setCreateAt(time);
+
+        classificationVoList.add(circleClassificationVo);
+
+        //查询所有视频帖子
+        List<CircleClassificationVo> classificationVos1 = circleMapper.queryImagesOrVideos(1, getPaging(paging));
+        //去除一样的
+        List<CircleClassificationVo> classificationVos = classificationVos1.stream().filter(u -> u.getId() != circleClassificationVo.getId()).collect(Collectors.toList());
+        for (int i = 0; i < classificationVos.size(); i++) {
+            //在用户登录的情况下 增加帖子浏览记录
+            if (userId != 0) {
+                //得到上一次观看帖子的时间
+                Browse browse = new Browse();
+                String s = browseMapper.selectCreateAt(id, userId);
+                if (s == null) {
+                    //增加浏览记录
+                    browse.setCreateAt(System.currentTimeMillis() / 1000 + "");
+                    browse.setUId(userId);
+                    browse.setZqId(id);
+                    browse.setType(1);
+                    //增加浏览记录
+                    int j = browseMapper.addBrowse(browse);
+                    if (j <= 0) {
+                        throw new ApplicationException(CodeType.SERVICE_ERROR, "增加浏览记录错误");
+                    }
+
+                    //修改帖子浏览数量
+                    int i1 = circleMapper.updateBrowse(id);
+                    if (i1 <= 0) {
+                        throw new ApplicationException(CodeType.SERVICE_ERROR);
+                    }
+                } else {
+                    //得到过去时间和现在的时间是否相隔1440分钟 如果相隔了 就添加新的浏览记录
+                    long minutesApart = TimeUtil.getMinutesApart(s);
+                    if (minutesApart >= 1440) {
+                        //修改帖子浏览数量
+                        int i1 = circleMapper.updateBrowse(id);
+                        if (i1 <= 0) {
+                            throw new ApplicationException(CodeType.SERVICE_ERROR);
+                        }
+
+                    }
+                }
+
+            }
+
+            //等于0在用户没有到登录的情况下 直接设置没有点赞
+            if (userId == 0) {
+                circleClassificationVo.setWhetherGive(0);
+            } else {
+                //查看我是否关注了此人
+                int i1 = attentionMapper.queryWhetherAttention(userId, circleClassificationVo.getUId());
+                if (i1 > 0) {
+                    circleClassificationVo.setWhetherAttention(1);
+                }
+
+                //查询是否对帖子点了赞   0没有 1有
+                Integer integer = circleGiveMapper.whetherGive(userId, circleClassificationVo.getId());
+                if (integer == 0) {
+                    circleClassificationVo.setWhetherGive(0);
+                } else {
+                    circleClassificationVo.setWhetherGive(1);
+                }
+            }
+
+            classificationVoList.add(classificationVos.get(i));
+
+        }
+
+        return classificationVoList;
+    }
+
+    @Override
+    public CircleClassificationVo querySingleCircle(int id, int userId,Paging paging) throws ParseException {
         //查询单个圈子
         CircleClassificationVo circleClassificationVo = circleMapper.selectSingleCircle(id);
         if (circleClassificationVo == null) {
@@ -228,6 +329,38 @@ public class CircleServiceImpl implements ICircleService {
         String time = DateUtils.getTime(circleClassificationVo.getCreateAt());
         circleClassificationVo.setCreateAt(time);
 
+        //如果为图文贴，继续推荐相关帖子
+        if (circleClassificationVo.getType() == 0) {
+            //根据圈子分类和点赞推荐，先后排序
+            //查询当前帖子所在圈子的话题分类
+            int topic = communityMapper.queryCommunityFromTopic(circleClassificationVo.getTagId());
+            //查询该分类下的帖子根据点赞数排序
+            //排除查看的当前帖子
+            List<CircleClassificationVo> recommends = circleMapper.queryCirclesByTopic(circleClassificationVo.getId(),topic,getPaging(paging));
+            for (int i = 0; i < recommends.size(); i++) {
+                //得到图片组
+                String[] img = circleMapper.selectImgByPostId(recommends.get(i).getId());
+                recommends.get(i).setImg(img);
+                if (userId != 0) {
+                    //查看我是否关注了此人
+                    int i2 = attentionMapper.queryWhetherAttention(userId, recommends.get(i).getUId());
+                    if (i2 > 0) {
+                        recommends.get(i).setWhetherAttention(1);
+                    }
+
+                    //查询是否对帖子点了赞   0没有 1有
+                    Integer give = circleGiveMapper.whetherGive(userId, recommends.get(i).getId());
+                    if (give == 0) {
+                        recommends.get(i).setWhetherGive(0);
+                    } else {
+                        recommends.get(i).setWhetherGive(1);
+                    }
+                }
+            }
+
+            circleClassificationVo.setRecommends(recommends);
+        }
+
 
         return circleClassificationVo;
     }
@@ -272,43 +405,51 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public List<CircleVo> queryCheckMyCirclesSquare(int userId, String communityName, Paging paging) {
-        int pages = (paging.getPage() - 1) * paging.getLimit();
+    public Map<String,Object> queryHotTopic(int userId) {
+        Map<String, Object> map = new HashMap<>();
+        //热门话题
+        List<HotTopicVo> hotTopicVos = circleMapper.queryHotTopic();
 
-        //如果communityName不等于空 就根据communityName查询圈子
-        if (communityName != null && !"".equals(communityName) && !"undefined".equals(communityName)) {
-            List<CircleVo> circleVos = circleMapper.searchFundCircle(userId, communityName, getPaging(paging));
-            for (int i = 0; i < circleVos.size(); i++) {
-                //查询圈子最近更新得4个帖子封面
-                List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
-                circleVos.get(i).setCircleVoList(circleVos1);
-            }
-            return circleVos;
-
+        //我创建的圈子数量
+        int myCircleCount = 0;
+        //我加入的圈子数量
+        int joinedCircleCount = 0;
+        if (userId != 0) {
+            myCircleCount = circleMapper.myCircleCount(userId);
+            joinedCircleCount = circleMapper.circleJoinedCount(userId);
         }
 
-        //查看缓存是否存在 如果存在就查询缓存中的数据，否则查询数据库加入缓存
-        if (redisTemplate.hasKey("MyCirclesSquare::" + userId)) {
-            //查询缓存数据
-            List range = redisConfig.getList("MyCirclesSquare::" + userId, pages, paging.getPage() * paging.getLimit() - 1);
-            return range;
-        } else {
-            //查询我创建的圈子
-            List<CircleVo> circleVos = circleMapper.myCircleAndCircleJoined(userId, getPaging(paging));
-            for (int i = 0; i < circleVos.size(); i++) {
-                //查询圈子最近更新得4个帖子封面
-                List<CircleImgIdVo> circleVos1 = circleMapper.queryCoveId(circleVos.get(i).getTagId());
-                circleVos.get(i).setCircleVoList(circleVos1);
+        map.put("hotTopicVos",hotTopicVos);
+        map.put("myCircleCount",myCircleCount);
+        map.put("joinedCircleCount",joinedCircleCount);
+
+        return map;
+    }
+
+    @Override
+    public List<CommunityTopic> queryAllTopic() {
+        return circleMapper.queryAllTopic();
+    }
+
+    @Override
+    public List<CircleVo> queryCommunityByTopic(int userId, int topicId, Paging paging) {
+        List<CircleVo> circleVos = circleMapper.queryCommunityByTopic(topicId,getPaging(paging));
+        for (CircleVo circleVo : circleVos) {
+            //查询圈子人数
+            circleVo.setMemberCount(circleMapper.countCircleJoined(circleVo.getId()));
+
+            if (userId != 0) {
+                //查询用户是否加入了圈子
+                int isJoined = circleMapper.queryWhetherJoinedCircle(circleVo.getId(),userId);
+                if (isJoined != 0){
+                    circleVo.setWhetherJoined(1);
+                }
+            }else {
+                circleVo.setWhetherJoined(0);
             }
 
-            //存入redis缓存
-            if (circleVos.size() != 0) {
-                redisTemplate.opsForList().rightPushAll("MyCirclesSquare::" + userId, circleVos);
-            }
-
-            return circleVos;
         }
-
+        return circleVos;
     }
 
     @Override
@@ -442,6 +583,10 @@ public class CircleServiceImpl implements ICircleService {
         communities.stream().filter(u -> u.getUserId() == userId).forEach(u -> {
             communityVo.setWhetherThere(1);
         });
+        //如果排行榜开启，返回统计后的参与排行用户的头像（最多展示8条）
+        if (communityVo.getRankingSwitch() == 1) {
+            communityVo.setUserRankVos(communityMapper.queryCircleRanking(id));
+        }
 
         //得到单元体导航栏
         List<Haplont> haplonts = communityMapper.selectHaplontByTagId(id);
@@ -626,10 +771,7 @@ public class CircleServiceImpl implements ICircleService {
                 createCircleVo.setCircleVoList(circleVos1);
                 createCircleVo.setMemberCount(circleMapper.countCircleJoined(createCircleVo.getId()));
             }
-            //查询我创建的圈子数量
-            int myCircleCount = circleMapper.myCircleCount(userId);
-            //查询加入的圈子数量
-            int joinedCircleCount = circleMapper.circleJoinedCount(userId);
+
 //            //存入redis缓存
 //            if (createCircleVos.size() != 0) {
 //                redisTemplate.opsForList().rightPushAll("MyCirclesSquare::" + userId, createCircleVos);
@@ -638,8 +780,6 @@ public class CircleServiceImpl implements ICircleService {
 //            }
 
             map.put("circle",createCircleVos);
-            map.put("createSize",myCircleCount);
-            map.put("joinSize",joinedCircleCount);
 //        }
 
         return map;
@@ -655,7 +795,7 @@ public class CircleServiceImpl implements ICircleService {
 //            List range = redisConfig.getList("JoinedCircles::" + userId, pages, paging.getPage() * paging.getLimit() - 1);
 //            map.put("joinedCircle",range);
 //        } else {
-            //查询我加入的圈子
+        //查询我加入的圈子
         List<CircleVo> joinedCircleVos = circleMapper.circleJoined(userId, getPaging(paging));
 //        for (CircleVo createCircleVo : joinedCircleVos) {
 //            //根据圈子对应的标签id查询封面和id
@@ -799,6 +939,21 @@ public class CircleServiceImpl implements ICircleService {
             }
         }
         return circleVos;
+    }
+
+    @Override
+    public ResultUtil setCircleRanking(int rankingSwitch, String rankingRules, int id) {
+        int i = communityMapper.setCircleRanking(rankingSwitch,rankingRules,id);
+        if (i <= 0) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"圈子排行设置失败");
+        }
+        return ResultUtil.success(i);
+    }
+
+    @Override
+    public List<UserRankVo> queryCircleRanking(int communityId) {
+        //根据圈子id查询该圈子内排行榜单
+        return communityMapper.queryCircleRanking(communityId);
     }
 
 

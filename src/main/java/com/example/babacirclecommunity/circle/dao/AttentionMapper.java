@@ -2,6 +2,7 @@ package com.example.babacirclecommunity.circle.dao;
 
 import com.example.babacirclecommunity.circle.entity.Attention;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
+import com.example.babacirclecommunity.circle.vo.GuessYouLike;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -70,5 +71,33 @@ public interface AttentionMapper {
      */
     @Select("select COALESCE(count(*),0) from tb_circles a INNER JOIN tb_user d on a.user_id=d.id INNER JOIN tb_user_attention b on a.user_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 and a.is_delete=1")
     int countAttentionCircle(@Param("userId") int userId);
+
+    /**
+     * 猜你喜欢
+     * @param userId
+     * @param ran
+     * @return
+     */
+    @Select("<script>" +
+            "select a.id,a.user_name,a.avatar,(select count(1) from tb_user_attention where bg_id = a.id and is_delete = 1) as followedNum from tb_user a " +
+            "<if test='userId != 0'>" +
+            "where a.id != ${userId} and a.id not in (select bg_id from tb_user_attention where gu_id = ${userId} and is_delete = 1) " +
+            "</if>" +
+            "limit ${ran},4" +
+            "</script>")
+    List<GuessYouLike> queryGuessYouLike(@Param("userId") int userId,@Param("ran") int ran);
+
+    /**
+     * 猜你喜欢总数据量
+     * @param userId
+     * @return
+     */
+    @Select("<script>" +
+            "select COUNT(1) from tb_user " +
+            "<if test='userId != 0'>" +
+            "where id != ${userId} and id not in (select bg_id from tb_user_attention where gu_id = ${userId} and is_delete = 1)" +
+            "</if>" +
+            "</script>")
+    int queryGuessYouLikeNum(@Param("userId") int userId);
 
 }

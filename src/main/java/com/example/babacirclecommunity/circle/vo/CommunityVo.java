@@ -2,6 +2,7 @@ package com.example.babacirclecommunity.circle.vo;
 
 
 import com.example.babacirclecommunity.circle.entity.Haplont;
+import com.example.babacirclecommunity.user.vo.UserRankVo;
 import lombok.Data;
 
 import java.util.List;
@@ -81,4 +82,19 @@ public class CommunityVo {
      * 是否公开 （0不是，1是）默认是
      */
     private int whetherPublic;
+
+    /**
+     * 排行榜开关（0关闭 ，1开启）默认关闭
+     */
+    private int rankingSwitch;
+
+    /**
+     * 排行榜规则
+     */
+    private String rankingRules;
+
+    /**
+     * 上榜用户top8
+     */
+    private List<UserRankVo> userRankVos;
 }

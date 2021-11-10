@@ -30,6 +30,7 @@ public interface ICollaborateService {
      *  查询单个合作帖子
      * @param id
      * @param userId
+     * @throws ParseException
      * @return
      */
     ResourcesVo querySingleCollaboratePost(int id, int userId) throws ParseException;

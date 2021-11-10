@@ -1,9 +1,11 @@
 package com.example.babacirclecommunity.circle.dao;
 
 import com.example.babacirclecommunity.circle.entity.Circle;
+import com.example.babacirclecommunity.circle.entity.CommunityTopic;
 import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.entity.Haplont;
 import com.example.babacirclecommunity.circle.vo.*;
+import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.home.entity.Community;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
 import com.example.babacirclecommunity.user.vo.UserVo;
@@ -40,14 +42,14 @@ public interface CircleMapper {
     Integer myCircleCount(@Param("userId") int userId);
 
     /**
-     * 查询我加入的圈子 （根据圈子人数排序）
+     * 查询我加入的圈子 （根据圈子帖子数量排序）
      * @param userId 用户id
      * @param paging 分页
      * @return
      */
-    @Select("select b.user_id,b.id,b.tag_id, b.community_name, b.posters,b.introduce,IFNULL(t1.count1, 0) AS cnt from tb_community_user a " +
-            "INNER JOIN tb_community b on a.community_id=b.id LEFT JOIN (SELECT community_id,COUNT(*) AS count1 FROM " +
-            "tb_community_user GROUP BY community_id) t1 on a.community_id=t1.community_id where a.user_id=${userId} " +
+    @Select("select b.user_id,b.id,b.tag_id,b.community_name,b.posters,b.introduce,(select count(tags_two) from tb_circles where is_delete = 1 and tags_two = b.tag_id) " +
+            "as cnt from tb_community_user a " +
+            "INNER JOIN tb_community b on a.community_id=b.id where a.user_id=${userId} " +
             "and b.is_delete = 1 ORDER BY cnt desc,a.create_at desc ${paging}")
     List<CircleVo> circleJoined(@Param("userId") int userId,@Param("paging") String paging);
 
@@ -109,14 +111,50 @@ public interface CircleMapper {
     int querySameNameExist(@Param("communityName") String communityName);
 
     /**
-     * 查询官方圈子
+     * 查询广场热门话题
      * @return
      */
-    @Select("select posters as cover,tag_id,community_name from tb_community where whether_official=1")
-    List<CircleImgIdVo> queryOfficialCircle();
+    @Select("select a.id,a.topic_name,sum(c.ct) cs from (select community_id,count(id) as ct from tb_community_user GROUP BY community_id) c left join tb_community b on c.community_id = b.id " +
+            "INNER JOIN tb_community_topic a on b.community_type = a.id GROUP BY a.id order by cs desc limit 3")
+    List<HotTopicVo> queryHotTopic();
+
+    /**
+     * 查询所有话题
+     * @return
+     */
+    @Select("select * from tb_community_topic")
+    List<CommunityTopic> queryAllTopic();
+
+    /**
+     * 根据话题查询圈子
+     * @param topicId
+     * @param sql
+     * @return
+     */
+    @Select("select a.whether_public,a.user_id,a.community_name,a.id,(select count(tags_two) from tb_circles where is_delete = 1 and tags_two = a.tag_id) as cnt," +
+            "a.tag_id,a.introduce,a.posters from tb_community a " +
+            "where a.is_delete=1 and a.whether_public=1 and a.community_type = ${topicId} GROUP BY a.tag_id ${sql}")
+    List<CircleVo> queryCommunityByTopic(@Param("topicId") int topicId, @Param("sql") String sql);
+
+    /**
+     * 查询该话题下所有的帖子（点赞排序）
+     * @param id
+     * @param topic
+     * @param sql
+     * @return
+     */
+    @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.community_name as tagName,b.tag_id as tagId" +
+            ",c.avatar,c.id as uId,c.user_name,c.user_sex,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
+            "from tb_circles a LEFT JOIN (select COALESCE(count(*),0) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
+            "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment where is_delete = 1 GROUP BY t_id) e on a.id=e.t_id inner JOIN tb_user c on a.user_id=c.id " +
+            "LEFT join tb_community b on a.tags_two = b.tag_id " +
+            "LEFT join tb_community_topic g on b.community_type = g.id " +
+            "where a.is_delete=1 and g.id = ${topic} and a.id <> ${id} order by giveNumber desc ${sql}")
+    List<CircleClassificationVo> queryCirclesByTopic(@Param("id") int id,@Param("topic") int topic,@Param("sql") String sql);
+
     /**
      * 统计每个圈子的人数
-     * @param id 用户id
+     * @param id 圈子id
      * @return
      */
     @Select("select IFNULL(count(*),0) from tb_community_user where community_id=${id}")
@@ -193,7 +231,7 @@ public interface CircleMapper {
             "LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment GROUP BY t_id) e on a.id=e.t_id " +
             "INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
-            "where a.type=${type} and a.is_delete=1  order by a.create_at desc ${paging}")
+            "where a.type=${type} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryImagesOrVideos(@Param("type") int type, @Param("paging") String paging);
 
     /**
@@ -250,10 +288,11 @@ public interface CircleMapper {
     /**
      * 添加圈子
      * @param community
+     * @return
      */
-    @Insert("insert into tb_community(community_name,posters,user_id,introduce,announcement,create_at,tag_id,whether_public)" +
+    @Insert("insert into tb_community(community_name,posters,user_id,introduce,announcement,create_at,tag_id,whether_public,community_type)" +
             "values(#{community.communityName},#{community.posters},${community.userId},#{community.introduce},#{community.announcement}" +
-            ",#{community.createAt},#{community.tagId},${community.whetherPublic})")
+            ",#{community.createAt},#{community.tagId},${community.whetherPublic},${community.communityType})")
     @Options(useGeneratedKeys=true, keyProperty="community.id",keyColumn="id")
     int addCommunity(@Param("community") Community community);
 
@@ -300,8 +339,6 @@ public interface CircleMapper {
     @Select("select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
             "from tb_circles a INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 and a.tags_two=${tagId} ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("tagId") int tagId, @Param("paging") String paging);
-
-
 
     /**
      * 查询圈子成员

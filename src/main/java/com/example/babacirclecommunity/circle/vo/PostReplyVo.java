@@ -14,7 +14,6 @@ public class PostReplyVo {
      */
     private int id;
 
-
     /**
      * 回复人id
      */
@@ -34,6 +33,11 @@ public class PostReplyVo {
      *评论内容
      */
     private String hContent;
+
+    /**
+     *创建时间
+     */
+    private String createAt;
 
     /**
      * 二级评论点赞数量

@@ -1,13 +1,16 @@
 package com.example.babacirclecommunity.circle.service;
 
 import com.example.babacirclecommunity.circle.entity.Circle;
+import com.example.babacirclecommunity.circle.entity.CommunityTopic;
 import com.example.babacirclecommunity.circle.entity.CommunityUser;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.circle.vo.CommunitySearchVo;
 import com.example.babacirclecommunity.circle.vo.CommunityVo;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.home.entity.Community;
+import com.example.babacirclecommunity.user.vo.UserRankVo;
 import com.example.babacirclecommunity.user.vo.UserVo;
 
 import java.io.IOException;
@@ -39,13 +42,24 @@ public interface ICircleService {
     List<CircleClassificationVo> queryImagesOrVideos(int type,Paging paging,int userId);
 
     /**
+     * 查询视频帖子详情
+     * @param id
+     * @param paging
+     * @param userId
+     * @throws ParseException
+     * @return
+     */
+    List<CircleClassificationVo> queryCircleOfVideos(int id,Paging paging,int userId) throws ParseException;
+
+    /**
      * 查询单个圈子的帖子
      * @param id 圈子id
      * @param userId 用户id
+     * @param paging
      * @return
      * @throws ParseException
      */
-    CircleClassificationVo querySingleCircle(int id,int userId) throws ParseException;
+    CircleClassificationVo querySingleCircle(int id,int userId,Paging paging) throws ParseException;
 
     /**
      * 查询推荐圈子
@@ -56,12 +70,26 @@ public interface ICircleService {
     List<CircleClassificationVo> queryReferenceCircles(int userId, Paging paging);
 
     /**
-     * 查询我的圈子 （圈子广场）
-     * @param userId 当前登录用户id
-     * @param paging 分页
+     * 查询广场热门话题
+     * @param userId
      * @return
      */
-    List<CircleVo> queryCheckMyCirclesSquare(int userId,String communityName, Paging paging);
+    Map<String,Object> queryHotTopic(int userId);
+
+    /**
+     * 查询所有话题
+     * @return
+     */
+    List<CommunityTopic> queryAllTopic();
+
+    /**
+     * 根据话题查询圈子
+     * @param userId
+     * @param topicId
+     * @param paging
+     * @return
+     */
+    List<CircleVo> queryCommunityByTopic(int userId,int topicId,Paging paging);
 
     /**
      * 添加圈子
@@ -74,6 +102,7 @@ public interface ICircleService {
      * 发布圈子
      * @param circle
      * @param imgUrl 图片地址
+     * @throws ParseException,IOException,InterruptedException,Exception
      */
     void publishingCircles(Circle circle, String imgUrl) throws ParseException, IOException, InterruptedException, Exception;
 
@@ -197,4 +226,20 @@ public interface ICircleService {
      * @return
      */
     List<CircleVo> queryHotCircleList(int userId,Paging paging);
+
+    /**
+     * 设置圈子排行榜开关/规则
+     * @param rankingSwitch
+     * @param rankingRules
+     * @param id
+     * @return
+     */
+    ResultUtil setCircleRanking(int rankingSwitch, String rankingRules, int id);
+
+    /**
+     * 查看圈子排行榜
+     * @param communityId
+     * @return
+     */
+    List<UserRankVo> queryCircleRanking(int communityId);
 }

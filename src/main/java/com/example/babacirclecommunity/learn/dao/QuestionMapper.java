@@ -37,13 +37,15 @@ public interface QuestionMapper {
 
     /**
      * 根据userId查询提问列表
-     * @param uId
+     * @param userId
      * @param paging
      * @return
      */
-    @Select("select a.id,a.title,a.description,a.content_type,a.cover_img,a.favour,a.collect,a.comment,a.tags_two,b.tag_name from " +
-            "tb_question a LEFT JOIN tb_tags b on a.tags_two = b.id where a.u_id = ${uId} and a.is_delete = 1 ORDER BY a.create_at desc ${paging}")
-    List<QuestionVo> queryQuestionListByUser(@Param("uId") int uId, @Param("paging") String paging);
+    @Select("select a.id,a.user_id,c.user_name,c.avatar,a.title,a.description,a.plan_class_id,a.circle_id,a.type,a.cover,a.video," +
+            "a.favour_num,a.comment_num,a.haplont_id,a.tags_two,b.tag_name,a.create_at from " +
+            "tb_question a LEFT JOIN tb_tags b on a.tags_two = b.id left join tb_user c on a.user_id = c.id where " +
+            "a.user_id = ${userId} and a.is_delete = 0 ORDER BY a.create_at desc ${paging}")
+    List<QuestionTagVo> queryQuestionListByUser(@Param("userId") int userId, @Param("paging") String paging);
 
     /**
      * 根据tagId标签查询提问列表

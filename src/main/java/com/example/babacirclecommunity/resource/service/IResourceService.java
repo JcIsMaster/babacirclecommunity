@@ -31,6 +31,7 @@ public interface IResourceService {
      * 查询单个资源帖子
      * @param id 帖子id
      * @param userId 用户id
+     * @throws ParseException
      * @return
      */
     ResourcesVo selectSingleResourcePost(int id, int userId) throws ParseException;

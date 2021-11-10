@@ -9,6 +9,7 @@ import com.example.babacirclecommunity.circle.entity.Attention;
 import com.example.babacirclecommunity.circle.service.IAttentionService;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CommentUserVo;
+import com.example.babacirclecommunity.circle.vo.GuessYouLike;
 import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
@@ -118,5 +119,13 @@ public class AttentionServiceImpl implements IAttentionService {
         }
 
         return circleClassificationVos;
+    }
+
+    @Override
+    public List<GuessYouLike> guessYouLike(int userId) {
+        int total = attentionMapper.queryGuessYouLikeNum(userId);
+        int ran = (int) (Math.random() * (total - 4));
+        List<GuessYouLike> likes = attentionMapper.queryGuessYouLike(userId,ran);
+        return likes;
     }
 }

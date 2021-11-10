@@ -83,6 +83,11 @@ public class ResourceServiceImpl implements IResourceService {
             if (selectWhetherCollection > 0) {
                 resourcesVo.setWhetherCollection(1);
             }
+            //查看当前用户是否关注发帖人
+            int whetherAttention = attentionMapper.queryWhetherAttention(userId, resourcesVo.getUId());
+            if (whetherAttention > 0) {
+                resourcesVo.setWhetherAttention(1);
+            }
 
             //得到上一次观看帖子的时间
             Browse browse = new Browse();
@@ -212,7 +217,7 @@ public class ResourceServiceImpl implements IResourceService {
     @Override
     public List<ResourcesVo> queryAllVideosPrimaryTagId(int id, Paging paging, int userId) throws ParseException {
         Integer page = (paging.getPage() - 1) * paging.getLimit();
-        String pagings = "limit " + page + "," + paging.getLimit() + "";
+        String pagings = "limit " + page + "," + paging.getLimit();
 
         //是否收藏
         int selectWhetherCollection = 0;
@@ -254,7 +259,6 @@ public class ResourceServiceImpl implements IResourceService {
                 Browse browse = new Browse();
                 String s = resourceMapper.queryCreateAt(resourcesVos.get(i).getId(), userId);
                 if (s == null) {
-                    System.out.println("增加");
                     //增加浏览记录
                     browse.setCreateAt(System.currentTimeMillis() / 1000 + "");
                     browse.setUId(userId);
@@ -277,16 +281,16 @@ public class ResourceServiceImpl implements IResourceService {
                     long minutesApart = TimeUtil.getMinutesApart(s);
                     if (minutesApart >= 1440) {
                         //增加浏览记录
-                        browse.setCreateAt(System.currentTimeMillis() / 1000 + "");
-                        browse.setUId(userId);
-                        browse.setZqId(resourcesVos.get(i).getId());
-                        browse.setType(0);
+//                        browse.setCreateAt(System.currentTimeMillis() / 1000 + "");
+//                        browse.setUId(userId);
+//                        browse.setZqId(resourcesVos.get(i).getId());
+//                        browse.setType(0);
 
                         //增加浏览记录
-                        int ie = browseMapper.addBrowse(browse);
-                        if (ie <= 0) {
-                            throw new ApplicationException(CodeType.SERVICE_ERROR, "增加浏览记录错误");
-                        }
+//                        int ie = browseMapper.addBrowse(browse);
+//                        if (ie <= 0) {
+//                            throw new ApplicationException(CodeType.SERVICE_ERROR, "增加浏览记录错误");
+//                        }
 
                         //修改帖子浏览数量
                         int i1 = resourceMapper.updateBrowse(resourcesVos.get(i).getId());
@@ -391,11 +395,11 @@ public class ResourceServiceImpl implements IResourceService {
 
 
         //根据id查询帖子信息
-        ResourcesVo resourcesVo = resourceMapper.querySingleResourcePost(id);
-        if ((resourcesVo == null)) {
-            throw new ApplicationException(CodeType.SERVICE_ERROR, "帖子不存在");
-        }
-        String time = "";
+//        ResourcesVo resourcesVo = resourceMapper.querySingleResourcePost(id);
+//        if ((resourcesVo == null)) {
+//            throw new ApplicationException(CodeType.SERVICE_ERROR, "帖子不存在");
+//        }
+        //String time = "";
 
         List<String> posterList = new ArrayList<>();
 
@@ -449,13 +453,12 @@ public class ResourceServiceImpl implements IResourceService {
             outputStream.flush();
             outputStream.close();
 
-            time = System.currentTimeMillis() / 1000 + 13 + "";
+            //time = System.currentTimeMillis() / 1000 + 13 + "";
 
-
-            WxPoster wxPoster = new WxPoster();
+            //WxPoster wxPoster = new WxPoster();
             //生成海报5
-            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMasterResource("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", resourcesVo.getAvatar(), resourcesVo.getCover(), resourcesVo.getContent(), resourcesVo.getUserName(), resourcesVo.getTitle());
-            String newGreat = posterUrlGreatMaster.replace("e:/file/img/", "https://www.gofatoo.com/img/");
+            //String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMasterResource("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", resourcesVo.getAvatar(), resourcesVo.getCover(), resourcesVo.getContent(), resourcesVo.getUserName(), resourcesVo.getTitle());
+            String newGreat = file.getPath().replace("e:\\file\\img\\", "https://www.gofatoo.com/img/");
             /*if(newGreat!=null){
                 if(circleFriendsVo.getType()==0){
                     //帖子分享数量加一

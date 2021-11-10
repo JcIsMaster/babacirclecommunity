@@ -135,18 +135,18 @@ public class CommentServiceImpl implements ICommentService {
         //根据一级评论id查询二级评论
         for (CommentReplyVo s : commentReplyVos) {
             //得到评论点赞数量
-//            int i = commentMapper.queryCommentGiveNum(s.getId(), 0);
-//            s.setCommentGiveNum(i);
+            int i = commentMapper.queryCommentGiveNum(s.getId(), 0);
+            s.setCommentGiveNum(i);
 
 
             //查看一级评论是否点赞
-//            if (userId != 0) {
-//                //是否点赞
-//                CommentGive commentGive = commentMapper.queryWhetherGives(userId, 0, s.getId());
-//                if (commentGive != null) {
-//                    s.setCommentGiveStatus(1);
-//                }
-//            }
+            if (userId != 0) {
+                //是否点赞
+                CommentGive commentGive = commentMapper.queryWhetherGives(userId, 0, s.getId());
+                if (commentGive != null) {
+                    s.setCommentGiveStatus(1);
+                }
+            }
 
 
             //根据一级评论id查询二级的评论
@@ -155,7 +155,7 @@ public class CommentServiceImpl implements ICommentService {
             //得到每个一级评论下面的二级评论数量
 //            s.setCommentSize(postReplies.size());
 
-//            for (PostReplyVo a : postReplies) {
+            for (PostReplyVo a : postReplies) {
 //                //得到二级评论评论点赞数量
 //                int i1 = commentMapper.queryCommentGiveNum(a.getId(), 1);
 //                a.setTwoCommentGiveNum(i1);
@@ -169,13 +169,13 @@ public class CommentServiceImpl implements ICommentService {
 //                    }
 //                }
 //
-//                String userName = userMapper.selectUserById(a.getBhId()).getUserName();
-//                if (userName == null) {
-//                    throw new ApplicationException(CodeType.SERVICE_ERROR);
-//                }
-//
-//                a.setUName(userName);
-//            }
+                String userName = userMapper.selectUserById(a.getBhId()).getUserName();
+                if (userName == null) {
+                    throw new ApplicationException(CodeType.SERVICE_ERROR);
+                }
+
+                a.setUName(userName);
+            }
 
             s.setPostReplyList(postReplies);
         }

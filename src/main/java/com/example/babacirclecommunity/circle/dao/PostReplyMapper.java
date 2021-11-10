@@ -31,6 +31,6 @@ public interface PostReplyMapper {
      * @param cId 一级评论id
      * @return
      */
-    @Select("select a.id,a.bh_id,a.h_content,a.reply_give_status,b.avatar,b.id as userId,b.user_name from tb_post_reply a INNER JOIN tb_user b on a.h_id=b.id where c_id=${cId} ORDER BY a.create_at desc")
+    @Select("select a.id,a.bh_id,a.h_content,a.create_at,a.reply_give_status,b.avatar,b.id as userId,b.user_name from tb_post_reply a INNER JOIN tb_user b on a.h_id=b.id where c_id=${cId} ORDER BY a.create_at desc")
     List<PostReplyVo> queryPostReplyComment(@Param("cId") int cId);
 }

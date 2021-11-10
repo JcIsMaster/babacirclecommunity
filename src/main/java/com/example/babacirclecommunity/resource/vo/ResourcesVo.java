@@ -100,6 +100,11 @@ public class ResourcesVo {
     private int whetherCollection;
 
     /**
+     * 是否关注 （1已关注，0未关注）
+     */
+    private int whetherAttention;
+
+    /**
      * 观看过人的头像
      */
     private String[] browseAvatar;

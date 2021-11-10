@@ -72,6 +72,11 @@ public class CollaborateServiceImpl implements ICollaborateService {
             if (selectWhetherCollection > 0) {
                 resourcesVo.setWhetherCollection(1);
             }
+            //查看当前用户是否关注发帖人
+            int whetherAttention = attentionMapper.queryWhetherAttention(userId, resourcesVo.getUId());
+            if (whetherAttention > 0) {
+                resourcesVo.setWhetherAttention(1);
+            }
 
             //得到上一次观看帖子的时间
             Browse browse = new Browse();

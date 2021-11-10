@@ -1,15 +1,21 @@
 package com.example.babacirclecommunity.personalCenter.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.babacirclecommunity.circle.dao.*;
 import com.example.babacirclecommunity.circle.entity.Haplont;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.circle.vo.CircleVo;
 import com.example.babacirclecommunity.common.utils.Paging;
+import com.example.babacirclecommunity.learn.dao.DryGoodsGiveMapper;
+import com.example.babacirclecommunity.learn.dao.QuestionMapper;
+import com.example.babacirclecommunity.learn.vo.QuestionTagVo;
 import com.example.babacirclecommunity.my.dao.MyMapper;
 import com.example.babacirclecommunity.personalCenter.service.IPersonalCenterService;
 import com.example.babacirclecommunity.personalCenter.vo.PersonalVo;
 import com.example.babacirclecommunity.resource.dao.ResourceMapper;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
+import com.example.babacirclecommunity.sameCity.dao.SameCityMapper;
+import com.example.babacirclecommunity.sameCity.entity.ParameterJson;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.vo.PersonalCenterUserVo;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +60,15 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
     @Autowired
     private ResourceMapper resourceMapper;
 
+    @Autowired
+    private SameCityMapper sameCityMapper;
+
+    @Autowired
+    private QuestionMapper questionMapper;
+
+    @Autowired
+    private DryGoodsGiveMapper dryGoodsGiveMapper;
+
     @Override
     public PersonalVo queryPersonalCenter(int userId,int otherId) {
 
@@ -82,6 +97,12 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         int whetherAttention = attentionMapper.queryWhetherAttention(userId, otherId);
 
         personalVo.setPersonalCenterUserVo(personalCenterUserVo);
+
+        //查询用户同城匹配参数
+        String parameter = sameCityMapper.queryParameterByUserId(otherId);
+        if (parameter != null) {
+            personalVo.setParameterJson(JSONObject.parseObject(parameter, ParameterJson.class));
+        }
 
         //查询用户动态帖数量
         int postedCircleNum = circleMapper.queryHavePostedCircleNum(otherId);
@@ -159,6 +180,22 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         //查询个人中心里“货源”
         if (type == 2) {
             return resourceMapper.queryMyPostedPosts(otherId, 12,130, pag);
+        }
+        //查询个人中心里“提问”
+        if (type == 3) {
+            List<QuestionTagVo> questionTagVos = questionMapper.queryQuestionListByUser(otherId, pag);
+            //是否对帖子点过赞
+            if (userId != 0){
+                for (QuestionTagVo vo : questionTagVos) {
+                    Integer giveStatus = dryGoodsGiveMapper.whetherGive(0, userId, vo.getId());
+                    if (giveStatus == 0) {
+                        vo.setWhetherGive(0);
+                    } else {
+                        vo.setWhetherGive(1);
+                    }
+                }
+            }
+            return questionTagVos;
         }
         return null;
     }

@@ -33,6 +33,7 @@ public interface ICommentService {
     /**
      * 查询评论
      * @param tId 帖子id
+     * @param userId
      * @return
      */
     List<CommentReplyVo> queryComments(int tId, int userId);
