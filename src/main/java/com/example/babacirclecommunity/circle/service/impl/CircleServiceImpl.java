@@ -5,11 +5,14 @@ import com.example.babacirclecommunity.circle.entity.*;
 import com.example.babacirclecommunity.circle.service.ICircleService;
 import com.example.babacirclecommunity.circle.vo.*;
 import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.constanct.HonoredLevel;
+import com.example.babacirclecommunity.common.constanct.PointsType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.*;
 import com.example.babacirclecommunity.home.entity.Community;
 import com.example.babacirclecommunity.my.dao.MyMapper;
 import com.example.babacirclecommunity.resource.vo.ResourceClassificationVo;
+import com.example.babacirclecommunity.sameCity.dao.SameCityMapper;
 import com.example.babacirclecommunity.tags.dao.TagMapper;
 import com.example.babacirclecommunity.tags.entity.Tag;
 import com.example.babacirclecommunity.user.vo.UserRankVo;
@@ -28,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.security.Key;
 import java.text.ParseException;
@@ -70,6 +74,9 @@ public class CircleServiceImpl implements ICircleService {
 
     @Autowired
     private RedisConfig redisConfig;
+
+    @Resource
+    private SameCityMapper sameCityMapper;
 
 
     public String getPaging(Paging paging) {
@@ -367,7 +374,53 @@ public class CircleServiceImpl implements ICircleService {
 
     @Override
     public List<CircleClassificationVo> queryReferenceCircles(int userId, Paging paging) {
-        List<CircleClassificationVo> circles = circleMapper.queryReferenceCircles(getPaging(paging));
+        /**
+         * 1.未登录状态默认推荐热门
+         * 2.登录状态，未匹配：推荐近期浏览并点赞的分类 权重以分类为主
+         * 3.登录状态，已匹配：权重以匹配为主，浏览点赞为辅推荐
+         * 4.进入帖子详情：权重以分类为主，浏览点赞为辅推荐
+         */
+        List<CircleClassificationVo> circles = null;
+        //登录状态
+        if(userId != 0) {
+            //查询是否参与了匹配
+            String needs = sameCityMapper.queryMatchingNeedsByUserId(userId);
+            //未匹配(推荐近期浏览并点赞的分类 权重以分类为主)
+            if (needs == null) {
+                circles = circleMapper.queryReferenceLoggedAndNotMatch(userId,getPaging(paging));
+            }else {//已匹配(权重以匹配为主，浏览点赞为辅推荐)
+                switch (needs.replace("\"","")) {
+                    case "找货源":
+                        circles = circleMapper.queryReferenceLoggedAndMatch("供货",getPaging(paging));
+                        break;
+                    case "找人才":
+                        circles = circleMapper.queryReferenceLoggedAndMatch("实习",getPaging(paging));
+                        break;
+                    case "认识人脉":
+                        circles = circleMapper.queryReferenceLoggedAndMatch("找人才",getPaging(paging));
+                        break;
+                    case "找合作":
+                        circles = circleMapper.queryReferenceLoggedAndMatch("找流量",getPaging(paging));
+                        break;
+                    case "实习":
+                        circles = circleMapper.queryReferenceLoggedAndMatch("找人才",getPaging(paging));
+                        break;
+                    case "供货":
+                        circles = circleMapper.queryReferenceLoggedAndMatch("找货源",getPaging(paging));
+                        break;
+                    case "学电商":
+                        circles = circleMapper.queryReferenceCircles(getPaging(paging));
+                        break;
+                    case "找流量":
+                        circles = circleMapper.queryReferenceLoggedAndMatch("找合作",getPaging(paging));
+                        break;
+                    default:
+                        throw new ApplicationException(CodeType.RESOURCES_NOT_FIND);
+                }
+            }
+        }else {//未登录默认推荐热门
+            circles = circleMapper.queryReferenceCircles(getPaging(paging));
+        }
         for (int i = 0; i < circles.size(); i++) {
 
             //得到图片组
@@ -453,7 +506,7 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public void addCircle(Community community) throws ParseException {
+    public void addCircle(Community community,int honoredLevel) throws ParseException {
         //获取token
         String token = ConstantUtil.getToken();
         String identifyTextContent = ConstantUtil.identifyText(community.getCommunityName(), token);
@@ -469,6 +522,24 @@ public class CircleServiceImpl implements ICircleService {
         String identifyTextContent2 = ConstantUtil.identifyText(community.getAnnouncement(), token);
         if ("87014".equals(identifyTextContent2)) {
             throw new ApplicationException(CodeType.SERVICE_ERROR, "内容违规");
+        }
+
+        //查询用户已创建圈子数量
+        Integer circleCount = circleMapper.myCircleCount(community.getUserId());
+        if (honoredLevel == 0) {
+            if (circleCount >= HonoredLevel.HONORED_LEVEL_TONG.getCircleNum()) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"当前等级创建圈子数量已达到上限");
+            }
+        }else if (honoredLevel == 1) {
+            if (circleCount >= HonoredLevel.HONORED_LEVEL_YIN.getCircleNum()) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"当前等级创建圈子数量已达到上限");
+            }
+        }else if (honoredLevel == 2) {
+            if (circleCount >= HonoredLevel.HONORED_LEVEL_JIN.getCircleNum()) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"当前等级创建圈子数量已达到上限");
+            }
+        }else {
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
         //查找是否有同名圈子
@@ -531,7 +602,8 @@ public class CircleServiceImpl implements ICircleService {
             throw new ApplicationException(CodeType.SERVICE_ERROR, "内容违规");
         }
 
-        circle.setCreateAt(System.currentTimeMillis() / 1000 + "");
+        String time = String.valueOf(System.currentTimeMillis() / 1000);
+        circle.setCreateAt(time);
 
         //如果状态等于1说明发布的是视频
         if (circle.getType() == 1) {
@@ -554,11 +626,14 @@ public class CircleServiceImpl implements ICircleService {
                 throw new ApplicationException(CodeType.SERVICE_ERROR, "最多只能上传9张图片！");
             }
 
-            int addImg = circleMapper.addImg(circle.getId(), split, System.currentTimeMillis() / 1000 + "", 1);
+            int addImg = circleMapper.addImg(circle.getId(), split, time, 1);
             if (addImg <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
         }
+
+        //为用户添加荣誉积分
+        HonoredPointsUtil.addHonoredPoints(circle.getUserId(), PointsType.HONORED_POINTS_POST,0,time);
 
     }
 
@@ -845,6 +920,11 @@ public class CircleServiceImpl implements ICircleService {
 
         int i = communityMapper.updateCircle(community);
         if (i <= 0) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR, "修改失败");
+        }
+        //修改圈子对应的标签名
+        int j = tagMapper.updateTagNameForCircle(community.getCommunityName(), community.getTagId());
+        if (j <= 0) {
             throw new ApplicationException(CodeType.SERVICE_ERROR, "修改失败");
         }
     }

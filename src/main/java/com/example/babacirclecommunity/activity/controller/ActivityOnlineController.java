@@ -3,6 +3,8 @@ package com.example.babacirclecommunity.activity.controller;
 import com.example.babacirclecommunity.activity.entity.*;
 import com.example.babacirclecommunity.activity.service.IActivityOnlineService;
 import com.example.babacirclecommunity.activity.vo.*;
+import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import io.swagger.annotations.Api;
@@ -31,8 +33,8 @@ public class ActivityOnlineController {
     @ApiOperation(value = "查询线上活动列表",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryActivityOnlineList")
-    public List<ActivityOnlineListVo> queryActivityOnlineList(Paging paging){
-        return iActivityOnlineService.queryActivityOnlineList(paging);
+    public List<ActivityOnlineListVo> queryActivityOnlineList(int activityLevel,Paging paging){
+        return iActivityOnlineService.queryActivityOnlineList(activityLevel,paging);
     }
 
     @ApiOperation(value = "查询线上活动详情",notes = "成功返回数据 反则为空")
@@ -42,11 +44,21 @@ public class ActivityOnlineController {
         return iActivityOnlineService.queryActivityOnlineDetailsById(id);
     }
 
+    @ApiOperation(value = "创建线上活动验证",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/createActivityOnlineVerify")
+    public ResultUtil createActivityOnlineVerify(int userId,int honoredLevel) {
+        if (userId == 0) {
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"未登录");
+        }
+        return iActivityOnlineService.createActivityOnlineVerify(userId,honoredLevel);
+    }
+
     @ApiOperation(value = "创建线上活动",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/createActivityOnline")
-    public ResultUtil createActivityOnline(ActivityOnline activityOnline) throws ParseException {
-        return iActivityOnlineService.createActivityOnline(activityOnline);
+    public ResultUtil createActivityOnline(ActivityOnline activityOnline,int honoredLevel) throws ParseException {
+        return iActivityOnlineService.createActivityOnline(activityOnline,honoredLevel);
     }
 
     @ApiOperation(value = "用户参加线上活动(发起我的砍价)",notes = "成功返回数据 反则为空")

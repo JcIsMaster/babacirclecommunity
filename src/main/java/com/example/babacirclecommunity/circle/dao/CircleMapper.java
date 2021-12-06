@@ -299,6 +299,7 @@ public interface CircleMapper {
     /**
      * 初始化圈子人数
      * @param communityUser
+     * @return
      */
     @Insert("insert into tb_community_user(community_id,user_id,create_at)" +
             "values(${communityUser.communityId},${communityUser.userId},#{communityUser.createAt})")
@@ -349,7 +350,7 @@ public interface CircleMapper {
     List<UserVo> queryCircleMembers(@Param("communityId") int communityId);
 
     /**
-     * 推荐
+     * 推荐（默认热门，浏览量）
      * @param paging
      * @return
      */
@@ -357,8 +358,47 @@ public interface CircleMapper {
             ",c.avatar,c.id as uId,c.user_name,c.user_sex,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
             "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
             "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment where is_delete = 1 GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
-            "where a.is_delete=1 order by a.create_at desc ${paging}")
+            "where a.is_delete=1 order by a.browse desc ${paging}")
     List<CircleClassificationVo> queryReferenceCircles(@Param("paging") String paging);
+
+    /**
+     * 推荐（已登录且参与匹配）
+     * @param needs
+     * @param paging
+     * @return
+     */
+    @Select("(select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId" +
+            ",c.avatar,c.id as uId,c.user_name,c.user_sex,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
+            "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
+            "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment where is_delete = 1 GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
+            "where a.is_delete=1 and a.user_id in (select user_id from tb_parameter where json_class-> '$.twoSelect' = #{needs}) order by a.create_at desc) " +
+            "UNION " +
+            "(select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId" +
+            ",c.avatar,c.id as uId,c.user_name,c.user_sex,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
+            "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
+            "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment where is_delete = 1 GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
+            "where a.is_delete=1 order by a.browse desc,giveNumber desc) ${paging}")
+    List<CircleClassificationVo> queryReferenceLoggedAndMatch(@Param("needs") String needs,@Param("paging") String paging);
+
+    /**
+     * 推荐（已登录但未参与匹配）
+     * @param userId
+     * @param paging
+     * @return
+     */
+    @Select("(select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId" +
+            ",c.avatar,c.id as uId,c.user_name,c.user_sex,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
+            "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
+            "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment where is_delete = 1 GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
+            "where a.is_delete=1 and a.tags_two in (select DISTINCT a.tags_two from tb_circles a INNER JOIN tb_browse b on a.id = b.zq_id where b.type = 1 and " +
+            "UNIX_TIMESTAMP(DATE_SUB(FROM_UNIXTIME(unix_timestamp(now()),'%Y-%m-%d %H:%i:%s'), INTERVAL 30 DAY))<=b.create_at and b.u_id = ${userId}))" +
+            "UNION " +
+            "(select a.type,a.forwarding_number,a.id,a.content,a.browse,a.video,a.cover,a.address,a.create_at,b.tag_name,b.id as tagId" +
+            ",c.avatar,c.id as uId,c.user_name,c.user_sex,ifnull(d.giveNumber,0) as giveNumber ,ifnull(e.uu,0) as numberPosts " +
+            "from tb_circles a LEFT JOIN (select count(*) as giveNumber,zq_id from tb_circles_give where give_cancel=1 GROUP BY zq_id) d on a.id=d.zq_id " +
+            "LEFT JOIN (select COALESCE(count(*),0) as uu,t_id from tb_comment where is_delete = 1 GROUP BY t_id) e on a.id=e.t_id INNER JOIN tb_user c on a.user_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
+            "where a.is_delete=1 order by a.browse desc,giveNumber desc) ${paging}")
+    List<CircleClassificationVo> queryReferenceLoggedAndNotMatch(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
      * 添加圈子的标签

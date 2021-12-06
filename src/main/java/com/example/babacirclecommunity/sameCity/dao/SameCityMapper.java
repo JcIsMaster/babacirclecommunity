@@ -48,4 +48,12 @@ public interface SameCityMapper {
      */
     @Select("select json_class from tb_parameter where user_id = ${userId}")
     String queryParameterByUserId(@Param("userId") int userId);
+
+    /**
+     * 根据用户id查询用户选择参数
+     * @param userId
+     * @return
+     */
+    @Select("select json_class-> '$.twoSelect' from tb_parameter where user_id = ${userId}")
+    String queryMatchingNeedsByUserId(@Param("userId") int userId);
 }

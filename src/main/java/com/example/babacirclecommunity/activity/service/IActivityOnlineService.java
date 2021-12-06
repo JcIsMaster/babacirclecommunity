@@ -23,10 +23,11 @@ public interface IActivityOnlineService {
 
     /**
      * 查询线上活动列表
+     * @param activityLevel
      * @param paging
      * @return
      */
-    List<ActivityOnlineListVo> queryActivityOnlineList(Paging paging);
+    List<ActivityOnlineListVo> queryActivityOnlineList(int activityLevel,Paging paging);
 
     /**
      * 查询线上活动详情
@@ -36,12 +37,21 @@ public interface IActivityOnlineService {
     ActivityOnlineVo queryActivityOnlineDetailsById(int id);
 
     /**
+     * 创建线上活动验证
+     * @param userId
+     * @param honoredLevel
+     * @return
+     */
+    ResultUtil createActivityOnlineVerify(int userId,int honoredLevel);
+
+    /**
      * 创建线上活动
      * @param activityOnline
+     * @param honoredLevel
      * @return
      * @throws ParseException
      */
-    ResultUtil createActivityOnline(ActivityOnline activityOnline) throws ParseException;
+    ResultUtil createActivityOnline(ActivityOnline activityOnline,int honoredLevel) throws ParseException;
 
     /**
      * 用户参加线上活动

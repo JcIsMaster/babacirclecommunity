@@ -3,10 +3,7 @@ package com.example.babacirclecommunity.tags.dao;
 import com.example.babacirclecommunity.home.entity.Community;
 import com.example.babacirclecommunity.tags.entity.Tag;
 import com.example.babacirclecommunity.tags.vo.AllTagVo;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -105,5 +102,13 @@ public interface TagMapper {
     @Insert("insert into tb_tag_haplont(tag_id,haplont_id)values(${tagId},${haplontId})")
     int addTagHaplont(@Param("tagId") int tagId,@Param("haplontId") int haplontId);
 
+    /**
+     * 根据圈子改动修改对应的标签名
+     * @param tagName
+     * @param tagId
+     * @return
+     */
+    @Update("update tb_tags set tag_name = #{tagName} where id = ${tagId}")
+    int updateTagNameForCircle(@Param("tagName") String tagName,@Param("tagId") int tagId);
 
 }

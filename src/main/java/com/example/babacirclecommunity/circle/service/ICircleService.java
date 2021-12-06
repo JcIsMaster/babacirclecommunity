@@ -94,17 +94,18 @@ public interface ICircleService {
     /**
      * 添加圈子
      * @param community
+     * @param honoredLevel
      * @throws ParseException
      */
-    void addCircle(Community community) throws ParseException;
+    void addCircle(Community community,int honoredLevel) throws ParseException;
 
     /**
      * 发布圈子
      * @param circle
      * @param imgUrl 图片地址
-     * @throws ParseException,IOException,InterruptedException,Exception
+     * @throws Exception
      */
-    void publishingCircles(Circle circle, String imgUrl) throws ParseException, IOException, InterruptedException, Exception;
+    void publishingCircles(Circle circle, String imgUrl) throws Exception;
 
     /**
      * 进入单元体的接口

@@ -2,7 +2,9 @@ package com.example.babacirclecommunity.talents.service.Impl;
 
 import com.example.babacirclecommunity.circle.dao.AttentionMapper;
 import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.constanct.PointsType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
+import com.example.babacirclecommunity.common.utils.HonoredPointsUtil;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
 import com.example.babacirclecommunity.talents.dao.TalentsMapper;
@@ -70,12 +72,16 @@ public class TalentServiceImpl implements ITalentService {
         }
         //反之新增名片
         else {
-            talents.setCreateAt(System.currentTimeMillis() / 1000 + "");
+            String s = String.valueOf(System.currentTimeMillis() / 1000);
+            talents.setCreateAt(s);
             i = talentsMapper.addPersonalTalent(talents);
+            if (i <= 0) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"添加人才失败");
+            }
+            //为用户添加荣誉积分
+            HonoredPointsUtil.addHonoredPoints(talents.getUserId(), PointsType.HONORED_POINTS_Talents,0, s);
         }
-        if (i <= 0) {
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加人才失败");
-        }
+
         return ResultUtil.success(i,1);
     }
 }

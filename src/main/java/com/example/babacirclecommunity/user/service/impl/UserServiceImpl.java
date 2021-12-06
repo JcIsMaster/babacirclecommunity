@@ -6,6 +6,8 @@ import com.example.babacirclecommunity.common.constanct.CodeType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
 import com.example.babacirclecommunity.gold.dao.GoldMapper;
+import com.example.babacirclecommunity.honored.dao.HonoredMapper;
+import com.example.babacirclecommunity.honored.entity.Honored;
 import com.example.babacirclecommunity.my.dao.MyMapper;
 import com.example.babacirclecommunity.user.dao.UserMapper;
 import com.example.babacirclecommunity.user.entity.User;
@@ -45,6 +47,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private MyMapper myMapper;
+
+    @Autowired
+    private HonoredMapper honoredMapper;
 
     @Override
     public User wxLogin(String code, String userName, String avatar, String address, int sex) {
@@ -108,6 +113,12 @@ public class UserServiceImpl implements IUserService {
             int i2 = goldMapper.addUserGoldCoins(user1.getId());
             if(i2<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR,"初始化金币数据失败");
+            }
+
+            //初始化荣誉等级
+            int i3 = honoredMapper.addHonored(user1.getId());
+            if(i3<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"初始化荣誉等级数据失败");
             }
             return user1;
         }

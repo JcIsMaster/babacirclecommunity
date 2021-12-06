@@ -5,6 +5,7 @@ import com.example.babacirclecommunity.circle.dao.BrowseMapper;
 import com.example.babacirclecommunity.circle.entity.Browse;
 import com.example.babacirclecommunity.circle.vo.CircleClassificationVo;
 import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.constanct.PointsType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.*;
 import com.example.babacirclecommunity.resource.dao.CollectionMapper;
@@ -75,7 +76,9 @@ public class ResourceServiceImpl implements IResourceService {
     @Override
     public ResourcesVo selectSingleResourcePost(int id, int userId) throws ParseException {
         ResourcesVo resourcesVo = resourceMapper.selectSingleResourcePost(id);
-
+        if (resourcesVo == null) {
+            throw new ApplicationException(CodeType.RESOURCES_NOT_FIND);
+        }
         //在用户登录的情况下 增加帖子浏览记录
         if (userId != 0) {
             //查看是否收藏
@@ -485,7 +488,8 @@ public class ResourceServiceImpl implements IResourceService {
     }
 
     public int issue(Resources resources, String imgUrl) throws Exception {
-        resources.setCreateAt(System.currentTimeMillis() / 1000 + "");
+        String time = String.valueOf(System.currentTimeMillis() / 1000);
+        resources.setCreateAt(time);
         String[] split = null;
 
         //自己选封面
@@ -514,10 +518,17 @@ public class ResourceServiceImpl implements IResourceService {
         }
 
         if (resources.getType() == 0) {
-            int addImg = resourceMapper.addImg(resources.getId(), split, System.currentTimeMillis() / 1000 + "", 0);
+            int addImg = resourceMapper.addImg(resources.getId(), split, time, 0);
             if (addImg <= 0) {
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
+        }
+
+        //为用户添加荣誉积分
+        if (resources.getTagsOne() == 12) {
+            HonoredPointsUtil.addHonoredPoints(resources.getUId(), PointsType.HONORED_POINTS_RESOURCE,0, time);
+        }else if (resources.getTagsOne() == 13) {
+            HonoredPointsUtil.addHonoredPoints(resources.getUId(), PointsType.HONORED_POINTS_COLLABORATE,0, time);
         }
 
         return i;

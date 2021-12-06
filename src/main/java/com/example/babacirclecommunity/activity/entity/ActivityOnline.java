@@ -94,6 +94,11 @@ public class ActivityOnline {
     private int singleDiscountRate;
 
     /**
+     * 活动等级
+     */
+    private int activityLevel;
+
+    /**
      * 状态 0.进行中  1.已结束
      */
     private int isStatus;

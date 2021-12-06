@@ -22,11 +22,13 @@ public interface ActivityOnlineMapper {
 
     /**
      * 查询线上活动列表
+     * @param activityLevel
      * @param sql
      * @return
      */
-    @Select("select id,cover,title,original_price,discount_price from tb_activity_online where is_status = 0 order by create_at desc ${sql}")
-    List<ActivityOnlineListVo> queryActivityOnlineList(@Param("sql") String sql);
+    @Select("select id,cover,title,initiator_user_id,original_price,discount_price from tb_activity_online where activity_level = ${activityLevel} " +
+            "and is_status = 0 order by create_at desc ${sql}")
+    List<ActivityOnlineListVo> queryActivityOnlineList(@Param("activityLevel") int activityLevel,@Param("sql") String sql);
 
     /**
      * 查询线上活动详情
@@ -75,9 +77,9 @@ public interface ActivityOnlineMapper {
      * @return
      */
     @Insert("insert into tb_activity_online(cover,title,initiator_user_id,original_price,discount_price,stock,finish_time,shop_name,shop_url,shop_phone,we_chat_number," +
-            "description,create_at,single_discount_rate) values(#{activityOnline.cover},#{activityOnline.title},${activityOnline.initiatorUserId},${activityOnline.originalPrice}," +
+            "description,create_at,single_discount_rate,activity_level) values(#{activityOnline.cover},#{activityOnline.title},${activityOnline.initiatorUserId},${activityOnline.originalPrice}," +
             "${activityOnline.discountPrice},${activityOnline.stock},#{activityOnline.finishTime},#{activityOnline.shopName},#{activityOnline.shopUrl},#{activityOnline.shopPhone}," +
-            "#{activityOnline.weChatNumber},#{activityOnline.description},#{activityOnline.createAt},${activityOnline.singleDiscountRate})")
+            "#{activityOnline.weChatNumber},#{activityOnline.description},#{activityOnline.createAt},${activityOnline.singleDiscountRate},${activityOnline.activityLevel})")
     @Options(useGeneratedKeys=true, keyProperty="activityOnline.id",keyColumn="id")
     int createActivityOnline(@Param("activityOnline")ActivityOnline activityOnline);
 
@@ -216,5 +218,14 @@ public interface ActivityOnlineMapper {
             "from tb_activity_online_order a left join tb_activity_online b on a.activity_online_id = b.id left join tb_user c on a.user_id = c.id " +
             "where b.initiator_user_id = ${userId} ${sql}")
     List<ActivityOnlineOrderVo> queryActivityOrdersByUser(@Param("userId") int userId, @Param("sql") String sql);
+
+    /**
+     * 查询用户当月已创建线上活动的数量
+     * @param userId
+     * @return
+     */
+    @Select("select count(id) from tb_activity_online where initiator_user_id = ${userId} and " +
+            "FROM_UNIXTIME(create_at,\"%Y-%m\") = DATE_FORMAT(NOW(),\"%Y-%m\")")
+    int queryCreatedActivityOnlineNumFromCurrentMonth(@Param("userId") int userId);
 
 }

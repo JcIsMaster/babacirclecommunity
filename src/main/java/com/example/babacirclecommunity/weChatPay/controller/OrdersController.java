@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,9 @@ public class OrdersController {
 
     @Autowired
     private IOrdersService iOrdersService;
+
+    @Value("${withdraw.handling-fee}")
+    private double handlingFee;
 
     /**
      * 微信支付 （公众号支付(JSAPI)）
@@ -80,7 +84,9 @@ public class OrdersController {
         Map<String, String> paraMap = new HashMap<String, String>(15);
 
         // 支付金额，单位：分，这边需要转成字符串类型，否则后面的签名会失败
-        String payment =""+((money.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_HALF_UP).intValue()));
+        int feeMoney = money.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+        int feeMoneyGold = feeMoney / 10;
+        String payment =""+(int)(feeMoney * handlingFee);
 
         // 获取请求ip地址
         String ip = request.getHeader("x-forwarded-for");
@@ -188,6 +194,9 @@ public class OrdersController {
             Map<String, String> returnMap = WXPayUtil.xmlToMap(returnXml);
 
             if (returnMap.get("result_code").equals("SUCCESS")) {
+                //扣除金币
+                System.out.println("扣除总金币：" + feeMoneyGold);
+                iOrdersService.deductGoldByOpenId(openId,feeMoneyGold);
                 // 付款成功
                 System.out.println("returnMap为:" + returnMap);
             }else {

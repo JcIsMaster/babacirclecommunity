@@ -147,8 +147,8 @@ public class CircleController {
     @ApiOperation(value = "创建圈子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addCircle")
-    public void addCircle(Community community) throws ParseException {
-        iCircleService.addCircle(community);
+    public void addCircle(Community community,int honoredLevel) throws ParseException {
+        iCircleService.addCircle(community,honoredLevel);
     }
 
 

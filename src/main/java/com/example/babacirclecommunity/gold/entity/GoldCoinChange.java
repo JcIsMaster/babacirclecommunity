@@ -27,7 +27,7 @@ public class GoldCoinChange {
     private int positiveNegativeGoldCoins;
 
     /**
-     * 0 充值，1签到，2干货 3公开课
+     * 0 充值，1签到，2干货 3公开课 4.在线活动 5.提现
      */
     private int sourceGoldCoinType;
 

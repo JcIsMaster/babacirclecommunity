@@ -85,7 +85,6 @@ public interface GoldMapper {
      * 查询金币变化数据
      * @param userId 用户id
      * @param sql 分页
-     * @param expenditureOrIncome 0支出 1收入
      * @return
      */
     @Select("select user_id,source_gold_coin,positive_negative_gold_coins,create_at,source_gold_coin_type,expenditure_or_income from tb_gold_coin_change " +

@@ -1,8 +1,10 @@
 package com.example.babacirclecommunity.weChatPay.service.impl;
 
 import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.constanct.PointsType;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.ConstantUtil;
+import com.example.babacirclecommunity.common.utils.HonoredPointsUtil;
 import com.example.babacirclecommunity.common.utils.IdGenerator;
 import com.example.babacirclecommunity.gold.dao.GoldMapper;
 import com.example.babacirclecommunity.gold.entity.GoldCoinChange;
@@ -18,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -169,7 +170,7 @@ public class OrdersServiceImpl implements IOrdersService {
             response.put("paySign", paySign);
             //添加订单
             GoldCoinOrders goldCoinOrders = new GoldCoinOrders();
-            goldCoinOrders.setCreateAt(System.currentTimeMillis() / 1000 + "");
+            goldCoinOrders.setCreateAt(timeStamp);
             goldCoinOrders.setOrderNumber(paraMap.get("out_trade_no"));
             goldCoinOrders.setGoodsNo(goodsNo);
             goldCoinOrders.setOrderStatus(0);
@@ -185,7 +186,7 @@ public class OrdersServiceImpl implements IOrdersService {
 
 
             //amqpTemplate.convertAndSend("ex.order","order",paraMap.get("out_trade_no"));
-        //业务逻辑代码
+            //业务逻辑代码
         }
 
         return response;
@@ -267,7 +268,8 @@ public class OrdersServiceImpl implements IOrdersService {
                     }
                     //添加金币变化数据
                     GoldCoinChange goldCoinChange = new GoldCoinChange();
-                    goldCoinChange.setCreateAt(System.currentTimeMillis() / 1000 + "");
+                    String changeTime = String.valueOf(System.currentTimeMillis() / 1000);
+                    goldCoinChange.setCreateAt(changeTime);
                     goldCoinChange.setUserId(userId);
                     goldCoinChange.setSourceGoldCoin("充值");
                     goldCoinChange.setPositiveNegativeGoldCoins(gold);
@@ -277,6 +279,8 @@ public class OrdersServiceImpl implements IOrdersService {
                     if (i1 <= 0) {
                         throw new ApplicationException(CodeType.SERVICE_ERROR, "金币充值失败");
                     }
+                    //为用户添加荣誉积分
+                    HonoredPointsUtil.addHonoredPointsForRecharge(userId, gold,5,0, changeTime);
                 }
 
                 /** 此处添加自己的业务逻辑代码end **/
@@ -296,10 +300,32 @@ public class OrdersServiceImpl implements IOrdersService {
         }
     }
 
+    @Override
+    public void deductGoldByOpenId(String openId, Integer money) {
+        Integer userId = userMapper.queryUserIdByOpenId(openId);
+        int i = goldMapper.updateUserGold("can_withdraw_gold_coins=can_withdraw_gold_coins - " + money, userId);
+        if (i <= 0) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+        //增加提现订单记录
+        //添加金币变化数据
+        GoldCoinChange goldCoinChange = new GoldCoinChange();
+        String changeTime = String.valueOf(System.currentTimeMillis() / 1000);
+        goldCoinChange.setCreateAt(changeTime);
+        goldCoinChange.setUserId(userId);
+        goldCoinChange.setSourceGoldCoin("提现");
+        goldCoinChange.setPositiveNegativeGoldCoins(money);
+        goldCoinChange.setSourceGoldCoinType(5);
+        goldCoinChange.setExpenditureOrIncome(0);
+        int i1 = orderMapper.addGoldCoinChange(goldCoinChange);
+        if (i1 <= 0) {
+            throw new ApplicationException(CodeType.SERVICE_ERROR, "提现记录异常");
+        }
+    }
+
 
     /**
      * 分转元
-     *
      * @param amount 分
      * @return
      */

@@ -30,4 +30,11 @@ public interface IOrdersService {
      * @throws Exception
      */
     void weChatNotify(HttpServletRequest request, HttpServletResponse response)throws Exception;
+
+    /**
+     * 扣除金币
+     * @param openId
+     * @param money
+     */
+    void deductGoldByOpenId(String openId,Integer money);
 }

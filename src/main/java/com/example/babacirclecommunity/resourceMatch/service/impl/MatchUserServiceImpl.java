@@ -1,5 +1,9 @@
 package com.example.babacirclecommunity.resourceMatch.service.impl;
 
+import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.constanct.PointsType;
+import com.example.babacirclecommunity.common.exception.ApplicationException;
+import com.example.babacirclecommunity.common.utils.HonoredPointsUtil;
 import com.example.babacirclecommunity.resourceMatch.dao.MatchUserDao;
 import com.example.babacirclecommunity.resourceMatch.entity.Parameter;
 import com.example.babacirclecommunity.resourceMatch.service.MatchUserService;
@@ -26,7 +30,13 @@ public class MatchUserServiceImpl implements MatchUserService {
 
     @Override
     public int insertParameter(int userId, String text) {
-        return matchUserDao.insertParameter(userId, text);
+        int i = matchUserDao.insertParameter(userId, text);
+        if (i <= 0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+        //为用户添加荣誉积分
+        HonoredPointsUtil.addHonoredPoints(userId, PointsType.HONORED_POINTS_MATCH,0,String.valueOf(System.currentTimeMillis()/1000));
+        return i;
     }
 
     @Override

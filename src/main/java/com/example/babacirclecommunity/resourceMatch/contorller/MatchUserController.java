@@ -243,11 +243,11 @@ public class MatchUserController {
             myInformation.setStauts(0);
             myInformation.setTextValue(jb1.getPlatform());
         }
-        if(jb1.getIs_status()==0&&jb1.getIs_shops()==1){
+        else if(jb1.getIs_status()==0&&jb1.getIs_shops()==1){
             myInformation.setStauts(1);
             myInformation.setTextValue(jb1.getJob());
         }
-        if(jb1.getIs_status()==1){
+        else if(jb1.getIs_status()==1&&jb1.getIs_shops()==1){
             myInformation.setStauts(2);
             myInformation.setTextValue(jb1.getStatus());
         }
@@ -261,7 +261,5 @@ public class MatchUserController {
         myInformation.setThSelect(jb1.getThSelect());
         return ResultUtil.success(myInformation);
     }
-
-
 
 }

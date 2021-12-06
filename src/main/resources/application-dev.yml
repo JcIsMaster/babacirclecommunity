@@ -46,3 +46,6 @@ mybatis:
 app:
   workerId: 1
   dataCenterId: 2
+#提现手续费
+withdraw:
+  handling-fee: 0.98

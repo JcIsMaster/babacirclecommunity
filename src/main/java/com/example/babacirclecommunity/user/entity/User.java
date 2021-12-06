@@ -109,4 +109,14 @@ public class User {
 	 */
 	private int sumGoldNumber;
 
+	/**
+	 * 等级（0.铜  1.银   2.金）
+	 */
+	private int level;
+
+	/**
+	 * 当前总积分
+	 */
+	private int currentTotalPoints;
+
 }

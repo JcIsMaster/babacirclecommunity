@@ -24,6 +24,11 @@ public class ActivityOnlineListVo {
     private String title;
 
     /**
+     * 活动发起人id
+     */
+    private int initiatorUserId;
+
+    /**
      * 原价
      */
     private BigDecimal originalPrice;

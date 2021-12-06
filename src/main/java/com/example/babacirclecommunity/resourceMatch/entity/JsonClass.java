@@ -9,7 +9,7 @@ public class JsonClass {
     /**
      * 是职业还是状态
      */
-    private int is_status;
+    private Integer is_status;
 
     /**
      * 平台
@@ -61,11 +61,11 @@ public class JsonClass {
 
     private int age;
 
-    public int getIs_status() {
+    public Integer getIs_status() {
         return is_status;
     }
 
-    public void setIs_status(int is_status) {
+    public void setIs_status(Integer is_status) {
         this.is_status = is_status;
     }
 

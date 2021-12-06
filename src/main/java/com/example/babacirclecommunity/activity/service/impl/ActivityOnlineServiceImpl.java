@@ -6,6 +6,7 @@ import com.example.babacirclecommunity.activity.service.IActivityOnlineService;
 import com.example.babacirclecommunity.activity.vo.*;
 import com.example.babacirclecommunity.circle.dao.CircleMapper;
 import com.example.babacirclecommunity.common.constanct.CodeType;
+import com.example.babacirclecommunity.common.constanct.HonoredLevel;
 import com.example.babacirclecommunity.common.exception.ApplicationException;
 import com.example.babacirclecommunity.common.utils.Paging;
 import com.example.babacirclecommunity.common.utils.ResultUtil;
@@ -45,8 +46,8 @@ public class ActivityOnlineServiceImpl implements IActivityOnlineService {
     private OrderMapper orderMapper;
 
     @Override
-    public List<ActivityOnlineListVo> queryActivityOnlineList(Paging paging) {
-        return activityOnlineMapper.queryActivityOnlineList(getPaging(paging));
+    public List<ActivityOnlineListVo> queryActivityOnlineList(int activityLevel,Paging paging) {
+        return activityOnlineMapper.queryActivityOnlineList(activityLevel,getPaging(paging));
     }
 
     @Override
@@ -70,7 +71,35 @@ public class ActivityOnlineServiceImpl implements IActivityOnlineService {
     }
 
     @Override
-    public ResultUtil createActivityOnline(ActivityOnline activityOnline) throws ParseException {
+    public ResultUtil createActivityOnlineVerify(int userId, int honoredLevel) {
+        //查询是否为圈主，否则不允许创建
+        int circleCount = circleMapper.myCircleCount(userId);
+        if (circleCount == 0){
+            ResultUtil.error("您还不是圈主");
+        }
+
+        //查询当月用户已创建线上活动数量
+        int numFromCurrentMonth = activityOnlineMapper.queryCreatedActivityOnlineNumFromCurrentMonth(userId);
+        if (honoredLevel == 0) {
+            if (numFromCurrentMonth >= HonoredLevel.HONORED_LEVEL_TONG.getActivityOnlineNum()) {
+                ResultUtil.error("当月创建线上活动数量已达当前会员等级数量上限");
+            }
+        }else if (honoredLevel == 1) {
+            if (numFromCurrentMonth >= HonoredLevel.HONORED_LEVEL_YIN.getActivityOnlineNum()) {
+                ResultUtil.error("当月创建线上活动数量已达当前会员等级数量上限");
+            }
+        }else if (honoredLevel == 2) {
+            if (numFromCurrentMonth >= HonoredLevel.HONORED_LEVEL_JIN.getActivityOnlineNum()) {
+                ResultUtil.error("当月创建线上活动数量已达当前会员等级数量上限");
+            }
+        }else {
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return ResultUtil.success("验证通过");
+    }
+
+    @Override
+    public ResultUtil createActivityOnline(ActivityOnline activityOnline,int honoredLevel) throws ParseException {
         if (activityOnline.getInitiatorUserId() == 0) {
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"参数异常");
         }
@@ -79,6 +108,26 @@ public class ActivityOnlineServiceImpl implements IActivityOnlineService {
         if (circleCount == 0){
             ResultUtil.error("您还不是圈主");
         }
+
+        //查询当月用户已创建线上活动数量
+        int numFromCurrentMonth = activityOnlineMapper.queryCreatedActivityOnlineNumFromCurrentMonth(activityOnline.getInitiatorUserId());
+        if (honoredLevel == 0) {
+            if (numFromCurrentMonth >= HonoredLevel.HONORED_LEVEL_TONG.getActivityOnlineNum()) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"当月创建线上活动数量已达当前会员等级数量上限");
+            }
+        }else if (honoredLevel == 1) {
+            if (numFromCurrentMonth >= HonoredLevel.HONORED_LEVEL_YIN.getActivityOnlineNum()) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"当月创建线上活动数量已达当前会员等级数量上限");
+            }
+        }else if (honoredLevel == 2) {
+            if (numFromCurrentMonth >= HonoredLevel.HONORED_LEVEL_JIN.getActivityOnlineNum()) {
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"当月创建线上活动数量已达当前会员等级数量上限");
+            }
+        }else {
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+
+
         activityOnline.setCreateAt(String.valueOf(System.currentTimeMillis() / 1000));
         int i = activityOnlineMapper.createActivityOnline(activityOnline);
         if (i <= 0) {
