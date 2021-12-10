@@ -94,7 +94,7 @@ public interface IMyService {
     /**
      * 查询我近一个月浏览过的帖子
      * @param userId 用户id
-     * @param tagsOne 12货源源  13合作
+     * @param tagsOne 12货源  13合作
      * @param paging 分页
      * @return
      */
